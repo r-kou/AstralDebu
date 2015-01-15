@@ -90,6 +90,7 @@
     <ClCompile Include="text.cpp" />
     <ClCompile Include="texture.cpp" />
     <ClCompile Include="update.cpp" />
+    <ClCompile Include="update_main.cpp" />
     <ClCompile Include="warp.cpp" />
     <ClCompile Include="winmain.cpp" />
   </ItemGroup>

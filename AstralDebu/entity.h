@@ -116,6 +116,8 @@ protected:
 	bool blastRight(Entity *e) { return (getPosX() - e->getPosX() > 8); }
 	bool blastTop(Entity *e) { return (getPosY() - e->getPosY() < -8); }
 	bool blastBottom(Entity *e) { return (getPosY() - e->getPosY() > 8); }
+	float blastX(Entity *e, float x) { if (blastLeft(e)) return -x; else if (blastRight(e)) return x; else return 0; }
+	float blastY(Entity *e, float y,float m) { if (blastTop(e)) return -y-m; else if (blastBottom(e)) return y-m; else return -m; }
 	//オブジェクト反応の演算
 	UINT shift(int i) { return 1 << i; }
 	const UINT getRes(int i) { return response & shift(i); }

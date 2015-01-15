@@ -99,14 +99,7 @@ void SteelBox::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case BLAST:
 		//”š”­‚Å”ò‚ñ‚Å‚¢‚­
-		float vx, vy;
-		if (blastLeft(e)) vx = -VEL_BOMB_X;
-		else if (blastRight(e)) vx = VEL_BOMB_X;
-		if (blastTop(e)) vy = -VEL_BOMB_Y;
-		else if (blastBottom(e)) vy = VEL_BOMB_Y;
-		//‚¿‚å‚Á‚Æ•‚‚­
-		vy -= VEL_BOMB_M;
-		setRes(7, vx, vy);
+		setRes(7, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y, VEL_BOMB_M));
 		break;
 	case HAMMER:
 		//“S‹…‚©‚ç‚Ô‚Â‚©‚Á‚Ä‚«‚½‚ç‰ó‚ê‚é
@@ -216,13 +209,7 @@ void AirBox::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case BLAST:
 		//”š”­‚Å”ò‚ñ‚Å‚¢‚­
-		//”š”­‚Å”ò‚ñ‚Å‚¢‚­
-		float vx, vy;
-		if (blastLeft(e)) vx = -VEL_BOMB_X;
-		else if (blastRight(e)) vx = VEL_BOMB_X;
-		if (blastTop(e)) vy = -VEL_BOMB_A;
-		else if (blastBottom(e)) vy = VEL_BOMB_A;
-		setRes(7, vx, vy);
+		setRes(7, blastX(e,VEL_BOMB_X), blastY(e,VEL_BOMB_A,0));
 		break;
 	case HAMMER:
 		//“S‹…‚©‚ç‚Ô‚Â‚©‚Á‚Ä‚«‚½‚ç‰ó‚ê‚é

@@ -173,14 +173,7 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case EN_M:
 	case BLAST:
 		//êÅÇ¡îÚÇŒÇ≥ÇÍÇÈ
-		float vx, vy;
-		if (blastLeft(e)) vx = -VEL_BOMB_X;
-		else if (blastRight(e)) vx = VEL_BOMB_X;
-		if (blastTop(e)) vy = -VEL_BOMB_Y; 
-		else if(blastBottom(e)) vy = VEL_BOMB_Y;
-		//ÇøÇÂÇ¡Ç∆ïÇÇ≠
-		vy -= VEL_BOMB_M;
-		setRes(8, vx, vy);
+		setRes(8, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y, VEL_BOMB_M));
 		break;
 	case GOAL:
 		//ÉNÉäÉAÇ∑ÇÈ

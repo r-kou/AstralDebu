@@ -125,7 +125,7 @@ void AstralDebu::renderBack(){
 
 	//ステージ表示
 
-	numberF.print(std::to_string(debu->getResponse()),//"STAGE" + std::to_string(stage),
+	numberF.print("STAGE" + std::to_string(stage),
 		STG_MAR_X, STG_MAR_Y,
 		STG_LEN_X, STG_LEN_Y,
 		graphicsNS::WHITE, DT_CC);
