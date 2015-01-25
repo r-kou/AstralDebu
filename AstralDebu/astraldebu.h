@@ -19,6 +19,7 @@
 
 namespace astralNS {
 	const int OBJ_SIZE = 64;
+	const int STG_SIZE = 40;
 
 	const int IMG_COL_CHIP = 10;
 	const int IMG_COL_DEBU = 7;
@@ -62,6 +63,16 @@ namespace astralNS {
 	const int STG_LEN_X = WINDOW_W - STG_MAR_X;
 	const int STG_LEN_Y = LIFE_LEN_Y;
 
+	//色
+	const ARGB S1 = D3DCOLOR_ARGB(255, 136, 255, 255);
+	const ARGB S2 = D3DCOLOR_ARGB(255, 255, 255, 255);
+	const ARGB S3 = D3DCOLOR_ARGB(255, 17, 34, 34);
+	const ARGB S4 = D3DCOLOR_ARGB(255, 192, 255, 255);
+	const ARGB LIFE = D3DCOLOR_ARGB(255, 221, 221, 0);
+	const ARGB MENU_BACK = D3DCOLOR_ARGB(255, 192, 96, 32);
+	const ARGB MENU_TEXT = D3DCOLOR_ARGB(255, 214, 214, 32);
+	const ARGB MENU_HIDE = D3DCOLOR_ARGB(255, 80, 64, 32);
+
 	const enum GameState{
 		S_TITLE, S_STAGE, S_MAIN, S_OVER, S_CLEAR, S_END
 	};
@@ -79,6 +90,15 @@ private:
 	int map[MAP_COL][MAP_ROW];
 	//ゲーム状態
 	astralNS::GameState state;
+	//タイトルとかの状態
+	int state_num;
+	//ステージクリアにかかった時間
+	DWORD stage_start, stage_end;
+	//クリア時間一覧
+	double clear_time[astralNS::STG_SIZE];
+	//クリアした最後のステージ
+	int stage_max;
+
 	//ステージクリア
 	bool clear;
 	//主人公
@@ -91,6 +111,8 @@ private:
 	int obj_hold;
 	//ワープ１つ目のインデックス
 	int warp_r, warp_g, warp_y;
+	//チートモードを発動したか
+	bool cheat;
 
 	//主人公体力
 	int life, life_v;
@@ -121,12 +143,21 @@ private:
 	void renderStage();
 	void renderMain();
 	void renderClear();
+
+	//セーブデータ読み込み
+	void loadData();
+	//セーブデータ書き込み
+	void saveData();
+	//クリアタイムの更新
+	void updateClearTime();
+
 	//ステージ読み込み
 	void loadStage();
 	//チップ割り当て
 	void loadChip(int, int, char);
 	//ステージに合わせてチップを選択
 	int chipFormat(int);
+
 	//コマンド読み込み
 	void readCommand();
 	//オブジェクトの追加
@@ -152,6 +183,14 @@ private:
 	//オブジェクトの特殊行動
 	void actionObject(int i);
 
+	//タイトルと背景を描画
+	void renderTitleBack();
+	//スタートを描画
+	void renderTitleStart();
+	//メニューを描画
+	void renderTitleMenu();
+	//ステージセレクトを描画
+	void renderTitleSelect();
 	//背景と上のを描画
 	void renderBack();
 	//マップチップを描画

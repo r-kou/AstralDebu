@@ -4,12 +4,48 @@ using namespace astralNS;
 
 //タイトル画面の更新
 void AstralDebu::updateTitle(){
-	count = count++ % 30;
-
-	if (input->isKeyPressed('Z')){
-		state = S_STAGE;
-		stage = 1;
-		read = false;
+	if (state_num == 0) loadData();
+	else if (state_num == 1){
+		count = count++ % 30;
+		if (input->isKeyPressed('Z')){
+			if(stage_max == 0)count = 0;
+			else count = 1;
+			state_num = 2;
+		}
+	} else if (state_num == 2){
+		if (stage_max != 0){
+			if (input->isKeyPressed(VK_UP)) count -= (count != 0) ? 1 : -3;
+			if (input->isKeyPressed(VK_DOWN)) count += (count != 3) ? 1 : -3;
+		}
+		if (input->isKeyPressed('Z')){
+			switch (count){
+			case 0:
+				state = S_STAGE;
+				stage = 1;
+				read = false;
+				break;
+			case 1:
+				state = S_STAGE;
+				stage = stage_max+1;
+				read = false;
+				break;
+			case 2:
+				state_num = 3;
+				stage = stage_max;
+				break;
+			case 3:
+				break;
+			}
+		}
+	}
+	else if (state_num == 3) {
+		if (input->isKeyPressed(VK_UP)) stage += (stage != stage_max)  ? 1 : -stage_max + 1;
+		if (input->isKeyPressed(VK_DOWN)) stage -= (stage != 1) ? 1 : -stage_max + 1;
+		if (input->isKeyPressed('Z')) {
+			state = S_STAGE;
+			read = false;
+		}
+		if (input->isKeyPressed('X')) state_num = 2;
 	}
 }
 
@@ -22,6 +58,7 @@ void AstralDebu::updateStage(){
 		life = 100;
 		life_v = 100;
 		state = S_MAIN;
+		stage_start = timeGetTime();
 	}
 }
 
@@ -41,6 +78,9 @@ void AstralDebu::updateMain(){
 
 	if (clear) {
 		clear = false;
+		updateClearTime();
+		if (stage>stage_max) stage_max = stage;
+		saveData();
 		stage++;
 		if (stage > 21){
 			state = S_CLEAR;
@@ -100,6 +140,55 @@ void AstralDebu::updateClear(){
 
 }
 
+//セーブデータの読み込み
+void AstralDebu::loadData(){
+	std::ifstream save(SAV_NAME, std::ios::in | std::ios::binary);
+	int buf_stage;
+	double buf_time;
+	if (save){
+		try{
+			//クリアしたステージを読み込み
+			save.read((char *)&buf_stage, sizeof(int));
+			stage_max = buf_stage;
+			//クリア時間を読み込み
+			FOR(STG_SIZE) {
+				save.read((char *)&buf_time, sizeof(double));
+				clear_time[i] = buf_time;
+			}
+			save.close();
+		}
+		catch (...){
+			save.close();
+			throw(GameError(gameErrorNS::FATAL, "Error loading data."));
+		}
+	}
+	else {
+		//クリアしたステージを初期化
+		stage_max = 0;
+		//クリア時間を初期化
+		FOR(STG_SIZE) clear_time[i] = 0;
+	}
+	state_num = 1;
+}
+
+//セーブデータの書き込み
+void AstralDebu::saveData(){
+	std::ofstream save(SAV_NAME, std::ios::out | std::ios::binary | std::ios::trunc);
+	int buf_stage = stage_max;
+	if (save){
+		//クリアしたステージを読み込み
+		save.write((char *)&buf_stage, sizeof(int));
+		//クリア時間を読み込み
+		FOR(STG_SIZE) {
+			save.write((char *)&clear_time[i], sizeof(double));
+		}
+		save.close();
+	}
+	else throw(GameError(gameErrorNS::FATAL, "Error saving data."));
+}
+
+
+//ステージの読み込み
 void AstralDebu::loadStage(){
 	char buf[256];
 	std::ifstream file(MAP_DIR + "\\" + MAP_NAME(stage) + MAP_EXT);
@@ -239,4 +328,16 @@ void AstralDebu::loadChip(int i, int j, char c){
 		map[i][j] = 0;
 		break;
 	}
+}
+
+void AstralDebu::updateClearTime(){
+	//チート時は記録しない
+	if (cheat) return;
+	//終了時刻を取得
+	stage_end = timeGetTime();
+	double total_time = (double)(stage_end - stage_start) / 1000;
+	//未記録なら更新
+	if (clear_time[stage - 1] == 0) clear_time[stage - 1] = total_time;
+	//以前の記録より早いなら更新
+	else if (total_time < clear_time[stage - 1]) clear_time[stage - 1] = total_time;
 }

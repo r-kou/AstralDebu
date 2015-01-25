@@ -11,7 +11,7 @@
 #include "text.h"
 
 namespace gameNS {
-	const char FONT[] = "Arial Bold";
+	const std::string FONT = "Arial";
 	const int POINT_SIZE = 14;
 	const ARGB FONT_COLOR = graphicsNS::WHITE;
 	const int DBG_MAR_X = 100;

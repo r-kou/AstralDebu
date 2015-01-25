@@ -68,6 +68,7 @@ const std::string IMG_ENEMY = "enemy.png";
 const std::string IMG_TITLE = "title.png";
 const std::string MAP_DIR = "map";
 const std::string MAP_EXT = ".chip";
+const std::string SAV_NAME = "save.dat";
 
 //”Ä—pŠÖ”
 #endif

@@ -11,6 +11,12 @@ AstralDebu::AstralDebu(){
 	read = false;
 	clear = false;
 	state = S_TITLE;
+	state_num = 0;
+	stage_start = 0;
+	stage_end = 0;
+	stage_max = 0;
+	//クリア時間を初期化
+	FOR(STG_SIZE) clear_time[i] = 0;
 	//マップを初期化
 	FOR_D(MAP_COL, MAP_ROW){
 		map[i][j] = 0;
@@ -21,6 +27,7 @@ AstralDebu::AstralDebu(){
 	obj_num = 0;
 	obj_hold = -1;
 	vertex = NULL;
+	cheat = false;
 	cheat1 = false;
 	cheat2 = false;
 	cheat3 = false;
@@ -67,7 +74,7 @@ void AstralDebu::initTexture(Texture &t, std::string file){
 
 //フォントの初期化
 void AstralDebu::initFont(Text &t, int point){
-	if (t.initialize(graphics, point, true, false, gameNS::FONT) == false)
+	if (t.initialize(graphics, point, true, false, "メイリオ") == false)
 		throw(GameError(gameErrorNS::FATAL, "Error initializing font."));
 	t.setFontColor(graphicsNS::WHITE);
 }

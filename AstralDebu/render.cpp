@@ -3,28 +3,12 @@ using namespace astralNS;
 
 //タイトル画面の描画
 void AstralDebu::renderTitle(){
-	graphics->spriteBegin();
-	title.draw();
-
-	bigF.print("アストラル・デブ",
-		2, 122, WINDOW_W, WINDOW_H,
-		graphicsNS::WHITE, DT_CT);
-
-	bigF.print("アストラル・デブ",
-		0, 120, WINDOW_W, WINDOW_H,
-		graphicsNS::RED, DT_CT);
-
-	middleF.print("－－その時デブは星になる－－",
-		0, 260, WINDOW_W, WINDOW_H,
-		graphicsNS::WHITE, DT_CT);
-
-	if (count < 20){
-		bigF.print("「Ｚ」キーで　スタート",
-			0, 400, WINDOW_W, WINDOW_H,
-			graphicsNS::RED, DT_CT);
-	}
-
-	graphics->spriteEnd();
+	//タイトルを描画
+	renderTitleBack();
+	//クリック前
+	if (state_num <= 1) renderTitleStart();
+	if (state_num >= 2) renderTitleMenu();
+	if (state_num == 3) renderTitleSelect();
 }
 
 //ステージ表示画面の描画
@@ -73,14 +57,81 @@ int AstralDebu::chipFormat(int c){
 	else return 14;
 }
 
+//タイトルと背景を描画
+void AstralDebu::renderTitleBack(){
+	graphics->spriteBegin();
+	title.draw();
+
+	bigF.print("アストラル・デブ",
+		2, 122, WINDOW_W, WINDOW_H,
+		graphicsNS::WHITE, DT_CT);
+
+	bigF.print("アストラル・デブ",
+		0, 120, WINDOW_W, WINDOW_H,
+		graphicsNS::RED, DT_CT);
+
+	middleF.print("－－その時デブは星になる－－",
+		0, 260, WINDOW_W, WINDOW_H,
+		graphicsNS::WHITE, DT_CT);
+
+	graphics->spriteEnd();
+}
+
+//スタートを描画
+void AstralDebu::renderTitleStart(){
+	graphics->spriteBegin();
+
+	if (count < 20){
+		bigF.print("「Ｚ」キーで　スタート",
+			0, 400, WINDOW_W, WINDOW_H,
+			graphicsNS::RED, DT_CT);
+	}
+	graphics->spriteEnd();
+}
+
+//メニューを描画
+void AstralDebu::renderTitleMenu(){
+	graphics->spriteBegin();
+	//メニューを描画
+	drawQuad(8 * CHIP_SIZE, 7.5f*CHIP_SIZE + DATA_LEN, 9 * CHIP_SIZE, 5 * CHIP_SIZE, graphicsNS::BLACK);
+	drawQuad(8 * CHIP_SIZE + 3, 7.5f*CHIP_SIZE + DATA_LEN + 3, 9 * CHIP_SIZE - 6, 5 * CHIP_SIZE - 6, MENU_BACK);
+	middleF.print("はじめから", (int)(9 * CHIP_SIZE), (int)(8 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, MENU_TEXT, DT_CC);
+	middleF.print("つづきから", (int)(9 * CHIP_SIZE), (int)(9 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, (stage_max == 0) ? MENU_HIDE : MENU_TEXT, DT_CC);
+	middleF.print("ステージセレクト", (int)(9 * CHIP_SIZE), (int)(10 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, (stage_max == 0) ? MENU_HIDE : MENU_TEXT, DT_CC);
+	middleF.print("クリアタイム", (int)(9 * CHIP_SIZE), (int)(11 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, (stage_max == 0) ? MENU_HIDE : MENU_TEXT, DT_CC);
+	//矢印描画
+	drawQuad(8.25f*CHIP_SIZE, (8.25f+count)*CHIP_SIZE + DATA_LEN, (float)CHIP_SIZE, (0.5f*CHIP_SIZE), graphicsNS::BLACK);
+	drawTriangle((9.25f)*CHIP_SIZE, (8.0f + count)*CHIP_SIZE + DATA_LEN, (9.75f)*CHIP_SIZE, (8.5f + count)*CHIP_SIZE + DATA_LEN,
+		(9.25f)*CHIP_SIZE, (9.0f+count)*CHIP_SIZE + DATA_LEN, graphicsNS::BLACK);
+	drawQuad(8.25f*CHIP_SIZE + 2, (8.25f+count)*CHIP_SIZE + DATA_LEN + 2, (float)CHIP_SIZE, (0.5f*CHIP_SIZE) - 4, graphicsNS::RED);
+	drawTriangle((9.25f)*CHIP_SIZE + 2, (8.0f + count)*CHIP_SIZE + DATA_LEN + 4, (9.75f)*CHIP_SIZE - 3, (8.5f+count)*CHIP_SIZE + DATA_LEN,
+		(9.25f)*CHIP_SIZE + 2, (9.0f + count)*CHIP_SIZE + DATA_LEN - 4, graphicsNS::RED);
+
+	graphics->spriteEnd();
+}
+
+//ステージセレクトを描画
+void AstralDebu::renderTitleSelect(){
+	graphics->spriteBegin();
+	//選択しているステージを描画
+	middleF.print(std::to_string(stage), (int)(15.0f * CHIP_SIZE), (int)(10 * CHIP_SIZE + DATA_LEN), (int)(2.0f * CHIP_SIZE), CHIP_SIZE, graphicsNS::WHITE, DT_CC);
+	//上下の矢印を描画
+	drawTriangle((15.75f)*CHIP_SIZE, (10.0f)*CHIP_SIZE + DATA_LEN, (16.0f)*CHIP_SIZE, (9.75f)*CHIP_SIZE + DATA_LEN,
+		(16.25f)*CHIP_SIZE, (10.0f)*CHIP_SIZE + DATA_LEN, MENU_TEXT);
+	drawTriangle((15.75f)*CHIP_SIZE, (11.0f)*CHIP_SIZE + DATA_LEN, (16.0f)*CHIP_SIZE, (11.25f)*CHIP_SIZE + DATA_LEN,
+		(16.25f)*CHIP_SIZE, (11.0f)*CHIP_SIZE + DATA_LEN, MENU_TEXT);
+
+	graphics->spriteEnd();
+}
+
 //背景と上のを描画
 void AstralDebu::renderBack(){
 	graphics->spriteBegin();
 
 	ARGB back;
-	if ((stage <= 10) || (stage == 20)) back = graphicsNS::S1;
-	else if (stage <= 19) back = graphicsNS::S2;
-	else back = graphicsNS::S3;
+	if ((stage <= 10) || (stage == 20)) back = S1;
+	else if (stage <= 19) back = S2;
+	else back = S3;
 
 	//背景塗りつぶし
 	drawQuad(0, 0, (float)WINDOW_W, (float)WINDOW_H, back);
@@ -97,7 +148,7 @@ void AstralDebu::renderBack(){
 
 	//体力
 	drawQuad((float)LIFE_MAR_X, (float)LIFE_MAR_Y,
-		(float)life*DATA_MAR, (float)LIFE_LEN_Y, graphicsNS::LIFE);
+		(float)life*DATA_MAR, (float)LIFE_LEN_Y, LIFE);
 
 	//体力変化
 	if (life_v > life)
@@ -145,7 +196,8 @@ void AstralDebu::renderChip(){
 				chip.setX((float)i*CHIP_SIZE);
 				if (map[i][j] < 10) chip.setCurrentFrame(chipFormat(map[i][j]));
 				else chip.setCurrentFrame(map[i][j]);
-				chip.draw();
+				if (stage >= 31) chip.draw(graphicsNS::ALPHA50);
+				else chip.draw();
 			}
 		}
 	}
