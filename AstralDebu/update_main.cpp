@@ -29,9 +29,13 @@ void AstralDebu::readCommand(){
 		debu->setVelX(0.0f);
 		debu->setVelY(0.0f);
 	}
-	//全回復
-	if (input->isKeyPressed('E') && (cheat1)){
-		life = 100;
+	//爆発する
+	if (input->isKeyPressed('E') && (cheat3)){
+		int tmp = getEmptyIndex();
+		SAFE_DELETE(object[tmp]);
+		object[tmp] = new Blast(true);
+		if (!object[tmp]->initialize(this, &bombT, debu->ChipCX(), debu->ChipCY()))
+			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
 	}
 	//デブがすごくなる
 	if (str == "tabata") {
@@ -39,8 +43,13 @@ void AstralDebu::readCommand(){
 		input->clearTextIn();
 	}
 	//判定が見える
-	else if (str == "hantai") {
+	else if (str == "atari") {
 		cheat2 = !cheat2;
+		input->clearTextIn();
+	}
+	//爆発する
+	else if (str == "tuyoi"){
+		cheat3 = !cheat3;
 		input->clearTextIn();
 	}
 }
@@ -48,19 +57,19 @@ void AstralDebu::readCommand(){
 //オブジェクトの追加
 void AstralDebu::addObject(Entity *e, Texture &t, int i, int j){
 	map[i][j] = 0;
-	object[obj_num] = e;
+	object[objMax] = e;
 	if (!e->initialize(this, &t, i, j))
 		throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
-	obj_num++;
+	objMax++;
 }
 
 //敵の追加　デブの位置を入れる
 void AstralDebu::addEnemy(Enemy *e, Texture &t, Debu *d, int i, int j){
 	map[i][j] = 0;
-	object[obj_num] = e;
+	object[objMax] = e;
 	if (!e->initialize(this, &t, d, i, j))
 		throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
-	obj_num++;
+	objMax++;
 }
 
 //ワープの追加
@@ -78,13 +87,13 @@ void AstralDebu::handleObject(){
 	//立ってる時かハンマー所持時だけ有効
 	if ((debu->getState() != entityNS::STAND) && (debu->getState() != entityNS::HOLD_HAMMER)) return;
 	//地形には何もできない
-	if ((map[cursorX()][cursorY()] != 0) && (map[cursorX()][cursorY()] != CHIP_LADDER))  return;
+	if ((map[getCursorChipX()][getCursorChipY()] != 0) && (map[getCursorChipX()][getCursorChipY()] != CHIP_LADDER))  return;
 
 	//存在しているオブジェクトを見る
 	ALL_OBJ{
-		if ((i != obj_hold) &&
-		(object[i]->ChipCX() == cursorX()) &&
-		(object[i]->ChipCY() == cursorY()) &&
+		if ((i != objHolded) &&
+		(object[i]->ChipCX() == getCursorChipX()) &&
+		(object[i]->ChipCY() == getCursorChipY()) &&
 		canTouch(object[i])) {
 			if (canHold(object[i])) exist = i;
 			else return;
@@ -121,7 +130,7 @@ void AstralDebu::holdObject(int i){
 		e->setType(entityNS::NONE);
 	}
 	else {
-		obj_hold = i;
+		objHolded = i;
 		debu->setHold(true);
 
 		e->setVelX(0.0f);
@@ -132,18 +141,18 @@ void AstralDebu::holdObject(int i){
 		else e->setState(entityNS::LOCK);
 
 		switch (e->getType()){
-		case entityNS::BOX_W:
-		case entityNS::BOX_B:
-		case entityNS::BOX_A:
+		case entityNS::WOOD_BOX:
+		case entityNS::BOMB_BOX:
+		case entityNS::AIR_BOX:
 			subLife(5);
 			break;
-		case entityNS::BOX_S:
+		case entityNS::STEEL_BOX:
 		case entityNS::BOMB:
 		case entityNS::HIBOMB:
 			subLife(10);
 			break;
-		case entityNS::BOX_L:
-		case entityNS::BOX_H:
+		case entityNS::LEAD_BOX:
+		case entityNS::HIBOMB_BOX:
 			subLife(20);
 			break;
 		case entityNS::HAMMER:
@@ -155,9 +164,9 @@ void AstralDebu::holdObject(int i){
 
 //オブジェクトを放す
 void AstralDebu::putObject(){
-	Entity *e = object[obj_hold];
+	Entity *e = object[objHolded];
 
-	obj_hold = -1;
+	objHolded = -1;
 	debu->setHold(false);
 	debu->setState(entityNS::STAND);
 
@@ -166,9 +175,9 @@ void AstralDebu::putObject(){
 		else e->setPosX((debu->ChipCX() + 1.5f) * CHIP_SIZE);
 	}
 	else {
-		e->setPosX((cursorX() + 0.5f) * CHIP_SIZE);
+		e->setPosX((getCursorChipX() + 0.5f) * CHIP_SIZE);
 	}
-	e->setPosY((cursorY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
 	e->setState(entityNS::STAND);
@@ -194,15 +203,15 @@ void AstralDebu::pushObject(int exist){
 	}
 
 	//押す先に何かあったら不可
-	if ((map[cursorNX][cursorY()] != 0) && (map[cursorNX][cursorY()] != CHIP_LADDER)) return;
+	if ((map[cursorNX][getCursorChipY()] != 0) && (map[cursorNX][getCursorChipY()] != CHIP_LADDER)) return;
 	ALL_OBJ{
 		if ((object[i]->ChipCX() == cursorNX) &&
-		(object[i]->ChipCY() == cursorY()) &&
+		(object[i]->ChipCY() == getCursorChipY()) &&
 		canTouch(object[i])) return;
 	}
 
 	e->setPosX((cursorNX + 0.5f) * CHIP_SIZE);
-	e->setPosY((cursorY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
 	e->setState(entityNS::STAND);
@@ -210,18 +219,18 @@ void AstralDebu::pushObject(int exist){
 
 	//体力減少
 	switch (e->getType()){
-	case entityNS::BOX_W:
-	case entityNS::BOX_B:
-	case entityNS::BOX_A:
+	case entityNS::WOOD_BOX:
+	case entityNS::BOMB_BOX:
+	case entityNS::AIR_BOX:
 		//木箱は体力減少なし
 		break;
-	case entityNS::BOX_S:
+	case entityNS::STEEL_BOX:
 	case entityNS::BOMB:
 	case entityNS::HIBOMB:
 		subLife(5);
 		break;
-	case entityNS::BOX_L:
-	case entityNS::BOX_H:
+	case entityNS::LEAD_BOX:
+	case entityNS::HIBOMB_BOX:
 		subLife(10);
 		break;
 	}
@@ -229,14 +238,14 @@ void AstralDebu::pushObject(int exist){
 
 //オブジェクトを投げる
 void AstralDebu::throwObject(){
-	Entity *e = object[obj_hold];
+	Entity *e = object[objHolded];
 
-	obj_hold = -1;
+	objHolded = -1;
 	debu->setHold(false);
 	debu->setState(entityNS::STAND);
 
-	e->setPosX((cursorX() + 0.5f) * CHIP_SIZE);
-	e->setPosY((cursorY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+	e->setPosX((getCursorChipX() + 0.5f) * CHIP_SIZE);
+	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 	if (debu->getDirect()) e->setVelX(-VEL_THROW);
 	else e->setVelX(VEL_THROW);
 	e->setVelY(0.0f);
@@ -245,18 +254,18 @@ void AstralDebu::throwObject(){
 
 	//体力減少
 	switch (e->getType()){
-	case entityNS::BOX_W:
-	case entityNS::BOX_B:
-	case entityNS::BOX_A:
+	case entityNS::WOOD_BOX:
+	case entityNS::BOMB_BOX:
+	case entityNS::AIR_BOX:
 		subLife(5);
 		break;
-	case entityNS::BOX_S:
+	case entityNS::STEEL_BOX:
 	case entityNS::BOMB:
 	case entityNS::HIBOMB:
 		subLife(10);
 		break;
-	case entityNS::BOX_L:
-	case entityNS::BOX_H:
+	case entityNS::LEAD_BOX:
+	case entityNS::HIBOMB_BOX:
 		subLife(20);
 		break;
 	case entityNS::HAMMER:
@@ -287,8 +296,9 @@ void AstralDebu::deadObject(int i){
 
 	switch (e->getType()){
 	case entityNS::BOMB:
-	case entityNS::BOX_B:
-	case entityNS::EN_M:
+	case entityNS::BOMB_BOX:
+	case entityNS::MISSILE:
+	case entityNS::MINE:
 		//消去してから爆風を生成する
 		SAFE_DELETE(e);
 		object[i] = new Blast(false);
@@ -296,7 +306,7 @@ void AstralDebu::deadObject(int i){
 			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
 		break;
 	case entityNS::HIBOMB:
-	case entityNS::BOX_H:
+	case entityNS::HIBOMB_BOX:
 		//消去してからすごい爆風を生成する
 		SAFE_DELETE(e);
 		object[i] = new Blast(true);
@@ -314,16 +324,12 @@ void AstralDebu::deadObject(int i){
 //オブジェクトの特殊行動
 void AstralDebu::actionObject(int i){
 	Entity *e = object[i];
-	int tmp = obj_num;
+	int tmp;
 	switch (e->getType()){
 	case entityNS::EN_3:
 		//銃弾生成
 		e->setAction(false);
-		ALL_OBJ if ((object[i]->getType() == entityNS::NONE) && (object[i]->getState() == entityNS::EMPTY)) {
-			tmp = i;
-			break;
-		}
-		if (tmp == obj_num) obj_num++;
+		tmp = getEmptyIndex();
 		SAFE_DELETE(object[tmp]);
 		object[tmp] = new Bullet();
 		if (!object[tmp]->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
@@ -336,11 +342,7 @@ void AstralDebu::actionObject(int i){
 	case entityNS::EN_5:
 		//ミサイル生成
 		e->setAction(false);
-		ALL_OBJ if ((object[i]->getType() == entityNS::NONE) && (object[i]->getState() == entityNS::EMPTY)) {
-			tmp = i;
-			break;
-		}
-		if (tmp == obj_num) obj_num++;
+		tmp = getEmptyIndex();
 		SAFE_DELETE(object[tmp]);
 		object[tmp] = new Missile();
 		if (!object[tmp]->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))

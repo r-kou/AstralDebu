@@ -9,14 +9,14 @@ Rock::Rock(int stage){
 	type = ROCK;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	edge_x = EDGE_RX;
-	edge_y = EDGE_RY;
-	margin_x = EDGE_MAR_X;
-	margin_y = EDGE_MAR_Y;
+	edgeX = EDGE_ROCK_X;
+	edgeY = EDGE_ROCK_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
 	//ステージに応じて画像変更
-	if (stage < 10) img = IMG_R1;
-	else if (stage < 20) img = IMG_R2;
-	else img = IMG_R3;
+	if (stage < 10) img = IMG_ROCK_AREA1;
+	else if (stage < 20) img = IMG_ROCK_AREA2;
+	else img = IMG_ROCK_AREA3;
 }
 
 //他オブジェクトへの接触
@@ -40,7 +40,7 @@ Meat::Meat(){
 	type = MEAT;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	img = IMG_M;
+	img = IMG_MEAT;
 }
 
 //コンストラクタ
@@ -49,7 +49,7 @@ Himeat::Himeat(){
 	type = HIMEAT;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	img = IMG_H;
+	img = IMG_HIMEAT;
 }
 
 
@@ -59,11 +59,11 @@ Hammer::Hammer(){
 	type = HAMMER;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	img = IMG_HAM;
-	edge_x = EDGE_HX;
-	edge_y = EDGE_HY;
-	margin_x = EDGE_MAR_X;
-	margin_y = EDGE_MAR_Y;
+	img = IMG_HAMMER;
+	edgeX = EDGE_HAMMER_X;
+	edgeY = EDGE_HAMMER_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
 }
 
 
@@ -122,20 +122,21 @@ void Hammer::collideObj(Entity *e, UCHAR t){
 
 	//鉄球類固有の衝突判定　ほとんどのオブジェクトを貫通する
 	switch (e->getType()){
-	case BOX_L:
-	case BOX_H:
-		//停止するのは鉛箱だけ　それ以外は全て粉砕する
+	case LEAD_BOX:
+	case HIBOMB_BOX:
+	case GOAST_BOX:
+		//停止するのは鉛箱と霊箱だけ　それ以外は全て粉砕する
 		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(0);
 		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(1);
 		if ((t & TOP) && (diffVelY(e) < 0)) setRes(2);
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == JUMP || state == LADDER)) ||
 			((diffVelY(e) > 0) && (state == KNOCK)))) setRes(4); //空中にいたら着地判定
 		break;
-	case WARP_R:
-	case WARP_G:
-	case WARP_Y:
+	case RED_WARP:
+	case GREEN_WARP:
+	case YELLOW_WARP:
 		//ワープは可能
-		if (warp_interval == 0.0f) setRes(5, (e->getPartnerX() + 0.5f) * CHIP_SIZE, (e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+		if (warpInterval == 0.0f) setRes(5, (e->getPartnerX() + 0.5f) * CHIP_SIZE, (e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 		break;
 	}
 }
@@ -154,5 +155,5 @@ void Hammer::setHold(Debu *d){
 	setVelX(VEL_HAM);
 	setVelY(0);
 
-	SETRECT(edge, (long)d->getPosX() - EDGE_HS, (long)d->getPosY() - EDGE_HY, EDGE_HS * 2, EDGE_HY * 2);
+	SETRECT(edge, (long)d->getPosX() - EDGE_HAMMER_HOLDED_X, (long)d->getPosY() - EDGE_HAMMER_Y, EDGE_HAMMER_HOLDED_X * 2, EDGE_HAMMER_Y * 2);
 }

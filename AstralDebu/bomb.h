@@ -5,8 +5,8 @@
 #include "entity.h"
 
 namespace bombNS{
-	const int IMG_B = 25;
-	const int IMG_H = 26;
+	const int IMG_BOMB = 25;
+	const int IMG_HIBOMB = 26;
 
 	const int IMG_SIZE = 32;
 	const int IMG_COL = 10;
@@ -43,4 +43,12 @@ public:
 	Hibomb();
 };
 
+class Mine : public Entity {
+public:
+	//コンストラクタ
+	Mine();
+
+	//他オブジェクトへの接触
+	virtual void collideObj(Entity *e, UCHAR t);
+};
 #endif

@@ -10,13 +10,14 @@ namespace boxNS{
 	const float VEL_BOMB_M = 150;
 	const float VEL_BOMB_A = 350;
 
-	const int IMG_W = 20;
-	const int IMG_S = 21;
-	const int IMG_L = 22;
-	const int IMG_B = 23;
-	const int IMG_H = 24;
-	const int IMG_A = 45;
-	const int IMG_F = 46;
+	const int IMG_WOOD_BOX = 20;
+	const int IMG_STEEL_BOX = 21;
+	const int IMG_LEAD_BOX = 22;
+	const int IMG_BOMB_BOX = 23;
+	const int IMG_HIBOMB_BOX = 24;
+	const int IMG_AIR_BOX = 45;
+	const int IMG_FRAME_BOX = 46;
+	const int IMG_GOAST_BOX = 47;
 
 	const int IMG_SIZE = 32;
 	const int IMG_COL = 10;
@@ -121,4 +122,19 @@ public:
 	virtual void collideObj(Entity *e, UCHAR t);
 };
 
+
+class GoastBox : public Box {
+public :
+	//コンストラクタ
+	GoastBox();
+
+	//移動
+	virtual void move(float frameTime);
+
+	//他オブジェクトへの接触
+	virtual void collideObj(Entity *e, UCHAR t);
+
+	//描画
+	virtual void draw();
+};
 #endif

@@ -10,20 +10,20 @@ Warp::Warp(ENTITY_TYPE t){
 	type = t;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	edge_x = EDGE_X;
-	edge_y = EDGE_Y;
-	margin_x = EDGE_MAR_X;
-	margin_y = EDGE_MAR_Y;
+	edgeX = EDGE_X;
+	edgeY = EDGE_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
 	//色を変える
 	switch (type){
-	case WARP_R:
-		img = IMG_R;
+	case RED_WARP:
+		img = IMG_RED_WARP;
 		break;
-	case WARP_G:
-		img = IMG_G;
+	case GREEN_WARP:
+		img = IMG_GREEN_WARP;
 		break;
-	case WARP_Y:
-		img = IMG_Y;
+	case YELLOW_WARP:
+		img = IMG_YELLOW_WARP;
 		break;
 	}
 
@@ -32,15 +32,15 @@ Warp::Warp(ENTITY_TYPE t){
 //描画
 void Warp::draw(){
 	//一瞬だけ灯が消える
-	if (anim_interval <= 0.1f){
+	if (animInterval <= 0.1f){
 		//現在の状態をセーブ
 		int cur = image.getCurrentFrame();
 		//消灯画像にして描画
-		image.setCurrentFrame(IMG_E);
+		image.setCurrentFrame(IMG_EMPTY_WARP);
 		Entity::draw();
 		//画像を戻す
 		image.setCurrentFrame(cur);
-		if (anim_interval <= 0.0f) anim_interval = 0.4f;
+		if (animInterval <= 0.0f) animInterval = 0.4f;
 	}
 	else Entity::draw();
 }
@@ -48,7 +48,7 @@ void Warp::draw(){
 //判定の位置を設定
 void Warp::setEdge(){
 	//中心からedge分だけ伸びる
-	SETRECT(edge, (long)pos.x - edge_x, (long)pos.y - edge_y + EDGE_SLIDE, edge_x * 2, edge_y * 2 + 1);
+	SETRECT(edge, (long)pos.x - edgeX, (long)pos.y - edgeY + EDGE_SLIDE, edgeX * 2, edgeY * 2 + 1);
 }
 
 //コンストラクタ
@@ -57,10 +57,10 @@ Goal::Goal(){
 	type = GOAL;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	edge_x = EDGE_X;
-	edge_y = EDGE_Y;
-	margin_x = EDGE_MAR_X;
-	margin_y = EDGE_MAR_Y;
+	edgeX = EDGE_X;
+	edgeY = EDGE_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
 }
 
 //初期化
@@ -68,7 +68,7 @@ bool Goal::initialize(Game *game, Texture *t, int i, int j){
 	bool ret = false;
 	ret = Entity::initialize(game, t, i, j);
 	//画像セット
-	if (ret) setImage(IMG_W_S, IMG_W_E, true);
+	if (ret) setImage(IMG_GOAL_START, IMG_GOAL_END, true);
 	return ret;
 }
 
@@ -76,7 +76,9 @@ bool Goal::initialize(Game *game, Texture *t, int i, int j){
 void Goal::draw(){
 	//土台も描画
 	int cur = image.getCurrentFrame();
-	image.setCurrentFrame(IMG_W_D);
+	image.setCurrentFrame(IMG_GOAL_BASE);
+	image.setX(pos.x - size / 2 * image.getScale());
+	image.setY(pos.y - size / 2 * image.getScale());
 	image.draw();
 	image.setCurrentFrame(cur);
 
@@ -86,5 +88,5 @@ void Goal::draw(){
 //判定の位置を設定
 void Goal::setEdge(){
 	//中心からedge分だけ伸びる
-	SETRECT(edge, (long)pos.x - edge_x, (long)pos.y - edge_y + EDGE_SLIDE, edge_x * 2, edge_y * 2 + 1);
+	SETRECT(edge, (long)pos.x - edgeX, (long)pos.y - edgeY + EDGE_SLIDE, edgeX * 2, edgeY * 2 + 1);
 }

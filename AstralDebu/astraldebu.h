@@ -73,6 +73,8 @@ namespace astralNS {
 	const ARGB MENU_TEXT = D3DCOLOR_ARGB(255, 214, 214, 32);
 	const ARGB MENU_HIDE = D3DCOLOR_ARGB(255, 80, 64, 32);
 
+	const std::string FONT = "メイリオ";
+
 	const enum GameState{
 		S_TITLE, S_STAGE, S_MAIN, S_OVER, S_CLEAR, S_END
 	};
@@ -91,13 +93,13 @@ private:
 	//ゲーム状態
 	astralNS::GameState state;
 	//タイトルとかの状態
-	int state_num;
+	int stateNumber;
 	//ステージクリアにかかった時間
-	DWORD stage_start, stage_end;
+	DWORD clearTimeStart, clearTimeEnd;
 	//クリア時間一覧
-	double clear_time[astralNS::STG_SIZE];
+	double clearTime[astralNS::STG_SIZE];
 	//クリアした最後のステージ
-	int stage_max;
+	int clearedStage;
 
 	//ステージクリア
 	bool clear;
@@ -106,16 +108,16 @@ private:
 	//オブジェクト
 	Entity *object[astralNS::OBJ_SIZE];
 	//現在のオブジェクト数
-	int obj_num;
+	int objMax;
 	//デブが保持するオブジェクト
-	int obj_hold;
+	int objHolded;
 	//ワープ１つ目のインデックス
-	int warp_r, warp_g, warp_y;
+	int warpRed, warpGreen, warpYellow;
 	//チートモードを発動したか
 	bool cheat;
 
 	//主人公体力
-	int life, life_v;
+	int life, vitalLife;
 
 	//画像データ
 	Texture debuT, chipT, enemyT, bombT, titleT;
@@ -156,7 +158,7 @@ private:
 	//チップ割り当て
 	void loadChip(int, int, char);
 	//ステージに合わせてチップを選択
-	int chipFormat(int);
+	int setChipImage(int);
 
 	//コマンド読み込み
 	void readCommand();
@@ -205,7 +207,7 @@ private:
 	//四角を描画
 	void drawQuad(float l, float t, float r, float b, ARGB c);
 	//三角のvertexを描画
-	void setVertexT(float x1, float y1, float x2, float y2, float x3, float y3, ARGB c);
+	void setVertexTriangle(float x1, float y1, float x2, float y2, float x3, float y3, ARGB c);
 	//三角を描画
 	void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, ARGB c);
 	//カーソルを描画
@@ -213,15 +215,15 @@ private:
 	//デバッグ用 判定を描画
 	void drawEdge();
 	//ヒント用矢印を描画 横
-	void drawArrowH(float cx, float cy, bool d, ARGB c);
+	void drawArrowHorizontal(float cx, float cy, bool d, ARGB c);
 	//ヒント用矢印を描画 縦
-	void drawArrowV(float cx, float cy, bool d, ARGB c);
+	void drawArrowVertical(float cx, float cy, bool d, ARGB c);
 	//ヒント用パネルを描画
 	void drawPanel(std::string str, float cx, float cy, float len, ARGB c);
 
 	//カーソルの位置を返す
-	int cursorX();
-	int cursorY();
+	int getCursorChipX();
+	int getCursorChipY();
 	//オブジェクトが持てるか判定
 	bool canHold(Entity *e);
 	//オブジェクトが肉か判定
@@ -234,6 +236,8 @@ private:
 	void addLife(int i);
 	//体力の減少
 	void subLife(int i);
+	//未使用のオブジェクトを取得
+	int getEmptyIndex();
 public:
 	//コンストラクタ
 	AstralDebu();

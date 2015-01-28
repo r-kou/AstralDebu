@@ -4,18 +4,18 @@ using namespace astralNS;
 
 //タイトル画面の更新
 void AstralDebu::updateTitle(){
-	if (state_num == 0) loadData();
-	else if (state_num == 1){
+	if (stateNumber == 0) loadData();
+	else if (stateNumber == 1){
 		count = count++ % 30;
 		if (input->isKeyPressed('Z')){
-			if(stage_max == 0)count = 0;
+			if(clearedStage == 0)count = 0;
 			else count = 1;
-			state_num = 2;
+			stateNumber = 2;
 		}
-	} else if (state_num == 2){
-		if (stage_max != 0){
-			if (input->isKeyPressed(VK_UP)) count -= (count != 0) ? 1 : -3;
-			if (input->isKeyPressed(VK_DOWN)) count += (count != 3) ? 1 : -3;
+	} else if (stateNumber == 2){
+		if (clearedStage != 0){
+			if (input->isKeyPressed(VK_UP)) count -= (count != 0) ? 1 : -2;
+			if (input->isKeyPressed(VK_DOWN)) count += (count != 2) ? 1 : -2;
 		}
 		if (input->isKeyPressed('Z')){
 			switch (count){
@@ -26,26 +26,26 @@ void AstralDebu::updateTitle(){
 				break;
 			case 1:
 				state = S_STAGE;
-				stage = stage_max+1;
+				stage = clearedStage+1;
 				read = false;
 				break;
 			case 2:
-				state_num = 3;
-				stage = stage_max;
+				stateNumber = 3;
+				stage = clearedStage;
 				break;
 			case 3:
 				break;
 			}
 		}
 	}
-	else if (state_num == 3) {
-		if (input->isKeyPressed(VK_UP)) stage += (stage != stage_max)  ? 1 : -stage_max + 1;
-		if (input->isKeyPressed(VK_DOWN)) stage -= (stage != 1) ? 1 : -stage_max + 1;
+	else if (stateNumber == 3) {
+		if (input->isKeyPressed(VK_UP)) stage += (stage != clearedStage)  ? 1 : -clearedStage + 1;
+		if (input->isKeyPressed(VK_DOWN)) stage -= (stage != 1) ? 1 : -clearedStage + 1;
 		if (input->isKeyPressed('Z')) {
 			state = S_STAGE;
 			read = false;
 		}
-		if (input->isKeyPressed('X')) state_num = 2;
+		if (input->isKeyPressed('X')) stateNumber = 2;
 	}
 }
 
@@ -54,18 +54,21 @@ void AstralDebu::updateStage(){
 	if (!read) loadStage();
 
 	if (input->isKeyPressed('Z') && read){
+		cheat = false;
 		clear = false;
 		life = 100;
-		life_v = 100;
+		vitalLife = 100;
 		state = S_MAIN;
-		stage_start = timeGetTime();
+		clearTimeStart = timeGetTime();
 	}
 }
 
 //メインの更新
 void AstralDebu::updateMain(){
-	if (life_v > life) life_v--;
-	else if (life_v < life) life_v++;
+	if (vitalLife > life) vitalLife--;
+	else if (vitalLife < life) vitalLife++;
+
+	if (cheat1 || cheat3) cheat = true;
 
 	if (life == 0) debu->setState(entityNS::DEAD);
 
@@ -79,7 +82,7 @@ void AstralDebu::updateMain(){
 	if (clear) {
 		clear = false;
 		updateClearTime();
-		if (stage>stage_max) stage_max = stage;
+		if (stage>clearedStage) clearedStage = stage;
 		saveData();
 		stage++;
 		if (stage > 21){
@@ -99,7 +102,7 @@ void AstralDebu::updateMain(){
 		object[i]->move(frameTime);
 
 	//所持オブジェクトはデブの前に移動
-	if (obj_hold >= 0) moveHold(obj_hold);
+	if (objHolded >= 0) moveHold(objHolded);
 
 	ALL_OBJ if (object[i]->getAction())
 		actionObject(i);
@@ -142,18 +145,18 @@ void AstralDebu::updateClear(){
 
 //セーブデータの読み込み
 void AstralDebu::loadData(){
-	std::ifstream save(SAV_NAME, std::ios::in | std::ios::binary);
+	std::ifstream save(SAV_FILE, std::ios::in | std::ios::binary);
 	int buf_stage;
 	double buf_time;
 	if (save){
 		try{
 			//クリアしたステージを読み込み
 			save.read((char *)&buf_stage, sizeof(int));
-			stage_max = buf_stage;
+			clearedStage = buf_stage;
 			//クリア時間を読み込み
 			FOR(STG_SIZE) {
 				save.read((char *)&buf_time, sizeof(double));
-				clear_time[i] = buf_time;
+				clearTime[i] = buf_time;
 			}
 			save.close();
 		}
@@ -164,23 +167,23 @@ void AstralDebu::loadData(){
 	}
 	else {
 		//クリアしたステージを初期化
-		stage_max = 0;
+		clearedStage = 0;
 		//クリア時間を初期化
-		FOR(STG_SIZE) clear_time[i] = 0;
+		FOR(STG_SIZE) clearTime[i] = 0;
 	}
-	state_num = 1;
+	stateNumber = 1;
 }
 
 //セーブデータの書き込み
 void AstralDebu::saveData(){
-	std::ofstream save(SAV_NAME, std::ios::out | std::ios::binary | std::ios::trunc);
-	int buf_stage = stage_max;
+	std::ofstream save(SAV_FILE, std::ios::out | std::ios::binary | std::ios::trunc);
+	int buf_stage = clearedStage;
 	if (save){
 		//クリアしたステージを読み込み
 		save.write((char *)&buf_stage, sizeof(int));
 		//クリア時間を読み込み
 		FOR(STG_SIZE) {
-			save.write((char *)&clear_time[i], sizeof(double));
+			save.write((char *)&clearTime[i], sizeof(double));
 		}
 		save.close();
 	}
@@ -191,15 +194,15 @@ void AstralDebu::saveData(){
 //ステージの読み込み
 void AstralDebu::loadStage(){
 	char buf[256];
-	std::ifstream file(MAP_DIR + "\\" + MAP_NAME(stage) + MAP_EXT);
+	std::ifstream file(MAP_FILE_DIR + "\\" + MAP_NAME(stage) + MAP_FILE_EXT);
 
 	//古いオブジェクトをすべて消去
 	ALL_OBJ	SAFE_DELETE(object[i]);
-	obj_num = 0;
-	obj_hold = -1;
-	warp_r = -1;
-	warp_g = -1;
-	warp_y = -1;
+	objMax = 0;
+	objHolded = -1;
+	warpRed = -1;
+	warpGreen = -1;
+	warpYellow = -1;
 
 
 	if (file.fail())
@@ -288,33 +291,38 @@ void AstralDebu::loadChip(int i, int j, char c){
 	case 'N': //敵(箱を見ると押す)
 		//addEnemy(new Enemy4(), enemyT, debu, i, j);
 		break;
-	//case 'O':ゼロと区別つかんので欠番
-	case 'P': //敵(動かずにミサイル)
+	case 'o': //敵(動かずにミサイル)
 		addEnemy(new Enemy5(), enemyT, debu, i, j);
 		break;
-	case 'Q': //鉄球
+	case 'P': //鉄球
 		addObject(new Hammer(), chipT, i, j);
 		break;
-	case 'R': //赤ワープ
-		addObject(new Warp(entityNS::WARP_R), chipT, i, j);
-		if (warp_r == -1) warp_r = obj_num - 1;
-		else addWarp(warp_r, obj_num - 1);
+	case 'Q': //赤ワープ
+		addObject(new Warp(entityNS::RED_WARP), chipT, i, j);
+		if (warpRed == -1) warpRed = objMax - 1;
+		else addWarp(warpRed, objMax - 1);
 		break;
-	case 'S': //緑ワープ
-		addObject(new Warp(entityNS::WARP_G), chipT, i, j);
-		if (warp_g == -1) warp_g = obj_num - 1;
-		else addWarp(warp_g, obj_num - 1);
+	case 'R': //緑ワープ
+		addObject(new Warp(entityNS::GREEN_WARP), chipT, i, j);
+		if (warpGreen == -1) warpGreen = objMax - 1;
+		else addWarp(warpGreen, objMax - 1);
 		break;
-	case 'T': //黄ワープ
-		addObject(new Warp(entityNS::WARP_Y), chipT, i, j);
-		if (warp_y == -1) warp_y = obj_num - 1;
-		else addWarp(warp_y, obj_num - 1);
+	case 'S': //黄ワープ
+		addObject(new Warp(entityNS::YELLOW_WARP), chipT, i, j);
+		if (warpYellow == -1) warpYellow = objMax - 1;
+		else addWarp(warpYellow, objMax - 1);
 		break;
-	case 'U': //空気箱
+	case 'T': //空気箱
 		addObject(new AirBox(), chipT, i, j);
 		break;
-	case 'V': //フレーム箱
+	case 'U': //フレーム箱
 		addObject(new FrameBox(), chipT, i, j);
+		break;
+	case 'V': //機雷
+		addObject(new Mine(),chipT,i,j);
+		break;
+	case 'W': //霊はこ
+		addObject(new GoastBox(),chipT,i,j);
 		break;
 	case 'X': //ゴール
 		addObject(new Goal(), chipT, i, j);
@@ -334,10 +342,10 @@ void AstralDebu::updateClearTime(){
 	//チート時は記録しない
 	if (cheat) return;
 	//終了時刻を取得
-	stage_end = timeGetTime();
-	double total_time = (double)(stage_end - stage_start) / 1000;
+	clearTimeEnd = timeGetTime();
+	double total_time = (double)(clearTimeEnd - clearTimeStart) / 1000;
 	//未記録なら更新
-	if (clear_time[stage - 1] == 0) clear_time[stage - 1] = total_time;
+	if (clearTime[stage - 1] == 0) clearTime[stage - 1] = total_time;
 	//以前の記録より早いなら更新
-	else if (total_time < clear_time[stage - 1]) clear_time[stage - 1] = total_time;
+	else if (total_time < clearTime[stage - 1]) clearTime[stage - 1] = total_time;
 }

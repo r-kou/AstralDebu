@@ -21,25 +21,25 @@ namespace debuNS{
 	const int IMG_COL = 7;
 	const int IMG_STAND = 0;
 	const int IMG_HOLD = 1;
-	const int IMG_WALK_S = 2;
-	const int IMG_WALK_E = 4;
-	const int IMG_HOLD_WALK_S = 5;
-	const int IMG_HOLD_WALK_E = 7;
-	const int IMG_FALL_F = 9;
-	const int IMG_FALL_B = 10;
-	const int IMG_JUMP_F = 11;
-	const int IMG_JUMP_B = 12;
-	const int IMG_FALL_HOLD_F = 13;
-	const int IMG_FALL_HOLD_B = 14;
-	const int IMG_JUMP_HOLD_F = 15;
-	const int IMG_JUMP_HOLD_B = 16;
-	const int IMG_DEAD_S = 17;
-	const int IMG_DEAD_E = 21;
+	const int IMG_WALK_START = 2;
+	const int IMG_WALK_END = 4;
+	const int IMG_HOLD_WALK_START = 5;
+	const int IMG_HOLD_WALK_END = 7;
+	const int IMG_FALL_FRONT = 9;
+	const int IMG_FALL_BACK = 10;
+	const int IMG_JUMP_FRONT = 11;
+	const int IMG_JUMP_BACK = 12;
+	const int IMG_FALL_HOLD_FRONT = 13;
+	const int IMG_FALL_HOLD_BACK = 14;
+	const int IMG_JUMP_HOLD_FRONT = 15;
+	const int IMG_JUMP_HOLD_BACK = 16;
+	const int IMG_DEAD_START = 17;
+	const int IMG_DEAD_END = 21;
 	const int IMG_LADDER = 22;
-	const int IMG_LADDER_S = 23;
-	const int IMG_LADDER_E = 24;
-	const int IMG_CLEAR_S = 25;
-	const int IMG_CLEAR_E = 27;
+	const int IMG_LADDER_START = 23;
+	const int IMG_LADDER_END = 24;
+	const int IMG_CLEAR_START = 25;
+	const int IMG_CLEAR_END = 27;
 
 	const int EDGE_X = 10;
 	const int EDGE_Y = entityNS::EDGE_MAX;
@@ -54,7 +54,7 @@ private:
 	//オブジェクトを所持しているか
 	bool hold;
 	//ハンマー専用の向き
-	bool direct_h;
+	bool directHammer;
 
 	//はしごに捕まる
 	void getLadder();
@@ -85,11 +85,11 @@ public:
 
 	//setter
 	void setHold(bool h) { hold = h; }
-	void setHammer(bool d) { direct_h = d; }
+	void setHammer(bool d) { directHammer = d; }
 
 	//getter
 	bool getHold() { return hold; }
-	bool getHammer() { return direct_h; }
+	bool getHammer() { return directHammer; }
 };
 
 #endif

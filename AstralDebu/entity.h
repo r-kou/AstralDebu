@@ -11,19 +11,20 @@
 namespace entityNS{
 	enum ENTITY_TYPE {
 		NONE, DEBU,
-		BOX_W, BOX_S,
-		BOX_L, BOX_B,
-		BOX_H, BOX_A,
-		BOX_F, BOMB,
-		HIBOMB, ROCK,
+		WOOD_BOX, STEEL_BOX,
+		LEAD_BOX, BOMB_BOX,
+		HIBOMB_BOX, AIR_BOX,
+		FRAME_BOX, GOAST_BOX,
+		BOMB, HIBOMB,
+		MINE, ROCK,
 		HAMMER, MEAT,
 		HIMEAT, EN_1,
 		EN_2, EN_3,
 		EN_4, EN_5,
-		EN_B, EN_M,
-		WARP_R, WARP_G,
-		WARP_Y, GOAL,
-		BLAST
+		BULLET, MISSILE,
+		RED_WARP, GREEN_WARP,
+		YELLOW_WARP,
+		GOAL, BLAST
 	};
 	enum ENTITY_STATE {
 		EMPTY, LOCK,
@@ -81,21 +82,21 @@ protected:
 	//衝突判定用の短径
 	RECT edge;
 	//短径の幅
-	int edge_x, edge_y;
+	int edgeX, edgeY;
 	//許容余白
-	int margin_x, margin_y;
+	int marginX, marginY;
 	//ワープの転移先　ワープ専用
 	int partnerX, partnerY;
 	//行数
 	int col;
 	//汎用インターバル
-	float anim_interval;
+	float animInterval;
 	//転移インターバル
-	float warp_interval;
+	float warpInterval;
 	//状態が変更されたか
-	bool state_change;
+	bool stateChanged;
 	//左右の床への衝突判定
-	bool bottom_object[2];
+	bool bottomObj[2];
 	//特殊行動中か判定
 	bool action;
 	//オブジェクトへの反応の判定
@@ -174,7 +175,7 @@ public:
 	virtual void setEdge();
 
 	//死亡判定
-	virtual bool isDead() { return (state == entityNS::DEAD) && (anim_interval == 0.0f); }
+	virtual bool isDead() { return (state == entityNS::DEAD) && (animInterval == 0.0f); }
 
 	//左の接地判定を求める
 	bool collideBottomLeft(Entity *e) { return (getLeft(true) >= e->getLeft(false)) && (getLeft(true) <= e->getRight(false)) && (getBottom(false) >= e->getTop(false)); }
@@ -183,7 +184,7 @@ public:
 	bool collideBottomRight(Entity *e) { return (getRight(true) >= e->getLeft(false)) && (getRight(true) <= e->getRight(false)) && (getBottom(false) >= e->getTop(false)); }
 
 	//左右の接地判定
-	void bottomObj(bool d, Entity *e);
+	void checkBottom(bool d, Entity *e);
 
 	//getter
 	const entityNS::ENTITY_STATE getState() { return state; }
@@ -197,15 +198,15 @@ public:
 	const bool getDirect() { return direct; }
 	const int getSize() { return size; }
 	const RECT& getEdge() { return edge; }
-	const int getEdgeX() { return edge_x; }
-	const int getEdgeY() { return edge_y; }
+	const int getEdgeX() { return edgeX; }
+	const int getEdgeY() { return edgeY; }
 	const bool getComplete() { return image.getComplete(); }
-	const int getMarginX() { return margin_x; }
-	const int getMarginY() { return margin_y; }
+	const int getMarginX() { return marginX; }
+	const int getMarginY() { return marginY; }
 	const int getPartnerX() { return partnerX; }
 	const int getPartnerY() { return partnerY; }
-	const float getAnim() { return anim_interval; }
-	const float getWarp() { return warp_interval; }
+	const float getAnim() { return animInterval; }
+	const float getWarp() { return warpInterval; }
 	const bool getAction() { return action; }
 	const UINT getResponse() { return response; }
 
@@ -215,10 +216,10 @@ public:
 	const int ChipCX() { return ChipX(pos.x); }
 	const int ChipCY() { return ChipY(pos.y); }
 	//当たり判定の式長いので短縮用
-	const long getLeft(bool b) { return edge.left + (b ? margin_x : 0); }
-	const long getRight(bool b) { return edge.right - (b ? margin_x : 0); }
-	const long getTop(bool b) { return edge.top + (b ? margin_y : 0); }
-	const long getBottom(bool b) { return edge.bottom - (b ? margin_y : 0); }
+	const long getLeft(bool b) { return edge.left + (b ? marginX : 0); }
+	const long getRight(bool b) { return edge.right - (b ? marginX : 0); }
+	const long getTop(bool b) { return edge.top + (b ? marginY : 0); }
+	const long getBottom(bool b) { return edge.bottom - (b ? marginY : 0); }
 
 	//setter
 	void setState(entityNS::ENTITY_STATE s) { state = s; }
@@ -228,11 +229,11 @@ public:
 	void setVelX(float n) { vel.x = n; }
 	void setVelY(float n) { vel.y = n; }
 	void setDirect(bool d){ direct = d; }
-	void setChange(bool s) { state_change = s; }
+	void setChange(bool s) { stateChanged = s; }
 	void setPartnerX(int x) { partnerX = x; }
 	void setPartnerY(int y) { partnerY = y; }
-	void setAnim(float a) { anim_interval = a; }
-	void setWarp(float i) { warp_interval = i; }
+	void setAnim(float a) { animInterval = a; }
+	void setWarp(float i) { warpInterval = i; }
 	void setAction(bool b) { action = b; }
 	void resetResponse() { response = 0; }
 
@@ -240,10 +241,10 @@ public:
 	void setCX() { pos.x = (float)(ChipCX() + 0.5f) * CHIP_SIZE; }
 	void setCY() { pos.y = (float)(ChipCY() + 0.5f) * CHIP_SIZE + DATA_LEN; }
 	//判定をぎりぎりに抑える
-	void setLeft(bool b) { pos.x = (float)ChipCX() * CHIP_SIZE + edge_x - (b ? margin_x : 0); }
-	void setRight(bool b) { pos.x = (float)(ChipCX() + 1) * CHIP_SIZE - edge_x + (b ? margin_x : 0); }
-	void setTop(bool b) { pos.y = (float)ChipCY() * CHIP_SIZE + DATA_LEN + edge_y - (b ? margin_y : 0); }
-	void setBottom(bool b) { pos.y = (float)(ChipCY() + 1) * CHIP_SIZE + DATA_LEN - edge_y + (b ? margin_y : 0); }
+	void setLeft(bool b) { pos.x = (float)ChipCX() * CHIP_SIZE + edgeX - (b ? marginX : 0); }
+	void setRight(bool b) { pos.x = (float)(ChipCX() + 1) * CHIP_SIZE - edgeX + (b ? marginX : 0); }
+	void setTop(bool b) { pos.y = (float)ChipCY() * CHIP_SIZE + DATA_LEN + edgeY - (b ? marginY : 0); }
+	void setBottom(bool b) { pos.y = (float)(ChipCY() + 1) * CHIP_SIZE + DATA_LEN - edgeY + (b ? marginY : 0); }
 };
 
 

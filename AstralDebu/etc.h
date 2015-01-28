@@ -8,20 +8,20 @@
 namespace etcNS{
 	const float VEL_HAM = 300;
 
-	const int IMG_R1 = 4;
-	const int IMG_R2 = 9;
-	const int IMG_R3 = 10;
-	const int IMG_M = 31;
-	const int IMG_H = 32;
-	const int IMG_HAM = 27;
+	const int IMG_ROCK_AREA1 = 4;
+	const int IMG_ROCK_AREA2 = 9;
+	const int IMG_ROCK_AREA3 = 14;
+	const int IMG_MEAT = 31;
+	const int IMG_HIMEAT = 32;
+	const int IMG_HAMMER = 27;
 
 	const int IMG_SIZE = 32;
 	const int IMG_COL = 10;
-	const int EDGE_RX = entityNS::EDGE_MAX;
-	const int EDGE_RY = entityNS::EDGE_MAX;
-	const int EDGE_HX = entityNS::EDGE_MAX;
-	const int EDGE_HY = entityNS::EDGE_MAX;
-	const int EDGE_HS = entityNS::EDGE_MAX * 2;
+	const int EDGE_ROCK_X = entityNS::EDGE_MAX;
+	const int EDGE_ROCK_Y = entityNS::EDGE_MAX;
+	const int EDGE_HAMMER_X = entityNS::EDGE_MAX;
+	const int EDGE_HAMMER_Y = entityNS::EDGE_MAX;
+	const int EDGE_HAMMER_HOLDED_X = entityNS::EDGE_MAX * 2;
 	const int EDGE_MAR_X = 2;
 	const int EDGE_MAR_Y = 2;
 

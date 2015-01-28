@@ -7,12 +7,12 @@
 namespace blastNS{
 	const int IMG_SIZE = 96;
 	const int IMG_COL = 6;
-	const int IMG_S = 0;
-	const int IMG_E = 5;
+	const int IMG_START = 0;
+	const int IMG_END = 5;
 
 	//ÇøÇÂÇ¡Ç∆ÇæÇØîªíËÇè¨Ç≥Ç≠
-	const int EDGE_1 = 45;
-	const int EDGE_2 = 75;
+	const int EDGE_SMALL = 45;
+	const int EDGE_LARGE = 75;
 	const int EDGE_MAR = 0;
 }
 

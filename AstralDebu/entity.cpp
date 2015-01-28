@@ -14,15 +14,15 @@ Entity::Entity(){
 	size = 2;
 	img = 0;
 	SETRECT(edge, 0, 0, 0, 0);
-	edge_x = 0;
-	edge_y = 0;
-	margin_x = 0;
-	margin_y = 0;
+	edgeX = 0;
+	edgeY = 0;
+	marginX = 0;
+	marginY = 0;
 	col = 1;
-	anim_interval = 0;
-	warp_interval = 0;
-	bottom_object[0] = false;
-	bottom_object[1] = false;
+	animInterval = 0;
+	warpInterval = 0;
+	bottomObj[0] = false;
+	bottomObj[1] = false;
 	action = false;
 	response = 0;
 	FOR(32) {
@@ -49,10 +49,10 @@ bool Entity::initialize(Game *game, Texture *t, int i, int j){
 		vel.x = 0.0f;
 		vel.y = 0.0f;
 		direct = false;
-		SETRECT(edge, (long)pos.x - edge_x, (long)pos.y - edge_y, edge_x * 2, edge_y * 2);
+		SETRECT(edge, (long)pos.x - edgeX, (long)pos.y - edgeY, edgeX * 2, edgeY * 2);
 		state = STAND;
-		anim_interval = 0;
-		warp_interval = 0;
+		animInterval = 0;
+		warpInterval = 0;
 	}
 	catch (...) { return false; }
 	return true;
@@ -65,17 +65,17 @@ void Entity::move(float frameTime){
 	pos.y += (vel.y * frameTime);
 
 	//左右の落下判定を消去
-	bottom_object[0] = false;
-	bottom_object[1] = false;
+	bottomObj[0] = false;
+	bottomObj[1] = false;
 
 	//インターバルがあるなら減算
-	if (warp_interval > 0.0f) {
-		warp_interval -= frameTime;
-		if (warp_interval <= 0.0f) warp_interval = 0.0f;
+	if (warpInterval > 0.0f) {
+		warpInterval -= frameTime;
+		if (warpInterval <= 0.0f) warpInterval = 0.0f;
 	}
-	if (anim_interval > 0.0f) {
-		anim_interval -= frameTime;
-		if (anim_interval <= 0.0f) anim_interval = 0.0f;
+	if (animInterval > 0.0f) {
+		animInterval -= frameTime;
+		if (animInterval <= 0.0f) animInterval = 0.0f;
 	}
 
 	//移動先に判定を設定
@@ -93,10 +93,10 @@ void Entity::touchMap(int map[MAP_COL][MAP_ROW]){
 		c_b = ChipY((float)getBottom(false)), c_bn = ChipY((float)getBottom(true));
 
 	//画面外か検査
-	if (pos.x <= edge_x) t_o |= LEFT;
-	if (pos.x >= WINDOW_W - edge_x) t_o |= RIGHT;
-	if (pos.y <= DATA_LEN + edge_y) t_o |= TOP;
-	if (pos.y >= WINDOW_H - edge_y) t_o |= BOTTOM;
+	if (pos.x <= edgeX) t_o |= LEFT;
+	if (pos.x >= WINDOW_W - edgeX) t_o |= RIGHT;
+	if (pos.y <= DATA_LEN + edgeY) t_o |= TOP;
+	if (pos.y >= WINDOW_H - edgeY) t_o |= BOTTOM;
 
 	//四隅のマップを検査
 	if ((t_o & EDGE1) == 0) {
@@ -110,13 +110,13 @@ void Entity::touchMap(int map[MAP_COL][MAP_ROW]){
 	if ((t_o & EDGE3) == 0) {
 		t |= touchMapDirect(map[c_r][c_bn], RIGHT);
 		UCHAR tmp = touchMapDirect(map[c_rn][c_b], BOTTOM);
-		if (tmp == BOTTOM) bottom_object[1] = true;
+		if (tmp == BOTTOM) bottomObj[1] = true;
 		t |= tmp;
 	}
 	if ((t_o & EDGE4) == 0) {
 		t |= touchMapDirect(map[c_l][c_bn], LEFT);
 		UCHAR tmp = touchMapDirect(map[c_ln][c_b], BOTTOM);
-		if (tmp == BOTTOM) bottom_object[0] = true;;
+		if (tmp == BOTTOM) bottomObj[0] = true;;
 		t |= tmp;
 	}
 
@@ -197,9 +197,9 @@ void Entity::touchObj(Entity *e){
 			}
 		}
 		if (e->collideBottomLeft(this))
-			e->bottomObj(false, this);
+			e->checkBottom(false, this);
 		if (e->collideBottomRight(this))
-			e->bottomObj(true, this);
+			e->checkBottom(true, this);
 	}
 	else {
 		if (pos.x > e->getPosX()){
@@ -225,9 +225,9 @@ void Entity::touchObj(Entity *e){
 			}
 		}
 		if (collideBottomLeft(e))
-			bottomObj(false, e);
+			checkBottom(false, e);
 		if (collideBottomRight(e))
-			bottomObj(true, e);
+			checkBottom(true, e);
 	}
 
 	//衝突判定
@@ -253,11 +253,11 @@ void Entity::collideObj(Entity *e, UCHAR t){
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == JUMP || state == LADDER)) ||
 			((diffVelY(e) > 0) && (state == KNOCK)))) setRes(3); //空中にいたら着地判定
 		break;
-	case WARP_R:
-	case WARP_G:
-	case WARP_Y:
+	case RED_WARP:
+	case GREEN_WARP:
+	case YELLOW_WARP:
 		//ワープは発動後一定期間内無効
-		if (warp_interval == 0.0f) setRes(5,(e->getPartnerX() + 0.5f) * CHIP_SIZE,(e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+		if (warpInterval == 0.0f) setRes(5,(e->getPartnerX() + 0.5f) * CHIP_SIZE,(e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 		break;
 	}
 }
@@ -297,7 +297,7 @@ void Entity::responseObj(){
 	}
 	if (getRes(5)){
 		//ワープ
-		warp_interval = 0.5f;
+		warpInterval = 0.5f;
 		pos.x = getResX(5);
 		pos.y = getResY(5);
 	}
@@ -345,23 +345,25 @@ void Entity::draw(){
 //判定の位置を設定
 void Entity::setEdge(){
 	//中心からedge分だけ伸びる
-	SETRECT(edge, (long)pos.x - edge_x, (long)pos.y - edge_y, edge_x * 2, edge_y * 2);
+	SETRECT(edge, (long)pos.x - edgeX, (long)pos.y - edgeY, edgeX * 2, edgeY * 2);
 }
 
 //左右の床の判定
-void Entity::bottomObj(bool d, Entity *e){
+void Entity::checkBottom(bool d, Entity *e){
 	switch (e->getType()){
-	case BOX_W:
-	case BOX_S:
-	case BOX_L:
-	case BOX_B:
-	case BOX_H:
+	case WOOD_BOX:
+	case STEEL_BOX:
+	case LEAD_BOX:
+	case BOMB_BOX:
+	case HIBOMB_BOX:
+	case AIR_BOX:
+	case FRAME_BOX:
 	case ROCK:
 		if (d){
-			bottom_object[1] = true;
+			bottomObj[1] = true;
 		}
 		else {
-			bottom_object[0] = true;
+			bottomObj[0] = true;
 		}
 		break;
 	}

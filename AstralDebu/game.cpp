@@ -120,6 +120,9 @@ void Game::renderGame(){
 		if (cheat2){
 			text->print("ハンテイ", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y * 2, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
 		}
+		if (cheat3){
+			text->print("ジバク", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y * 3, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
+		}
 		//描画終了
 		graphics->spriteEnd();
 		graphics->endScene();

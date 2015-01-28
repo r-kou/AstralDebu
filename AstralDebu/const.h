@@ -39,8 +39,8 @@
 #define MAP_NAME(x) "map" + std::to_string(x)
 #define FOR(x) for(int i = 0; i < x; i++)
 #define FOR_D(x,y) for(int i = 0; i < x; i++) for(int j = i + 1; j < y; j++)
-#define ALL_OBJ FOR(obj_num)
-#define ALL_OBJ_D FOR_D(obj_num,obj_num)
+#define ALL_OBJ FOR(objMax)
+#define ALL_OBJ_D FOR_D(objMax,objMax)
 
 //汎用定数
 const int WINDOW_W = 800;
@@ -60,15 +60,15 @@ const int CHIP_SIZE = 32;
 //ファイル名
 const std::string CLS_NAME = "AstralDebu";
 const std::string APP_TITLE = "アストラルデブ";
-const std::string IMG_DIR = "image";
-const std::string IMG_DEBU = "debu.png";
-const std::string IMG_CHIP = "chip.png";
-const std::string IMG_BOMB = "bomb.png";
-const std::string IMG_ENEMY = "enemy.png";
-const std::string IMG_TITLE = "title.png";
-const std::string MAP_DIR = "map";
-const std::string MAP_EXT = ".chip";
-const std::string SAV_NAME = "save.dat";
+const std::string IMG_FILE_DIR = "image";
+const std::string IMG_FILE_DEBU = "debu.png";
+const std::string IMG_FILE_CHIP = "chip.png";
+const std::string IMG_FILE_BLAST = "blast.png";
+const std::string IMG_FILE_ENEMY = "enemy.png";
+const std::string IMG_FILE_TITLE = "title.png";
+const std::string MAP_FILE_DIR = "map";
+const std::string MAP_FILE_EXT = ".chip";
+const std::string SAV_FILE = "save.dat";
 
 //汎用関数
 #endif

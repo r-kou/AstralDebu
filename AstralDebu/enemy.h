@@ -20,10 +20,10 @@ namespace enemyNS{
 	const int IMG_COL = 7;
 	const int IMG_STAND = 0;
 	const int IMG_ACTION = 1;
-	const int IMG_WALK_S = 2;
-	const int IMG_WALK_E = 4;
-	const int IMG_DEAD_B = 5;
-	const int IMG_DEAD_F = 6;
+	const int IMG_WALK_START = 2;
+	const int IMG_WALK_END = 4;
+	const int IMG_DEAD_BACK = 5;
+	const int IMG_DEAD_FRONT = 6;
 	const int IMG_BULLET = 7;
 	const int IMG_MISSILE = 8;
 

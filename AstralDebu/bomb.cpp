@@ -8,10 +8,10 @@ BombE::BombE(){
 	state = STAND;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	edge_x = EDGE_X;
-	edge_y = EDGE_Y;
-	margin_x = EDGE_MAR_X;
-	margin_y = EDGE_MAR_Y;
+	edgeX = EDGE_X;
+	edgeY = EDGE_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
 }
 
 //移動
@@ -57,13 +57,14 @@ void BombE::collideMap(UCHAR t){
 void BombE::collideObj(Entity *e, UCHAR t){
 	//爆弾はとりあえず爆発する
 	switch (e->getType()){
-	case BOX_W:
-	case BOX_S:
-	case BOX_L:
-	case BOX_B:
-	case BOX_H:
-	case BOX_A:
-	case BOX_F:
+	case WOOD_BOX:
+	case STEEL_BOX:
+	case LEAD_BOX:
+	case BOMB_BOX:
+	case HIBOMB_BOX:
+	case AIR_BOX:
+	case FRAME_BOX:
+	case GOAST_BOX:
 	case ROCK:
 		//静止してたら止まる
 		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == JUMP)) setRes(4);
@@ -81,7 +82,8 @@ void BombE::collideObj(Entity *e, UCHAR t){
 	case EN_3:
 	case EN_4:
 	case EN_5:
-	case EN_B:
+	case BULLET:
+	case MISSILE:
 		//左右にはこっちが動いていたら、上下は問答無用で爆発する
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
@@ -101,11 +103,30 @@ void BombE::collideObj(Entity *e, UCHAR t){
 //コンストラクタ
 Bomb::Bomb(){
 	type = BOMB;
-	img = IMG_B;
+	img = IMG_BOMB;
 }
 
 //コンストラクタ
 Hibomb::Hibomb(){
 	type = HIBOMB;
-	img = IMG_H;
+	img = IMG_HIBOMB;
+}
+
+//コンストラクタ
+Mine::Mine(){
+	state = STAND;
+	type = MINE;
+	img = 33;
+	size = IMG_SIZE;
+	col = IMG_COL;
+	edgeX = EDGE_X;
+	edgeY = EDGE_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
+}
+
+//他オブジェクトへの接触
+void Mine::collideObj(Entity *e, UCHAR t){
+	//機雷は本当になんでも爆発する
+	setRes(6);
 }

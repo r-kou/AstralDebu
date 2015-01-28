@@ -9,10 +9,10 @@ Debu::Debu(){
 	type = DEBU;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	edge_x = EDGE_X;
-	edge_y = EDGE_Y;
-	margin_x = EDGE_MAR_X;
-	margin_y = EDGE_MAR_Y;
+	edgeX = EDGE_X;
+	edgeY = EDGE_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
 }
 
 //初期化
@@ -150,14 +150,14 @@ void Debu::collideObj(Entity *e, UCHAR t){
 
 	//デブ固有の衝突判定
 	switch (e->getType()){
-	case BOX_W:
-	case BOX_S:
-	case BOX_L:
-	case BOX_B:
-	case BOX_H:
-	case BOX_A:
-		//箱は上に乗れる 横にはすり抜ける
-		if ((t & BOTTOM) && ((diffBottom(e, true) <= margin_y) &&
+	case WOOD_BOX:
+	case STEEL_BOX:
+	case LEAD_BOX:
+	case BOMB_BOX:
+	case HIBOMB_BOX:
+	case AIR_BOX:
+		//箱は上に乗れる 横にはすり抜ける 霊箱は当たらない
+		if ((t & BOTTOM) && ((diffBottom(e, true) <= marginY) &&
 			(((diffVelY(e) >= 0) && (state == JUMP || (state == LADDER))) ||
 			((diffVelY(e) > 0) && (state == KNOCK))))) setRes(3);
 		break;
@@ -166,11 +166,11 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case EN_3:
 	case EN_4:
 	case EN_5:
-	case EN_B:
+	case BULLET:
 		//吹っ飛ばされる
 		setRes(7, getPosX() > e->getPosX() ? VEL_ENEMY_X : -VEL_ENEMY_X, VEL_ENEMY_Y);
 		break;
-	case EN_M:
+	case MISSILE:
 	case BLAST:
 		//吹っ飛ばされる
 		setRes(8, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y, VEL_BOMB_M));
@@ -215,8 +215,8 @@ void Debu::changeImage(){
 			else setImage(IMG_STAND);
 		}
 		else {
-			if (hold) setImage(IMG_HOLD_WALK_S, IMG_HOLD_WALK_E, true);
-			else setImage(IMG_WALK_S, IMG_WALK_E, true);
+			if (hold) setImage(IMG_HOLD_WALK_START, IMG_HOLD_WALK_END, true);
+			else setImage(IMG_WALK_START, IMG_WALK_END, true);
 		}
 		break;
 	case JUMP:
@@ -224,45 +224,45 @@ void Debu::changeImage(){
 		if (vel.y > 0){
 			//前後移動で判断
 			if (vel.x >= 0) {
-				if (hold) setImage(IMG_FALL_HOLD_F);
-				else setImage(IMG_FALL_F);
+				if (hold) setImage(IMG_FALL_HOLD_FRONT);
+				else setImage(IMG_FALL_FRONT);
 			}
 			else {
-				if (hold) setImage(IMG_FALL_HOLD_B);
-				else setImage(IMG_FALL_B);
+				if (hold) setImage(IMG_FALL_HOLD_BACK);
+				else setImage(IMG_FALL_BACK);
 			}
 		}
 		//上昇中
 		else {
 			//前後移動で判断
 			if (vel.x >= 0)	{
-				if (hold) setImage(IMG_JUMP_HOLD_F);
-				else setImage(IMG_JUMP_F);
+				if (hold) setImage(IMG_JUMP_HOLD_FRONT);
+				else setImage(IMG_JUMP_FRONT);
 			}
 			else {
-				if (hold) setImage(IMG_JUMP_HOLD_B);
-				else setImage(IMG_JUMP_B);
+				if (hold) setImage(IMG_JUMP_HOLD_BACK);
+				else setImage(IMG_JUMP_BACK);
 			}
 		}
 		break;
 	case LADDER:
 		//動いているか停止しているかで判断 向きの区別は無し
 		if (vel.x == 0.0f && vel.y == 0.0f) setImage(IMG_LADDER);
-		else setImage(IMG_LADDER_S, IMG_LADDER_E, true);
+		else setImage(IMG_LADDER_START, IMG_LADDER_END, true);
 		break;
 	case HOLD_HAMMER:
-		image.setFlipH(direct_h);
+		image.setFlipH(directHammer);
 		setImage(IMG_HOLD);
 		break;
 	case CLEAR:
 		//アニメが終了したらクリア
 		image.setDelay(0.33f);
-		setImage(IMG_CLEAR_S, IMG_CLEAR_E, false);
+		setImage(IMG_CLEAR_START, IMG_CLEAR_END, false);
 		break;
 	case DEAD:
 		//アニメが終了したらやり直し
 		image.setDelay(0.25f);
-		setImage(IMG_DEAD_S, IMG_DEAD_E, false);
+		setImage(IMG_DEAD_START, IMG_DEAD_END, false);
 		break;
 	}
 

@@ -7,16 +7,16 @@ AstralDebu::AstralDebu(){
 	stage = 0;
 	count = 0;
 	life = 0;
-	life_v = 0;
+	vitalLife = 0;
 	read = false;
 	clear = false;
 	state = S_TITLE;
-	state_num = 0;
-	stage_start = 0;
-	stage_end = 0;
-	stage_max = 0;
+	stateNumber = 0;
+	clearTimeStart = 0;
+	clearTimeEnd = 0;
+	clearedStage = 0;
 	//クリア時間を初期化
-	FOR(STG_SIZE) clear_time[i] = 0;
+	FOR(STG_SIZE) clearTime[i] = 0;
 	//マップを初期化
 	FOR_D(MAP_COL, MAP_ROW){
 		map[i][j] = 0;
@@ -24,8 +24,8 @@ AstralDebu::AstralDebu(){
 	//オブジェクトも初期化
 	debu = NULL;
 	ALL_OBJ object[i] = NULL;
-	obj_num = 0;
-	obj_hold = -1;
+	objMax = 0;
+	objHolded = -1;
 	vertex = NULL;
 	cheat = false;
 	cheat1 = false;
@@ -43,11 +43,11 @@ void AstralDebu::initialize(HWND hwnd){
 	Game::initialize(hwnd);
 
 	//画像テクスチャを設定
-	initTexture(debuT, IMG_DEBU);
-	initTexture(chipT, IMG_CHIP);
-	initTexture(bombT, IMG_BOMB);
-	initTexture(enemyT, IMG_ENEMY);
-	initTexture(titleT, IMG_TITLE);
+	initTexture(debuT, IMG_FILE_DEBU);
+	initTexture(chipT, IMG_FILE_CHIP);
+	initTexture(bombT, IMG_FILE_BLAST);
+	initTexture(enemyT, IMG_FILE_ENEMY);
+	initTexture(titleT, IMG_FILE_TITLE);
 
 	//画像を設定
 	if (!title.initialize(graphics, &titleT, 0, 0, 0))
@@ -68,13 +68,13 @@ void AstralDebu::initialize(HWND hwnd){
 
 //テクスチャの初期化
 void AstralDebu::initTexture(Texture &t, std::string file){
-	if (!t.initialize(graphics, (IMG_DIR + "\\" + file).c_str()))
+	if (!t.initialize(graphics, (IMG_FILE_DIR + "\\" + file).c_str()))
 		throw(GameError(gameErrorNS::FATAL, "Error initializing texture."));
 }
 
 //フォントの初期化
 void AstralDebu::initFont(Text &t, int point){
-	if (t.initialize(graphics, point, true, false, "メイリオ") == false)
+	if (t.initialize(graphics, point, true, false, FONT) == false)
 		throw(GameError(gameErrorNS::FATAL, "Error initializing font."));
 	t.setFontColor(graphicsNS::WHITE);
 }
@@ -161,7 +161,7 @@ void AstralDebu::drawQuad(float l, float t, float r, float b, ARGB c){
 }
 
 //三角のvertexを描画
-void AstralDebu::setVertexT(float x1, float y1, float x2, float y2, float x3, float y3, ARGB c){
+void AstralDebu::setVertexTriangle(float x1, float y1, float x2, float y2, float x3, float y3, ARGB c){
 	//上
 	vtx[0].x = x1;
 	vtx[0].y = y1;
@@ -194,14 +194,14 @@ void AstralDebu::setVertexT(float x1, float y1, float x2, float y2, float x3, fl
 //三角を描画
 void AstralDebu::drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, ARGB c){
 	//短径を設定
-	setVertexT(x1, y1, x2, y2, x3, y3, c);
+	setVertexTriangle(x1, y1, x2, y2, x3, y3, c);
 	graphics->createVertexBuffer(vtx, sizeof vtx, vertex);
 	//graphcsに任せる
 	graphics->drawQuad(vertex);
 }
 
 //カーソルのX位置を返す
-int AstralDebu::cursorX(){
+int AstralDebu::getCursorChipX(){
 	if (debu->getDirect()) {
 		if (debu->ChipCX() > 0) return debu->ChipCX() - 1;
 		return 0;
@@ -214,20 +214,20 @@ int AstralDebu::cursorX(){
 }
 
 //カーソルのY位置を返す
-int AstralDebu::cursorY(){
+int AstralDebu::getCursorChipY(){
 	return debu->ChipCY();
 }
 
 //オブジェクトが持てるか判定
 bool AstralDebu::canHold(Entity *e){
 	switch (e->getType()){
-	case entityNS::BOX_W:
-	case entityNS::BOX_S:
-	case entityNS::BOX_L:
-	case entityNS::BOX_B:
-	case entityNS::BOX_H:
-	case entityNS::BOX_A:
-	case entityNS::BOX_F:
+	case entityNS::WOOD_BOX:
+	case entityNS::STEEL_BOX:
+	case entityNS::LEAD_BOX:
+	case entityNS::BOMB_BOX:
+	case entityNS::HIBOMB_BOX:
+	case entityNS::AIR_BOX:
+	case entityNS::FRAME_BOX:
 	case entityNS::BOMB:
 	case entityNS::HIBOMB:
 	case entityNS::MEAT:
@@ -281,6 +281,17 @@ void AstralDebu::subLife(int i){
 	if (cheat1) return;
 	life -= i;
 	if (life < 0) life = 0;
+}
+
+//未使用のオブジェクトを取得
+int AstralDebu::getEmptyIndex(){
+	int tmp = objMax;
+	ALL_OBJ if ((object[i]->getType() == entityNS::NONE) && (object[i]->getState() == entityNS::EMPTY)) {
+		tmp = i;
+		break;
+	}
+	if (tmp == objMax) objMax++;
+	return tmp;
 }
 
 //ポインタの解放

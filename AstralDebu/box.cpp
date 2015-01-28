@@ -8,10 +8,10 @@ Box::Box(){
 	state = STAND;
 	size = IMG_SIZE;
 	col = IMG_COL;
-	edge_x = EDGE_X;
-	edge_y = EDGE_Y;
-	margin_x = EDGE_MAR_X;
-	margin_y = EDGE_MAR_Y;
+	edgeX = EDGE_X;
+	edgeY = EDGE_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
 }
 
 //移動
@@ -40,13 +40,14 @@ void Box::collideObj(Entity *e, UCHAR t){
 
 	//箱類固有の衝突判定
 	switch (e->getType()){
-	case BOX_W:
-	case BOX_S:
-	case BOX_L:
-	case BOX_B:
-	case BOX_H:
-	case BOX_A:
-	case BOX_F:
+	case WOOD_BOX:
+	case STEEL_BOX:
+	case LEAD_BOX:
+	case BOMB_BOX:
+	case HIBOMB_BOX:
+	case AIR_BOX:
+	case FRAME_BOX:
+	case GOAST_BOX:
 	case HAMMER:
 		//箱同士はぶつかる
 		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(0);
@@ -60,8 +61,8 @@ void Box::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 WoodBox::WoodBox(){
-	type = BOX_W;
-	img = IMG_W;
+	type = WOOD_BOX;
+	img = IMG_WOOD_BOX;
 }
 
 //他オブジェクトへの接触
@@ -89,8 +90,8 @@ void WoodBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 SteelBox::SteelBox(){
-	type = BOX_S;
-	img = IMG_S;
+	type = STEEL_BOX;
+	img = IMG_STEEL_BOX;
 }
 
 //他オブジェクトへの接触
@@ -129,8 +130,8 @@ void SteelBox::responseObj(){
 
 //コンストラクタ
 LeadBox::LeadBox(){
-	type = BOX_L;
-	img = IMG_L;
+	type = LEAD_BOX;
+	img = IMG_LEAD_BOX;
 }
 
 //他オブジェクトへの接触
@@ -144,8 +145,8 @@ void LeadBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 BombBox::BombBox(){
-	type = BOX_B;
-	img = IMG_B;
+	type = BOMB_BOX;
+	img = IMG_BOMB_BOX;
 }
 
 //他オブジェクトへの接触
@@ -172,8 +173,8 @@ void BombBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 HibombBox::HibombBox(){
-	type = BOX_H;
-	img = IMG_H;
+	type = HIBOMB_BOX;
+	img = IMG_HIBOMB_BOX;
 }
 
 //他オブジェクトへの接触
@@ -192,8 +193,8 @@ void HibombBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 AirBox::AirBox(){
-	type = BOX_A;
-	img = IMG_A;
+	type = AIR_BOX;
+	img = IMG_AIR_BOX;
 }
 
 
@@ -245,11 +246,10 @@ void AirBox::draw(){
 	image.draw(D3DCOLOR_ARGB(128, 255, 255, 255));
 }
 
-
 //コンストラクタ
 FrameBox::FrameBox(){
-	type = BOX_F;
-	img = IMG_F;
+	type = FRAME_BOX;
+	img = IMG_FRAME_BOX;
 }
 
 //地形への接触
@@ -278,13 +278,13 @@ void FrameBox::collideMap(UCHAR t){
 void FrameBox::collideObj(Entity *e, UCHAR t){
 	//フレームはとりあえず壊れる
 	switch (e->getType()){
-	case BOX_W:
-	case BOX_S:
-	case BOX_L:
-	case BOX_B:
-	case BOX_H:
-	case BOX_A:
-	case BOX_F:
+	case WOOD_BOX:
+	case STEEL_BOX:
+	case LEAD_BOX:
+	case BOMB_BOX:
+	case HIBOMB_BOX:
+	case AIR_BOX:
+	case FRAME_BOX:
 	case ROCK:
 		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == JUMP)) setRes(4);
 	case BOMB:
@@ -301,7 +301,7 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 	case EN_3:
 	case EN_4:
 	case EN_5:
-	case EN_B:
+	case BULLET:
 		//左右にはこっちが動いていたら、上下は問答無用で壊れる
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
@@ -314,7 +314,7 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 	case DEBU:
 		//デブが乗っても壊れる
 		if (t & TOP) {
-			if ((diffTop(e, true) >= -margin_y) &&
+			if ((diffTop(e, true) >= -marginY) &&
 				((diffVelY(e) < 0) && (e->getState() == JUMP || e->getState() == LADDER || e->getState() == KNOCK))){
 				setRes(6);
 			}
@@ -324,5 +324,38 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 
 	//全オブジェクトの衝突判定をチェック
 	Entity::collideObj(e, t);
+}
 
+//コンストラクタ
+GoastBox::GoastBox(){
+	type = GOAST_BOX;
+	img = IMG_GOAST_BOX;
+}
+
+//移動
+void GoastBox::move(float frameTime){
+	//落ちない
+	Entity::move(frameTime);
+}
+
+//他オブジェクトへの接触
+void GoastBox::collideObj(Entity *e, UCHAR t){
+	//霊箱固有の衝突判定
+	switch (e->getType()){
+	case BLAST:
+		//爆発でのみ壊れる
+		setRes(6);
+		break;
+	}
+
+	//全オブジェクトの衝突判定をチェック
+	Box::collideObj(e, t);
+}
+
+//描画
+void GoastBox::draw(){
+	//霊なので半透明
+	image.setX(pos.x - size / 2 * image.getScale());
+	image.setY(pos.y - size / 2 * image.getScale());
+	image.draw(D3DCOLOR_ARGB(128, 255, 255, 255));
 }
