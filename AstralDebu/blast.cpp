@@ -7,6 +7,7 @@ using namespace blastNS;
 Blast::Blast(bool b){
 	type = BLAST;
 	state = STAND;
+	renderOrder = RO_BLAST;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	if (b){

@@ -41,6 +41,7 @@
 #define FOR_D(x,y) for(int i = 0; i < x; i++) for(int j = i + 1; j < y; j++)
 #define ALL_OBJ FOR(objMax)
 #define ALL_OBJ_D FOR_D(objMax,objMax)
+#define INC(x,t) x = static_cast<t>(x + 1)
 
 //”Ä—p’è”
 const int WINDOW_W = 800;

@@ -250,22 +250,23 @@ void AstralDebu::renderHint(){
 void AstralDebu::renderObject(){
 	graphics->spriteBegin();
 
+	for (entityNS::RENDER_ORDER ro = entityNS::RO_BASE; ro < entityNS::RO_DEBU; ro = static_cast<entityNS::RENDER_ORDER>(ro + 1)){
+		ALL_OBJ if ((canMove(object[i])&&(object[i]->isRenderOrder(ro)))) object[i]->draw();
+	}
 	//オブジェクトを描画　持ち物は後で
-	ALL_OBJ if ((canMove(object[i])) && (i != objHolded))
-		object[i]->draw();
+	//ALL_OBJ if ((canMove(object[i])) && (i != objHolded))
+	//	object[i]->draw();
 
 	//持ち物を描画
-	if (objHolded >= 0){
-		if (debu->getState() != entityNS::HOLD_HAMMER) object[objHolded]->draw();
-		else if (object[objHolded]->getVelX() > 0) object[objHolded]->draw();
-	}
+	if ((objHolded >= 0)&&(object[objHolded]->isRenderOrder(entityNS::RO_HOLD))) object[objHolded]->draw();
 
 	//デブを描画
 	debu->draw();
 
 	//左向きのハンマーをはデブの前に描画
-	if ((debu->getState() == entityNS::HOLD_HAMMER) && (object[objHolded]->getVelX() <= 0))
-		object[objHolded]->draw();
+	if ((objHolded >= 0) && (object[objHolded]->isRenderOrder(entityNS::RO_HAMMER))) object[objHolded]->draw();
+	//if ((debu->getState() == entityNS::HOLD_HAMMER) && (object[objHolded]->getVelX() <= 0))
+	//	object[objHolded]->draw();
 
 	//カーソルを描画
 	drawCursor();

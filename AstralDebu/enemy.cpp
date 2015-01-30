@@ -6,6 +6,7 @@ using namespace enemyNS;
 //コンストラクタ
 Enemy::Enemy(){
 	state = STAND;
+	renderOrder = RO_ENEMY;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	img = 1;
@@ -131,7 +132,7 @@ void Enemy::changeImage(){
 		setImage(IMG_STAND);
 		break;
 	case DEAD:
-		if (vel.x > 0.0) setImage(IMG_DEAD_FRONT);
+		if (vel.x*(direct ? -1 : 1) > 0.0) setImage(IMG_DEAD_FRONT);
 		else setImage(IMG_DEAD_BACK);
 		break;
 	}
@@ -297,6 +298,7 @@ void BulletE::changeImage(){
 //コンストラクタ
 Bullet::Bullet(){
 	type = BULLET;
+	renderOrder = RO_ENEMY;
 	img = IMG_BULLET;
 	edgeX = BULLET_X;
 	edgeY = BULLET_Y;
@@ -318,6 +320,7 @@ void Bullet::move(float frameTime){
 //コンストラクタ
 Missile::Missile(){
 	type = MISSILE;
+	renderOrder = RO_ENEMY;
 	img = IMG_MISSILE;
 	edgeX = MISSILE_X;
 	edgeY = MISSILE_Y;

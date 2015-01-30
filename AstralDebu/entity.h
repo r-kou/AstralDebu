@@ -34,6 +34,12 @@ namespace entityNS{
 		HOLD_HAMMER,
 		ACT
 	};
+	enum RENDER_ORDER {
+		RO_BASE, RO_BOX,
+		RO_OBJECT, RO_ENEMY,
+		RO_BLAST, RO_HOLD,
+		RO_DEBU, RO_HAMMER
+	};
 	//衝突判定の上下左右
 	const UCHAR LEFT = 1;
 	const UCHAR TOP = 2;
@@ -68,7 +74,8 @@ protected:
 	entityNS::ENTITY_STATE state;
 	//分類
 	entityNS::ENTITY_TYPE type;
-
+	//描画順
+	entityNS::RENDER_ORDER renderOrder;
 	//座標
 	VC2 pos;
 	//速度
@@ -100,7 +107,7 @@ protected:
 	//特殊行動中か判定
 	bool action;
 	//オブジェクトへの反応の判定
-	INT response;
+	int response;
 	//オブジェクトへの反応のオプション
 	VC2 responseVC[32];
 
@@ -189,6 +196,7 @@ public:
 	//getter
 	const entityNS::ENTITY_STATE getState() { return state; }
 	const entityNS::ENTITY_TYPE getType() { return type; }
+	const entityNS::RENDER_ORDER getRenderOrder() { return renderOrder; }
 	const VC2* getPos(){ return &pos; }
 	const VC2* getVel(){ return &vel; }
 	const float getPosX() { return pos.x; }
@@ -208,7 +216,7 @@ public:
 	const float getAnim() { return animInterval; }
 	const float getWarp() { return warpInterval; }
 	const bool getAction() { return action; }
-	const UINT getResponse() { return response; }
+	const int getResponse() { return response; }
 
 	//マップ上での座標を返す
 	const int ChipX(float x) { return (int)x / CHIP_SIZE; }
@@ -224,6 +232,7 @@ public:
 	//setter
 	void setState(entityNS::ENTITY_STATE s) { state = s; }
 	void setType(entityNS::ENTITY_TYPE t) { type = t; }
+	void setRenderOrder(entityNS::RENDER_ORDER o) { renderOrder = o; }
 	void setPosX(float n) { pos.x = n; }
 	void setPosY(float n) { pos.y = n; }
 	void setVelX(float n) { vel.x = n; }
@@ -237,6 +246,8 @@ public:
 	void setAction(bool b) { action = b; }
 	void resetResponse() { response = 0; }
 
+	//描画順を指定
+	boolean isRenderOrder(entityNS::RENDER_ORDER ro){ return renderOrder == ro; }
 	//マップチップに合わせる
 	void setCX() { pos.x = (float)(ChipCX() + 0.5f) * CHIP_SIZE; }
 	void setCY() { pos.y = (float)(ChipCY() + 0.5f) * CHIP_SIZE + DATA_LEN; }

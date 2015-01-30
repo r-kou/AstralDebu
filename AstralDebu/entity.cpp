@@ -162,7 +162,7 @@ void Entity::collideMap(UCHAR t){
 			vel.y = 0.0f;
 		}
 	}
-	else if ((state != KNOCK) && (state != DEAD)) {
+	else if ((state != KNOCK) && (state != DEAD)&&(state != CLEAR)) {
 		//‰º‚É‰½‚à‚È‚¢‚È‚ç—Ž‰º
 		state = JUMP;
 	}

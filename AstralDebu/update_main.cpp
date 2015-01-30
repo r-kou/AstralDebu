@@ -140,6 +140,8 @@ void AstralDebu::holdObject(int i){
 		if (e->getType() == entityNS::HAMMER) ((Hammer*)e)->setHold(debu);
 		else e->setState(entityNS::LOCK);
 
+		e->setRenderOrder(entityNS::RO_HOLD);
+
 		switch (e->getType()){
 		case entityNS::WOOD_BOX:
 		case entityNS::BOMB_BOX:
@@ -181,6 +183,7 @@ void AstralDebu::putObject(){
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
 	e->setState(entityNS::STAND);
+	e->setRenderOrder(entityNS::RO_OBJECT);
 	e->setEdge();
 
 }
@@ -251,6 +254,7 @@ void AstralDebu::throwObject(){
 	e->setVelY(0.0f);
 	e->setState(entityNS::KNOCK);
 	e->setEdge();
+	e->setRenderOrder(entityNS::RO_OBJECT);
 
 	//‘Ì—ÍŒ¸­
 	switch (e->getType()){

@@ -7,6 +7,7 @@ using namespace debuNS;
 Debu::Debu(){
 	state = STAND;
 	type = DEBU;
+	renderOrder = RO_DEBU;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	edgeX = EDGE_X;
@@ -223,7 +224,7 @@ void Debu::changeImage(){
 		//‰º~’†
 		if (vel.y > 0){
 			//‘OŒãˆÚ“®‚Å”»’f
-			if (vel.x >= 0) {
+			if (vel.x*(direct?-1:1) >= 0) {
 				if (hold) setImage(IMG_FALL_HOLD_FRONT);
 				else setImage(IMG_FALL_FRONT);
 			}
@@ -235,7 +236,7 @@ void Debu::changeImage(){
 		//ã¸’†
 		else {
 			//‘OŒãˆÚ“®‚Å”»’f
-			if (vel.x >= 0)	{
+			if (vel.x*(direct ? -1 : 1) >= 0)	{
 				if (hold) setImage(IMG_JUMP_HOLD_FRONT);
 				else setImage(IMG_JUMP_FRONT);
 			}

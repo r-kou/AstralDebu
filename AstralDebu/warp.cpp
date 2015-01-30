@@ -8,6 +8,7 @@ Warp::Warp(ENTITY_TYPE t){
 	state = STAND;
 	//ëIëÇµÇΩêFÇ…Ç»ÇÈ
 	type = t;
+	renderOrder = RO_BASE;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	edgeX = EDGE_X;
@@ -55,6 +56,7 @@ void Warp::setEdge(){
 Goal::Goal(){
 	state = STAND;
 	type = GOAL;
+	renderOrder = RO_BASE;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	edgeX = EDGE_X;

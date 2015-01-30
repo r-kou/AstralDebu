@@ -6,6 +6,7 @@ using namespace boxNS;
 //コンストラクタ
 Box::Box(){
 	state = STAND;
+	renderOrder = RO_BOX;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	edgeX = EDGE_X;

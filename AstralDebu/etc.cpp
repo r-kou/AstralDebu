@@ -7,6 +7,7 @@ using namespace etcNS;
 Rock::Rock(int stage){
 	state = STAND;
 	type = ROCK;
+	renderOrder = RO_BASE;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	edgeX = EDGE_ROCK_X;
@@ -38,6 +39,7 @@ void Rock::collideObj(Entity *e, UCHAR t){
 Meat::Meat(){
 	state = STAND;
 	type = MEAT;
+	renderOrder = RO_OBJECT;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	img = IMG_MEAT;
@@ -47,6 +49,7 @@ Meat::Meat(){
 Himeat::Himeat(){
 	state = STAND;
 	type = HIMEAT;
+	renderOrder = RO_OBJECT;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	img = IMG_HIMEAT;
@@ -57,6 +60,7 @@ Himeat::Himeat(){
 Hammer::Hammer(){
 	state = STAND;
 	type = HAMMER;
+	renderOrder = RO_OBJECT;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	img = IMG_HAMMER;
@@ -70,8 +74,14 @@ Hammer::Hammer(){
 //ˆÚ“®
 void Hammer::move(float frameTime){
 	if (state == HOLD_HAMMER){
-		if (pos.x >= getRight(false)) vel.x = -VEL_HAM;
-		else if (pos.x <= getLeft(false)) vel.x = VEL_HAM;
+		if (pos.x >= getRight(false)) {
+			vel.x = -VEL_HAM;
+			renderOrder = RO_HAMMER;
+		}
+		else if (pos.x <= getLeft(false)) {
+			vel.x = VEL_HAM;
+			renderOrder = RO_HOLD;
+		}
 
 		//‘¬“x•ª‚¾‚¯ˆÚ“®
 		pos.x += (vel.x * frameTime);

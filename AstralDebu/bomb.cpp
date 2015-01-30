@@ -6,6 +6,7 @@ using namespace bombNS;
 //コンストラクタ
 BombE::BombE(){
 	state = STAND;
+	renderOrder = RO_OBJECT;
 	size = IMG_SIZE;
 	col = IMG_COL;
 	edgeX = EDGE_X;
@@ -116,6 +117,7 @@ Hibomb::Hibomb(){
 Mine::Mine(){
 	state = STAND;
 	type = MINE;
+	renderOrder = RO_OBJECT;
 	img = 33;
 	size = IMG_SIZE;
 	col = IMG_COL;
