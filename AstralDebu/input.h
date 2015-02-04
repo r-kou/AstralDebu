@@ -19,8 +19,11 @@ namespace inputNS{
 	const int KEYS_ARRAY_LEN = 256;
 	const UCHAR KEYS_DOWN = 1;
 	const UCHAR KEYS_PRESSED = 2;
-	const UCHAR TEXT_IN = 4;
-	const UCHAR ALL = KEYS_DOWN + KEYS_PRESSED + TEXT_IN;
+	const UCHAR MOUSE = 4;
+	const UCHAR MOUSE_DOWN = 8;
+	const UCHAR MOUSE_PRESSED = 16;
+	const UCHAR TEXT_IN = 32;
+	const UCHAR ALL = KEYS_DOWN + KEYS_PRESSED + MOUSE + MOUSE_DOWN + MOUSE_PRESSED + TEXT_IN;
 }
 
 //キー入力を受け取るクラス
@@ -32,8 +35,17 @@ private:
 	bool keysPressed[inputNS::KEYS_ARRAY_LEN];
 	//入力文字列コマンド用
 	std::string textIn;
+	//入力文字
 	char charIn;
+	//改行の有無
 	bool newLine;
+	//マウス座標
+	int mouseX, mouseY;
+	//押されているマウス
+	bool mouseLDown, mouseMDown, mouseRDown;
+	//今まさに押されたマウス
+	bool mouseLPressed, mouseMPressed, mouseRPressed;
+
 	//キーの範囲内かを調べる
 	inline bool inKey(UCHAR k) const { return (k < inputNS::KEYS_ARRAY_LEN); }
 	inline bool inKey(size_t k) const { return (k < inputNS::KEYS_ARRAY_LEN); }
@@ -53,14 +65,32 @@ public:
 	bool isKeyDown(UCHAR) const;
 	bool isKeyPressed(UCHAR) const;
 	bool anyKeyPressed() const;
+	//マウス操作
+	void mouseIn(LPARAM);
 	//入力情報消去
 	void clearKeyPress(UCHAR);
 	void clear(UCHAR);
 	void clearAll() { clear(inputNS::ALL); }
 	void clearTextIn() { textIn.clear(); }
-	//文字列操作
-	std::string getTextIn() { return textIn; };
-	char getCharIn() { return charIn; }
+	//getter
+	int getMouseX() const { return mouseX; }
+	int getMouseY() const { return mouseY; }
+	int getMouseLDown() const { return mouseLDown; }
+	int getMouseMDown() const { return mouseMDown; }
+	int getMouseRDown() const { return mouseRDown; }
+	int getMouseLPressed() const { return mouseLPressed; }
+	int getMouseMPressed() const { return mouseMPressed; }
+	int getMouseRPressed() const { return mouseRPressed; }
+	std::string getTextIn() const { return textIn; };
+	char getCharIn() const { return charIn; }
+
+	//setter
+	void setMouseLDown(bool b) { mouseLDown = b; }
+	void setMouseMDown(bool b) { mouseMDown = b; }
+	void setMouseRDown(bool b) { mouseRDown = b; }
+	void setMouseLPressed(bool b) { mouseLPressed = b; }
+	void setMouseMPressed(bool b) { mouseMPressed = b; }
+	void setMouseRPressed(bool b) { mouseRPressed = b; }
 };
 
 #endif

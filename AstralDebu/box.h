@@ -7,7 +7,6 @@
 namespace boxNS{
 	const float VEL_BOMB_X = 350;
 	const float VEL_BOMB_Y = 250;
-	const float VEL_BOMB_M = 150;
 	const float VEL_BOMB_A = 350;
 
 	const int IMG_WOOD_BOX = 20;
@@ -58,9 +57,6 @@ public:
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
-
-	//他オブジェクトへの反応
-	virtual void responseObj();
 };
 
 class LeadBox : public Box{
@@ -101,9 +97,6 @@ public:
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
-
-	//他オブジェクトへの反応
-	virtual void responseObj();
 
 	//描画
 	virtual void draw();

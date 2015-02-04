@@ -8,13 +8,11 @@
 namespace enemyNS{
 	const float VEL_WALK = 80;
 	const float VEL_DASH = 160;
-	const float VEL_KNOCK_X = 350;
-	const float VEL_KNOCK_Y = 250;
 	const float VEL_BULLET = 200;
 	const float VEL_MISSILE = 100;
 	const float VEL_BOMB_X = 350;
-	const float VEL_BOMB_Y = 150;
-	const float VEL_BOMB_M = 250;
+	const float VEL_BOMB_Y = 250;
+	const float VEL_KNOCK_X = 250;
 
 	const int IMG_SIZE = 32;
 	const int IMG_COL = 7;

@@ -38,7 +38,7 @@ void Debu::move(float frameTime){
 				break;
 			case JUMP:
 				//空中制御はやや緩やか
-				if (vel.x > -VEL_MAX)
+				if (vel.x > -VEL_MAX_WALK)
 					vel.x -= VEL_RATE_JUMP * frameTime;
 				break;
 			case LADDER:
@@ -63,7 +63,7 @@ void Debu::move(float frameTime){
 				setDirect(false);
 				break;
 			case JUMP:
-				if (vel.x < VEL_MAX)
+				if (vel.x < VEL_MAX_WALK)
 					vel.x += VEL_RATE_JUMP * frameTime;
 				break;
 			case LADDER:
@@ -109,10 +109,10 @@ void Debu::move(float frameTime){
 
 	//地上では速度制限
 	if (state == STAND){
-		if (vel.x > VEL_MAX) vel.x = VEL_MAX;
-		else if (vel.x < -VEL_MAX) vel.x = -VEL_MAX;
+		if (vel.x > VEL_MAX_WALK) vel.x = VEL_MAX_WALK;
+		else if (vel.x < -VEL_MAX_WALK) vel.x = -VEL_MAX_WALK;
 	}
-	if (vel.y > VEL_FALL_MAX) vel.y = VEL_FALL_MAX;
+	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
 
 	//クリア時は動かない
 	if (state == CLEAR) {
@@ -160,7 +160,7 @@ void Debu::collideObj(Entity *e, UCHAR t){
 		//箱は上に乗れる 横にはすり抜ける 霊箱は当たらない
 		if ((t & BOTTOM) && ((diffBottom(e, true) <= marginY) &&
 			(((diffVelY(e) >= 0) && (state == JUMP || (state == LADDER))) ||
-			((diffVelY(e) > 0) && (state == KNOCK))))) setRes(3);
+			((diffVelY(e) > 0) && (state == KNOCK))))) setRes(RES_BOTTOM);
 		break;
 	case EN_1:
 	case EN_2:
@@ -169,40 +169,20 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case EN_5:
 	case BULLET:
 		//吹っ飛ばされる
-		setRes(7, getPosX() > e->getPosX() ? VEL_ENEMY_X : -VEL_ENEMY_X, VEL_ENEMY_Y);
+		setRes(RES_JUMP, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, 0);
 		break;
 	case MISSILE:
 	case BLAST:
 		//吹っ飛ばされる
-		setRes(8, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y, VEL_BOMB_M));
+		setRes(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
 		break;
 	case GOAL:
 		//クリアする
-		setRes(9);
+		setRes(RES_CLEAR);
 		break;
 	}
 }
 
-//他オブジェクトへの反応
-void Debu::responseObj(){
-	Entity::responseObj();
-
-	if (getRes(7)){
-		state = JUMP;
-		vel.x = getResX(7);
-		vel.y = getResY(7);
-	}
-	if (getRes(8)){
-		state = JUMP;
-		vel.x = getResX(8);
-		vel.y = getResY(8);
-	}
-	if (getRes(9)){
-		state = CLEAR;
-		vel.x = 0.0f;
-		vel.y = 0.0f;
-	}
-}
 //描画する画像を変更
 void Debu::changeImage(){
 	//現在の状態を確認

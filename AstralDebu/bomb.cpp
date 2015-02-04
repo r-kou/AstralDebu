@@ -19,7 +19,7 @@ BombE::BombE(){
 void BombE::move(float frameTime){
 	//空中にいるなら落下
 	if (state == JUMP) vel.y += GRAVITY_RATE * frameTime;
-	if (vel.y > VEL_FALL_MAX) vel.y = VEL_FALL_MAX;
+	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
 
 	Entity::move(frameTime);
 }
@@ -68,7 +68,7 @@ void BombE::collideObj(Entity *e, UCHAR t){
 	case GOAST_BOX:
 	case ROCK:
 		//静止してたら止まる
-		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == JUMP)) setRes(4);
+		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == JUMP)) setRes(RES_BOTTOM);
 	case BOMB:
 	case HIBOMB:
 	case HAMMER:
@@ -76,7 +76,7 @@ void BombE::collideObj(Entity *e, UCHAR t){
 		if (((t & LEFT) && (diffVelX(e) < 0)) ||
 			((t & RIGHT) && (diffVelX(e) > 0)) ||
 			((t & TOP) && (diffVelY(e) < 0)) ||
-			((t & BOTTOM) && (diffVelY(e) > 0) && (state == JUMP || state == KNOCK))) setRes(6);
+			((t & BOTTOM) && (diffVelY(e) > 0) && (state == JUMP || state == KNOCK))) setRes(RES_DEAD);
 		break;
 	case EN_1:
 	case EN_2:
@@ -88,11 +88,11 @@ void BombE::collideObj(Entity *e, UCHAR t){
 		//左右にはこっちが動いていたら、上下は問答無用で爆発する
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
-			(t & TOP) || (t & BOTTOM)) setRes(6);
+			(t & TOP) || (t & BOTTOM)) setRes(RES_DEAD);
 		break;
 	case BLAST:
 		//爆風は速度とか関係ない
-		setRes(6);
+		setRes(RES_BOTTOM);
 		break;
 	}
 
@@ -130,5 +130,5 @@ Mine::Mine(){
 //他オブジェクトへの接触
 void Mine::collideObj(Entity *e, UCHAR t){
 	//機雷は本当になんでも爆発する
-	setRes(6);
+	setRes(RES_BOTTOM);
 }

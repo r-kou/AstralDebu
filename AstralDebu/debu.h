@@ -6,16 +6,14 @@
 
 namespace debuNS{
 	const float VEL_RATE = 800;
-	const float VEL_MAX = 140;
+	const float VEL_MAX_WALK = 140;
 	const float VEL_JUMP = -300;
 	const float VEL_DUMP = 2000;
 	const float VEL_RATE_JUMP = 600;
 	const float VEL_LADDER = 100;
 	const float VEL_BOMB_X = 350;
 	const float VEL_BOMB_Y = 250;
-	const float VEL_BOMB_M = 150;
-	const float VEL_ENEMY_X = 250;
-	const float VEL_ENEMY_Y = -200;
+	const float VEL_KNOCK_X = 250;
 
 	const int IMG_SIZE = 32;
 	const int IMG_COL = 7;
@@ -76,9 +74,6 @@ public:
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
-
-	//他オブジェクトへの反応
-	virtual void responseObj();
 
 	//描画する画像を変更
 	virtual void changeImage();

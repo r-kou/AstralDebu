@@ -247,64 +247,98 @@ void Entity::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case ROCK:
 		//壊れる壁なので壁と同じ
-		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(0);
-		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(1);
-		if ((t & TOP) && (diffVelY(e) < 0)) setRes(2);
+		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
+		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
+		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == JUMP || state == LADDER)) ||
-			((diffVelY(e) > 0) && (state == KNOCK)))) setRes(3); //空中にいたら着地判定
+			((diffVelY(e) > 0) && (state == KNOCK)))) setRes(RES_BOTTOM); //空中にいたら着地判定
 		break;
 	case RED_WARP:
 	case GREEN_WARP:
 	case YELLOW_WARP:
 		//ワープは発動後一定期間内無効
-		if (warpInterval == 0.0f) setRes(5,(e->getPartnerX() + 0.5f) * CHIP_SIZE,(e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+		if (warpInterval == 0.0f) setRes(RES_WARP,(e->getPartnerX() + 0.5f) * CHIP_SIZE,(e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 		break;
 	}
 }
 
 //他オブジェクトへの反応
 void Entity::responseObj(){
-	if (getRes(0)) {
+	if (getRes(RES_LEFT)) {
 		//左に衝突
 		setLeft(false);
 		vel.x = 0.0f;
+		if (!action) direct = false;
 		if (state == KNOCK) state = STAND;
 	}
-	if (getRes(1)) {
+	if (getRes(RES_RIGHT)) {
 		//右に衝突
 		setRight(false);
 		vel.x = 0.0f;
+		if (!action) direct = true;
 		if (state == KNOCK) state = STAND;
 	}
-	if (getRes(2)) {
+	if (getRes(RES_TOP)) {
 		//上に衝突
 		setTop(false);
 		vel.y = 0.0f;
 		if (state == KNOCK) state = STAND;
 	}
-	if (getRes(3)) {
+	if (getRes(RES_BOTTOM)) {
 		//下に衝突
 		setBottom(false);
 		vel.y = 0.0f;
 		state = STAND;
 	}
-	if (getRes(4)) {
-		//下に衝突　マスにぴったり
+	if (getRes(RES_BOTTOM_CHIP)) {
+		//下に衝突 マスにぴったり
 		setCX();
-		setCY();
+		setBottom(false);
+		vel.y = 0.0f;
+		vel.x = 0.0f;
+		state = STAND;
+	}
+	if (getRes(RES_STOP)) {
+		//停止
+		vel.x = 0.0f;
 		vel.y = 0.0f;
 		state = STAND;
 	}
-	if (getRes(5)){
+	if (getRes(RES_CHIP)) {
+		//停止 マスにぴったり
+		setCX();
+		setCY();
+		vel.x = 0.0f;
+		vel.y = 0.0f;
+		state = STAND;
+	}
+	if (getRes(RES_WARP)){
 		//ワープ
 		warpInterval = 0.5f;
-		pos.x = getResX(5);
-		pos.y = getResY(5);
+		pos.x = getResX(RES_WARP);
+		pos.y = getResY(RES_WARP);
 	}
-	if (getRes(6)){
-		//死亡
+	if (getRes(RES_KNOCK)) {
+		state = KNOCK;
+		vel.x = setLimit(getResX(RES_KNOCK),VEL_MAX);
+		vel.y = setLimit(getResY(RES_KNOCK),VEL_MAX);
+	}
+	if (getRes(RES_JUMP)){
+		state = JUMP;
+		vel.x = setLimit(getResX(RES_JUMP), VEL_MAX);
+		vel.y = setLimit(getResY(RES_JUMP), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
+	}
+	if (getRes(RES_DEAD)){
 		state = DEAD;
+		vel.x = setLimit(getResX(RES_DEAD), VEL_MAX);
+		vel.y = setLimit(getResY(RES_DEAD), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
 	}
+	if (getRes(RES_CLEAR)){
+		state = CLEAR;
+		vel.x = 0.0f;
+		vel.y = 0.0f;
+	}
+
 }
 
 

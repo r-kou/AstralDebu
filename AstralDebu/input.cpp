@@ -7,6 +7,14 @@ Input::Input(){
 	newLine = true;
 	textIn = "";
 	charIn = 0;
+	mouseX = 0;
+	mouseY = 0;
+	mouseLDown = false;
+	mouseMDown = false;
+	mouseRDown = false;
+	mouseLPressed = false;
+	mouseMPressed = false;
+	mouseRPressed = false;
 }
 
 //デストラクタ　特に何もしない
@@ -55,6 +63,12 @@ void Input::keyIn(WPARAM wp){
 	if (wp == '\r' || wp == 'z' || wp == 'x' || wp == 'c') newLine = true;
 }
 
+//マウス操作
+void Input::mouseIn(LPARAM lp){
+	mouseX = GET_X_LPARAM(lp);
+	mouseY = GET_Y_LPARAM(lp);
+}
+
 //キーが押されているか
 bool Input::isKeyDown(UCHAR k) const {
 	if (inKey(k)) return keysDown[k];
@@ -87,6 +101,20 @@ void Input::clear(UCHAR w){
 	}
 	if (w&inputNS::KEYS_PRESSED){
 		for (size_t i = 0; inKey(i); i++) keysPressed[i] = false;
+	}
+	if (w & inputNS::MOUSE) {
+		mouseX = 0;
+		mouseY = 0;
+	}
+	if (w & inputNS::MOUSE_DOWN) {
+		mouseLDown = false;
+		mouseMDown = false;
+		mouseRDown = false;
+	}
+	if (w & inputNS::MOUSE_PRESSED) {
+		mouseLPressed = false;
+		mouseMPressed = false;
+		mouseRPressed = false;
 	}
 	if (w&inputNS::TEXT_IN) clearTextIn();
 }

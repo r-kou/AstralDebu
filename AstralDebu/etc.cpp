@@ -30,7 +30,7 @@ void Rock::collideObj(Entity *e, UCHAR t){
 	case BLAST:
 	case HAMMER:
 		//爆発する
-		setRes(6);
+		setRes(RES_DEAD);
 		break;
 	}
 }
@@ -91,7 +91,7 @@ void Hammer::move(float frameTime){
 	else {
 		//空中にいるなら落下
 		if (state == JUMP) vel.y += GRAVITY_RATE * frameTime;
-		if (vel.y > VEL_FALL_MAX) vel.y = VEL_FALL_MAX;
+		if (vel.y > VEL_MAX) vel.y = VEL_MAX;
 
 		Entity::move(frameTime);
 	}
@@ -136,17 +136,17 @@ void Hammer::collideObj(Entity *e, UCHAR t){
 	case HIBOMB_BOX:
 	case GOAST_BOX:
 		//停止するのは鉛箱と霊箱だけ　それ以外は全て粉砕する
-		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(0);
-		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(1);
-		if ((t & TOP) && (diffVelY(e) < 0)) setRes(2);
+		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
+		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
+		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == JUMP || state == LADDER)) ||
-			((diffVelY(e) > 0) && (state == KNOCK)))) setRes(4); //空中にいたら着地判定
+			((diffVelY(e) > 0) && (state == KNOCK)))) setRes(RES_BOTTOM_CHIP); //空中にいたら着地判定
 		break;
 	case RED_WARP:
 	case GREEN_WARP:
 	case YELLOW_WARP:
 		//ワープは可能
-		if (warpInterval == 0.0f) setRes(5, (e->getPartnerX() + 0.5f) * CHIP_SIZE, (e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+		if (warpInterval == 0.0f) setRes(RES_WARP, (e->getPartnerX() + 0.5f) * CHIP_SIZE, (e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 		break;
 	}
 }

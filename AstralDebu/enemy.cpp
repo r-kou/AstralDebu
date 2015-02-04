@@ -28,7 +28,7 @@ bool Enemy::initialize(Game *game, Texture *t, Debu *d, int i, int j){
 void Enemy::move(float frameTime){
 	//ãÛíÜÇ…Ç¢ÇÈÇ©éÄñSéûÇ»ÇÁóéâ∫
 	if (state == JUMP || state == DEAD) vel.y += GRAVITY_RATE * frameTime;
-	if (vel.y > VEL_FALL_MAX) vel.y = VEL_FALL_MAX;
+	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
 
 	//ï‡çsÇ≈ÇÕè∞Ç©ÇÁóéÇøÇ»Ç¢
 	if (bottomObj[0] && !bottomObj[1]) {
@@ -70,50 +70,25 @@ void Enemy::collideObj(Entity *e, UCHAR t){
 	case HIBOMB:
 	case HAMMER:
 		//î†Ç…ÇÕÇ‘Ç¬Ç©ÇÈ
-		if ((t & LEFT) && (diffVelX(e) < 0)) {
-			setLeft(false);
-			vel.x = 0.0f;
-			if (!action) direct = false;
-			if (state == KNOCK) state = STAND;
-		}
-		if ((t & RIGHT) && (diffVelX(e) > 0)) {
-			setRight(false);
-			vel.x = 0.0f;
-			if (!action) direct = true;
-			if (state == KNOCK) state = STAND;
-		}
-		if ((t & TOP) && (diffVelY(e) < 0)) {
-			setTop(false);
-			vel.y = 0.0f;
-			if (state == KNOCK) state = STAND;
-		}
-		if (t & BOTTOM) {
-			if ((diffBottom(e, true) <= marginY) &&
-				(((diffVelY(e) >= 0) && (state == JUMP || (state == LADDER))) ||
-				((diffVelY(e) > 0) && (state == KNOCK)))){
-				state = STAND;
-				setBottom(false);
-				vel.y = 0.0f;
-			}
-		}
+		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
+		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
+		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
+		if ((diffBottom(e, true) <= marginY) &&
+			((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == JUMP)) ||
+			((diffVelY(e) > 0) && (state == KNOCK))))) setRes(RES_BOTTOM); //ãÛíÜÇ…Ç¢ÇΩÇÁíÖínîªíË
 		//å¸Ç±Ç§Ç©ÇÁÇ‘Ç¬Ç©Ç¡ÇƒÇ´ÇΩÇÁéÄñS
-		if (!(e->getState() == HOLD_HAMMER) &&
-			!((t & LEFT) && (e->getVelX() > 0)) &&
-			!((t & RIGHT) && (e->getVelX() < 0)) &&
-			!((t & TOP) && (e->getVelY() > 0))) {
-			break;
+		if ((e->getState() == HOLD_HAMMER) ||
+			((t & LEFT) && (e->getVelX() > 0)) ||
+			((t & RIGHT) && (e->getVelX() < 0)) ||
+			((t & TOP) && (e->getVelY() > 0))) {
+			animInterval = 1.0f;
+			setRes(RES_DEAD, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, 0);
 		}
-		//éÄñSéûÇÕîöïóÇ∆ìØÇ∂ãììÆ (breakñ≥Çµ)
+		break;
 	case BLAST:
 		//êÅÇ¡îÚÇŒÇ≥ÇÍÇƒéÄñS
-		state = DEAD;
 		animInterval = 1.0f;
-		if (blastLeft(e)) vel.x = -VEL_BOMB_X;
-		else if (blastRight(e)) vel.x = VEL_BOMB_X;
-		if (blastTop(e)) vel.y = -VEL_BOMB_Y;
-		else if (blastBottom(e)) vel.y = VEL_BOMB_Y;
-		//ÇøÇÂÇ¡Ç∆ïÇÇ≠
-		vel.y -= VEL_BOMB_M;
+		setRes(RES_DEAD, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
 		break;
 	}
 }
@@ -284,7 +259,7 @@ void BulletE::collideObj(Entity *e, UCHAR t){
 	case HIBOMB:
 	case HAMMER:
 	case BLAST:
-		state = DEAD;
+		setRes(RES_DEAD);
 		break;
 	}
 }

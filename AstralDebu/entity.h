@@ -57,9 +57,25 @@ namespace entityNS{
 	const int EDGE_MAX = 16;
 	//落下速度
 	const float GRAVITY_RATE = 1000.0f;
-	//落下速度の最大
-	const float VEL_FALL_MAX = 300;
-
+	//吹っ飛び時の微妙な浮き
+	const float VEL_KNOCK_JUMP = 150;
+	//吹っ飛び時の上方向への最大速度
+	const float VEL_MAX_JUMP = 250;
+	//吹っ飛び時の最大速度
+	const float VEL_MAX = 350;
+	//反応の対応値
+	const UINT RES_LEFT = 0;
+	const UINT RES_RIGHT = 1;
+	const UINT RES_TOP = 2;
+	const UINT RES_BOTTOM = 3;
+	const UINT RES_BOTTOM_CHIP = 4;
+	const UINT RES_STOP = 5;
+	const UINT RES_CHIP = 6;
+	const UINT RES_WARP = 7;
+	const UINT RES_KNOCK = 8;
+	const UINT RES_JUMP = 9;
+	const UINT RES_DEAD = 10;
+	const UINT RES_CLEAR = 11;
 }
 
 class Entity{
@@ -125,14 +141,17 @@ protected:
 	bool blastTop(Entity *e) { return (getPosY() - e->getPosY() < -8); }
 	bool blastBottom(Entity *e) { return (getPosY() - e->getPosY() > 8); }
 	float blastX(Entity *e, float x) { if (blastLeft(e)) return -x; else if (blastRight(e)) return x; else return 0; }
-	float blastY(Entity *e, float y,float m) { if (blastTop(e)) return -y-m; else if (blastBottom(e)) return y-m; else return -m; }
+	float blastY(Entity *e, float y) { if (blastTop(e)) return -y; else if (blastBottom(e)) return y; else return 0; }
 	//オブジェクト反応の演算
 	UINT shift(int i) { return 1 << i; }
 	const UINT getRes(int i) { return response & shift(i); }
 	const float getResX(int i) { return responseVC[i].x; }
 	const float getResY(int i) { return responseVC[i].y; }
 	void setRes(int i) { response |= shift(i); }
-	void setRes(int i, float x, float y) { response |= shift(i); responseVC[i].x = x; responseVC[i].y = y; }
+	void setRes(int i, float x, float y) { response |= shift(i); responseVC[i].x += x; responseVC[i].y += y; }
+	//各値の最大値を設定
+	const float setLimit(float n, float max) { return ((n>max) ? max : ((n<-max) ? -max : n)); }
+
 public:
 	//コンストラクタ
 	Entity();
@@ -244,7 +263,8 @@ public:
 	void setAnim(float a) { animInterval = a; }
 	void setWarp(float i) { warpInterval = i; }
 	void setAction(bool b) { action = b; }
-	void resetResponse() { response = 0; }
+	//反応を初期化
+	void resetResponse() { response = 0; FOR(entityNS::RES_CLEAR){ responseVC[i].x = 0; responseVC[i].y = 0; } }
 
 	//描画順を指定
 	boolean isRenderOrder(entityNS::RENDER_ORDER ro){ return renderOrder == ro; }

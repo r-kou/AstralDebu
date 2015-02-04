@@ -31,6 +31,36 @@ LRESULT Game::messageHandler(HWND hw, UINT msg, WPARAM wp, LPARAM lp){
 		case WM_CHAR:
 			input->keyIn(wp);
 			return 0;
+		case WM_MOUSEMOVE:
+			input->mouseIn(lp);
+			return 0;
+		case WM_LBUTTONDOWN:
+			if (!input->getMouseLDown()) input->setMouseLPressed(true);
+			input->setMouseLDown(true);
+			input->mouseIn(lp);
+			return 0;
+		case WM_LBUTTONUP:
+			input->setMouseLDown(false);
+			input->mouseIn(lp);
+			return 0;
+		case WM_MBUTTONDOWN:
+			if (!input->getMouseMDown()) input->setMouseMPressed(true);
+			input->setMouseMDown(true);
+			input->mouseIn(lp);
+			return 0;
+		case WM_MBUTTONUP:
+			input->setMouseMDown(false);
+			input->mouseIn(lp);
+			return 0;
+		case WM_RBUTTONDOWN:
+			if (!input->getMouseRDown()) input->setMouseRPressed(true);
+			input->setMouseRDown(true);
+			input->mouseIn(lp);
+			return 0;
+		case WM_RBUTTONUP:
+			input->setMouseRDown(false);
+			input->mouseIn(lp);
+			return 0;
 		}
 	}
 	return DefWindowProc(hw, msg, wp, lp);
@@ -96,7 +126,7 @@ void Game::run(HWND hw){
 	renderGame();
 
 	//“ü—Í‚ð‰Šú‰»
-	input->clear(inputNS::KEYS_PRESSED);
+	input->clear(inputNS::KEYS_PRESSED+inputNS::MOUSE_PRESSED);
 }
 
 //•`‰æ
