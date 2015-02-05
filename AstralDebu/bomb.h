@@ -5,11 +5,10 @@
 #include "entity.h"
 
 namespace bombNS{
-	const int IMG_BOMB = 25;
-	const int IMG_HIBOMB = 26;
+	const int IMG_BOMB = 40;
+	const int IMG_HIBOMB = 41;
+	const int IMG_MINE = 43;
 
-	const int IMG_SIZE = 32;
-	const int IMG_COL = 10;
 	const int EDGE_X = entityNS::EDGE_MAX - 3;
 	const int EDGE_Y = entityNS::EDGE_MAX;
 	const int EDGE_MAR_X = 3;

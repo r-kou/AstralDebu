@@ -5,8 +5,6 @@
 #include "entity.h"
 
 namespace blastNS{
-	const int IMG_SIZE = 96;
-	const int IMG_COL = 6;
 	const int IMG_START = 0;
 	const int IMG_END = 5;
 
@@ -28,10 +26,10 @@ public:
 	virtual void move(float frameTime);
 
 	//地形への接触（何もしない）
-	virtual void collideMap(UCHAR t);
+	virtual void collideMap(UCHAR t){}
 
 	//他オブジェクトへの接触（何もしない）
-	virtual void collideObj(Entity *e, UCHAR t);
+	virtual void collideObj(Entity *e, UCHAR t){}
 
 };
 

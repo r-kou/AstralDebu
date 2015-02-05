@@ -4,8 +4,8 @@ using namespace entityNS;
 
 //コンストラクタ
 Entity::Entity(){
-	state = EMPTY;
-	type = NONE;
+	state = ST_EMPTY;
+	type = TY_NONE;
 	pos.x = 0.0f;
 	pos.y = 0.0f;
 	vel.x = 0.0f;
@@ -50,7 +50,7 @@ bool Entity::initialize(Game *game, Texture *t, int i, int j){
 		vel.y = 0.0f;
 		direct = false;
 		SETRECT(edge, (long)pos.x - edgeX, (long)pos.y - edgeY, edgeX * 2, edgeY * 2);
-		state = STAND;
+		state = ST_STAND;
 		animInterval = 0;
 		warpInterval = 0;
 	}
@@ -124,47 +124,38 @@ void Entity::touchMap(int map[MAP_COL][MAP_ROW]){
 	collideMap(t | t_o);
 }
 
-//上下左右の衝突判定
-UCHAR Entity::touchMapDirect(int c, UCHAR t){
-	//地形なら衝突
-	if ((c == 0) || (c == CHIP_LADDER)) return 0;
-	else {
-		return t;
-	}
-}
-
 //地形への接触
 void Entity::collideMap(UCHAR t){
 	//上下左右に応じて位置と速度を補正
 	if ((t & LEFT) && (vel.x <= 0.0f)) {
 		setLeft(false);
 		vel.x = 0.0f;
-		if (state == KNOCK) state = STAND;
+		if (state == ST_KNOCK) state = ST_STAND;
 	}
 	if ((t & RIGHT) && (vel.x >= 0.0f)) {
 		setRight(false);
 		vel.x = 0.0f;
-		if (state == KNOCK) state = STAND;
+		if (state == ST_KNOCK) state = ST_STAND;
 	}
 	if ((t & TOP) && (vel.y <= 0.0f)) {
 		setTop(false);
 		vel.y = 0.0f;
-		if (state == KNOCK) state = STAND;
+		if (state == ST_KNOCK) state = ST_STAND;
 	}
 	if (t & BOTTOM) {
 		//空中にいたら着地判定
-		if (((vel.y >= 0.0f) && (state == JUMP || state == LADDER)) ||
-			((vel.y > 0.0f) && (state == KNOCK || state == DEAD))){
+		if (((vel.y >= 0.0f) && (state == ST_JUMP || state == ST_LADDER)) ||
+			((vel.y > 0.0f) && (state == ST_KNOCK || state == ST_DEAD))){
 			//生きてたら着地　死んでたら停止
-			if (state == DEAD) vel.x = 0.0f;
-			else state = STAND;
+			if (state == ST_DEAD) vel.x = 0.0f;
+			else state = ST_STAND;
 			setBottom(false);
 			vel.y = 0.0f;
 		}
 	}
-	else if ((state != KNOCK) && (state != DEAD)&&(state != CLEAR)) {
+	else if ((state != ST_KNOCK) && (state != ST_DEAD)&&(state != ST_CLEAR)) {
 		//下に何もないなら落下
-		state = JUMP;
+		state = ST_JUMP;
 	}
 }
 
@@ -245,17 +236,17 @@ bool Entity::touchObjDirect(long x, long y, float v){
 //他オブジェクトへの接触
 void Entity::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
-	case ROCK:
+	case TY_ROCK:
 		//壊れる壁なので壁と同じ
 		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
 		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
 		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
-		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == JUMP || state == LADDER)) ||
-			((diffVelY(e) > 0) && (state == KNOCK)))) setRes(RES_BOTTOM); //空中にいたら着地判定
+		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP || state == ST_LADDER)) ||
+			((diffVelY(e) > 0) && (state == ST_KNOCK)))) setRes(RES_BOTTOM); //空中にいたら着地判定
 		break;
-	case RED_WARP:
-	case GREEN_WARP:
-	case YELLOW_WARP:
+	case TY_RED_WARP:
+	case TY_GREEN_WARP:
+	case TY_YELLOW_WARP:
 		//ワープは発動後一定期間内無効
 		if (warpInterval == 0.0f) setRes(RES_WARP,(e->getPartnerX() + 0.5f) * CHIP_SIZE,(e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 		break;
@@ -269,26 +260,26 @@ void Entity::responseObj(){
 		setLeft(false);
 		vel.x = 0.0f;
 		if (!action) direct = false;
-		if (state == KNOCK) state = STAND;
+		if (state == ST_KNOCK) state = ST_STAND;
 	}
 	if (getRes(RES_RIGHT)) {
 		//右に衝突
 		setRight(false);
 		vel.x = 0.0f;
 		if (!action) direct = true;
-		if (state == KNOCK) state = STAND;
+		if (state == ST_KNOCK) state = ST_STAND;
 	}
 	if (getRes(RES_TOP)) {
 		//上に衝突
 		setTop(false);
 		vel.y = 0.0f;
-		if (state == KNOCK) state = STAND;
+		if (state == ST_KNOCK) state = ST_STAND;
 	}
 	if (getRes(RES_BOTTOM)) {
 		//下に衝突
 		setBottom(false);
 		vel.y = 0.0f;
-		state = STAND;
+		state = ST_STAND;
 	}
 	if (getRes(RES_BOTTOM_CHIP)) {
 		//下に衝突 マスにぴったり
@@ -296,13 +287,13 @@ void Entity::responseObj(){
 		setBottom(false);
 		vel.y = 0.0f;
 		vel.x = 0.0f;
-		state = STAND;
+		state = ST_STAND;
 	}
 	if (getRes(RES_STOP)) {
 		//停止
 		vel.x = 0.0f;
 		vel.y = 0.0f;
-		state = STAND;
+		state = ST_STAND;
 	}
 	if (getRes(RES_CHIP)) {
 		//停止 マスにぴったり
@@ -310,7 +301,7 @@ void Entity::responseObj(){
 		setCY();
 		vel.x = 0.0f;
 		vel.y = 0.0f;
-		state = STAND;
+		state = ST_STAND;
 	}
 	if (getRes(RES_WARP)){
 		//ワープ
@@ -319,22 +310,22 @@ void Entity::responseObj(){
 		pos.y = getResY(RES_WARP);
 	}
 	if (getRes(RES_KNOCK)) {
-		state = KNOCK;
+		state = ST_KNOCK;
 		vel.x = setLimit(getResX(RES_KNOCK),VEL_MAX);
 		vel.y = setLimit(getResY(RES_KNOCK),VEL_MAX);
 	}
 	if (getRes(RES_JUMP)){
-		state = JUMP;
+		state = ST_JUMP;
 		vel.x = setLimit(getResX(RES_JUMP), VEL_MAX);
 		vel.y = setLimit(getResY(RES_JUMP), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
 	}
 	if (getRes(RES_DEAD)){
-		state = DEAD;
+		state = ST_DEAD;
 		vel.x = setLimit(getResX(RES_DEAD), VEL_MAX);
 		vel.y = setLimit(getResY(RES_DEAD), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
 	}
 	if (getRes(RES_CLEAR)){
-		state = CLEAR;
+		state = ST_CLEAR;
 		vel.x = 0.0f;
 		vel.y = 0.0f;
 	}
@@ -385,14 +376,14 @@ void Entity::setEdge(){
 //左右の床の判定
 void Entity::checkBottom(bool d, Entity *e){
 	switch (e->getType()){
-	case WOOD_BOX:
-	case STEEL_BOX:
-	case LEAD_BOX:
-	case BOMB_BOX:
-	case HIBOMB_BOX:
-	case AIR_BOX:
-	case FRAME_BOX:
-	case ROCK:
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_ROCK:
 		if (d){
 			bottomObj[1] = true;
 		}

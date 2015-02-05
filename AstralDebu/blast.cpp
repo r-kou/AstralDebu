@@ -5,11 +5,11 @@ using namespace blastNS;
 
 //コンストラクタ
 Blast::Blast(bool b){
-	type = BLAST;
-	state = STAND;
+	type = TY_BLAST;
+	state = ST_STAND;
 	renderOrder = RO_BLAST;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	size = BLAST_SIZE;
+	col = COL_BLAST;
 	if (b){
 		//5*5の爆風
 		edgeX = EDGE_LARGE;
@@ -42,13 +42,7 @@ bool Blast::initialize(Game *game, Texture *t, int i, int j){
 
 //移動(アニメするだけ)
 void Blast::move(float frameTime){
-	if (animInterval < 0.7f) state = DEAD;
+	if (animInterval < 0.7f) state = ST_DEAD;
 
 	Entity::move(frameTime);
 }
-
-//地形への接触（何もしない）
-void Blast::collideMap(UCHAR t){}
-
-//他オブジェクトへの接触（何もしない）
-void Blast::collideObj(Entity *e, UCHAR t){}

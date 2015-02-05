@@ -9,17 +9,15 @@ namespace boxNS{
 	const float VEL_BOMB_Y = 250;
 	const float VEL_BOMB_A = 350;
 
-	const int IMG_WOOD_BOX = 20;
-	const int IMG_STEEL_BOX = 21;
-	const int IMG_LEAD_BOX = 22;
-	const int IMG_BOMB_BOX = 23;
-	const int IMG_HIBOMB_BOX = 24;
-	const int IMG_AIR_BOX = 45;
-	const int IMG_FRAME_BOX = 46;
-	const int IMG_GOAST_BOX = 47;
+	const int IMG_WOOD_BOX = 32;
+	const int IMG_STEEL_BOX = 33;
+	const int IMG_LEAD_BOX = 34;
+	const int IMG_BOMB_BOX = 35;
+	const int IMG_HIBOMB_BOX = 36;
+	const int IMG_AIR_BOX = 37;
+	const int IMG_FRAME_BOX = 38;
+	const int IMG_GOAST_BOX = 39;
 
-	const int IMG_SIZE = 32;
-	const int IMG_COL = 10;
 	const int EDGE_X = entityNS::EDGE_MAX;
 	const int EDGE_Y = entityNS::EDGE_MAX;
 	const int EDGE_MAR_X = 2;

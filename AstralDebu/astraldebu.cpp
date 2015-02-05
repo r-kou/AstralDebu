@@ -18,7 +18,7 @@ AstralDebu::AstralDebu(){
 	//クリア時間を初期化
 	FOR(STG_SIZE) clearTime[i] = 0;
 	//マップを初期化
-	FOR_D(MAP_COL, MAP_ROW){
+	FOR_2(MAP_COL, MAP_ROW){
 		map[i][j] = 0;
 	}
 	//オブジェクトも初期化
@@ -76,7 +76,7 @@ void AstralDebu::initTexture(Texture &t, std::string file){
 void AstralDebu::initFont(Text &t, int point){
 	if (t.initialize(graphics, point, true, false, FONT) == false)
 		throw(GameError(gameErrorNS::FATAL, "Error initializing font."));
-	t.setFontColor(graphicsNS::WHITE);
+	t.setFontColor(WHITE);
 }
 
 //内部の更新
@@ -221,18 +221,18 @@ int AstralDebu::getCursorChipY(){
 //オブジェクトが持てるか判定
 bool AstralDebu::canHold(Entity *e){
 	switch (e->getType()){
-	case entityNS::WOOD_BOX:
-	case entityNS::STEEL_BOX:
-	case entityNS::LEAD_BOX:
-	case entityNS::BOMB_BOX:
-	case entityNS::HIBOMB_BOX:
-	case entityNS::AIR_BOX:
-	case entityNS::FRAME_BOX:
-	case entityNS::BOMB:
-	case entityNS::HIBOMB:
-	case entityNS::MEAT:
-	case entityNS::HIMEAT:
-	case entityNS::HAMMER:
+	case entityNS::TY_WOOD_BOX:
+	case entityNS::TY_STEEL_BOX:
+	case entityNS::TY_LEAD_BOX:
+	case entityNS::TY_BOMB_BOX:
+	case entityNS::TY_HIBOMB_BOX:
+	case entityNS::TY_AIR_BOX:
+	case entityNS::TY_FRAME_BOX:
+	case entityNS::TY_BOMB:
+	case entityNS::TY_HIBOMB:
+	case entityNS::TY_MEAT:
+	case entityNS::TY_HIMEAT:
+	case entityNS::TY_HAMMER:
 		return canTouch(e);
 		break;
 	default:
@@ -244,8 +244,8 @@ bool AstralDebu::canHold(Entity *e){
 //オブジェクトが肉か判定
 bool AstralDebu::canEat(Entity *e){
 	switch (e->getType()){
-	case entityNS::MEAT:
-	case entityNS::HIMEAT:
+	case entityNS::TY_MEAT:
+	case entityNS::TY_HIMEAT:
 		return true;
 		break;
 	default:
@@ -256,17 +256,17 @@ bool AstralDebu::canEat(Entity *e){
 
 //オブジェクトが接触可能か判定
 bool AstralDebu::canTouch(Entity *e){
-	if ((e->getState() == entityNS::LOCK) ||
-		(e->getState() == entityNS::CLEAR) ||
-		(e->getState() == entityNS::DEAD)) return false;
+	if ((e->getState() == entityNS::ST_LOCK) ||
+		(e->getState() == entityNS::ST_CLEAR) ||
+		(e->getState() == entityNS::ST_DEAD)) return false;
 	return canMove(e);
 }
 
 //オブジェクトを描画するか判定
 bool AstralDebu::canMove(Entity *e){
-	if ((e->getState() == entityNS::EMPTY) ||
-		(e->getState() == entityNS::LOCK) ||
-		(e->getType() == entityNS::NONE)) return false;
+	if ((e->getState() == entityNS::ST_EMPTY) ||
+		(e->getState() == entityNS::ST_LOCK) ||
+		(e->getType() == entityNS::TY_NONE)) return false;
 	return true;
 }
 
@@ -286,7 +286,7 @@ void AstralDebu::subLife(int i){
 //未使用のオブジェクトを取得
 int AstralDebu::getEmptyIndex(){
 	int tmp = objMax;
-	ALL_OBJ if ((object[i]->getType() == entityNS::NONE) && (object[i]->getState() == entityNS::EMPTY)) {
+	ALL_OBJ if ((object[i]->getType() == entityNS::TY_NONE) && (object[i]->getState() == entityNS::ST_EMPTY)) {
 		tmp = i;
 		break;
 	}

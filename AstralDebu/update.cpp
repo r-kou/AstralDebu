@@ -70,14 +70,14 @@ void AstralDebu::updateMain(){
 
 	if (cheat1 || cheat3) cheat = true;
 
-	if (life == 0) debu->setState(entityNS::DEAD);
+	if (life == 0) debu->setState(entityNS::ST_DEAD);
 
-	if ((debu->getState() == entityNS::DEAD) && (debu->getComplete())) {
+	if ((debu->getState() == entityNS::ST_DEAD) && (debu->getComplete())) {
 		state = S_STAGE;
 		read = false;
 	}
 
-	if ((debu->getState() == entityNS::CLEAR) && (debu->getComplete())) clear = true;
+	if ((debu->getState() == entityNS::ST_CLEAR) && (debu->getComplete())) clear = true;
 
 	if (clear) {
 		clear = false;
@@ -120,7 +120,7 @@ void AstralDebu::updateMain(){
 	if (canTouch(debu))
 		ALL_OBJ if (canTouch(object[i]))
 		debu->touchObj(object[i]);
-	ALL_OBJ_D if (canTouch(object[i]) && canTouch(object[j]))
+	ALL_OBJ_EACH if (canTouch(object[i]) && canTouch(object[j]))
 		object[i]->touchObj(object[j]);
 
 	//オブジェクトへの反応実行
@@ -193,8 +193,11 @@ void AstralDebu::saveData(){
 
 //ステージの読み込み
 void AstralDebu::loadStage(){
-	char buf[256];
-	std::ifstream file(MAP_FILE_DIR + "\\" + MAP_NAME(stage) + MAP_FILE_EXT);
+	short buf[MAP_COL];
+	std::ifstream file(MAP_FILE_DIR + "\\" + MAP_NAME(stage) + MAP_FILE_EXT, std::ios::in | std::ios::binary);
+
+	if (file.fail())
+		throw(GameError(gameErrorNS::FATAL, "Error reading map file"));
 
 	//古いオブジェクトをすべて消去
 	ALL_OBJ	SAFE_DELETE(object[i]);
@@ -204,130 +207,128 @@ void AstralDebu::loadStage(){
 	warpGreen = -1;
 	warpYellow = -1;
 
-
-	if (file.fail())
-		throw(GameError(gameErrorNS::FATAL, "Error reading map file"));
-
 	for (int j = 0; j < MAP_ROW; j++){
-		file >> buf;
+		file.read((char *)&buf, sizeof(short) * MAP_COL);
 		for (int i = 0; i < MAP_COL; i++){
-			loadChip(i, j, buf[i]);
+			loadChip(i, j, decodeChip(buf[i],i,j));
 		}
 	}
+	file.close();
 	read = true;
 }
 
-void AstralDebu::loadChip(int i, int j, char c){
+//チップ割り当て
+void AstralDebu::loadChip(int i,int j,short c){
 	switch (c){
-	case '0': //空白
+	case 0:
 		map[i][j] = 0;
 		break;
-	case '1': //壁
+	case 1:
 		map[i][j] = 1;
 		break;
-	case '2': //床
+	case 2:
 		map[i][j] = 2;
 		break;
-	case '3': //底
+	case 3:
 		map[i][j] = 3;
 		break;
-	case '4': //床＋底
+	case 4:
 		map[i][j] = 4;
 		break;
-	case '5': //次壁
-		map[i][j] = 5;
+	case 5:
+		map[i][j] = 9;
 		break;
-	case '6': //次床
-		map[i][j] = 6;
+	case 6:
+		map[i][j] = 10;
 		break;
-	case '7': //次底
-		map[i][j] = 7;
+	case 7:
+		map[i][j] = 11;
 		break;
-	case '8': //次床＋底
-		map[i][j] = 8;
+	case 8:
+		map[i][j] = 12;
 		break;
-	case '9': //岩
+	case 9: //岩
 		addObject(new Rock(stage), chipT, i, j);
 		break;
-	case 'A': //木箱
+	case 10: //木箱
 		addObject(new WoodBox(), chipT, i, j);
 		break;
-	case 'B': //鉄箱
+	case 11: //鉄箱
 		addObject(new SteelBox(), chipT, i, j);
 		break;
-	case 'C': //鉛箱
+	case 12: //鉛箱
 		addObject(new LeadBox(), chipT, i, j);
 		break;
-	case 'D': //爆弾箱
+	case 13: //爆弾箱
 		addObject(new BombBox(), chipT, i, j);
 		break;
-	case 'E': //超爆弾箱
+	case 14: //超爆弾箱
 		addObject(new HibombBox(), chipT, i, j);
 		break;
-	case 'F': //爆弾
+	case 15: //空気箱
+		addObject(new AirBox(), chipT, i, j);
+		break;
+	case 16: //フレーム箱
+		addObject(new FrameBox(), chipT, i, j);
+		break;
+	case 17: //霊はこ
+		addObject(new GoastBox(), chipT, i, j);
+		break;
+	case 18: //はしご
+		addObject(new Ladder(),chipT,i,j);
+		break;
+	case 19: //爆弾
 		addObject(new Bomb(), chipT, i, j);
 		break;
-	case 'G': //超爆弾
+	case 20: //超爆弾
 		addObject(new Hibomb(), chipT, i, j);
 		break;
-	case 'H': //にく
-		addObject(new Meat(), chipT, i, j);
+	case 21: //機雷
+		addObject(new Mine(), chipT, i, j);
 		break;
-	case 'I': //超にく
-		addObject(new Himeat(), chipT, i, j);
-		break;
-	case 'J': //はしご
-		map[i][j] = CHIP_LADDER;
-		break;
-	case 'K': //敵(歩くだけ)
-		addEnemy(new Enemy1(), enemyT, debu, i, j);
-		break;
-	case 'L': //敵(こっちに向かってくる)
-		addEnemy(new Enemy2(), enemyT, debu, i, j);
-		break;
-	case 'M': //敵(動かずに弾を撃つ)
-		addEnemy(new Enemy3(), enemyT, debu, i, j);
-		break;
-	case 'N': //敵(箱を見ると押す)
-		//addEnemy(new Enemy4(), enemyT, debu, i, j);
-		break;
-	case 'o': //敵(動かずにミサイル)
-		addEnemy(new Enemy5(), enemyT, debu, i, j);
-		break;
-	case 'P': //鉄球
+	case 22: //鉄球
 		addObject(new Hammer(), chipT, i, j);
 		break;
-	case 'Q': //赤ワープ
-		addObject(new Warp(entityNS::RED_WARP), chipT, i, j);
+	case 23: //にく
+		addObject(new Meat(), chipT, i, j);
+		break;
+	case 24: //超にく
+		addObject(new Himeat(), chipT, i, j);
+		break;
+	case 25: //敵(歩くだけ)
+		addEnemy(new Enemy1(), enemyT, debu, i, j);
+		break;
+	case 26: //敵(こっちに向かってくる)
+		addEnemy(new Enemy2(), enemyT, debu, i, j);
+		break;
+	case 27: //敵(動かずに弾を撃つ)
+		addEnemy(new Enemy3(), enemyT, debu, i, j);
+		break;
+	case 28: //敵(箱を見ると押す)
+		//addEnemy(new Enemy4(), enemyT, debu, i, j);
+		break;
+	case 29: //敵(動かずにミサイル)
+		addEnemy(new Enemy5(), enemyT, debu, i, j);
+		break;
+	case 30: //赤ワープ
+		addObject(new Warp(entityNS::TY_RED_WARP), chipT, i, j);
 		if (warpRed == -1) warpRed = objMax - 1;
 		else addWarp(warpRed, objMax - 1);
 		break;
-	case 'R': //緑ワープ
-		addObject(new Warp(entityNS::GREEN_WARP), chipT, i, j);
+	case 31: //緑ワープ
+		addObject(new Warp(entityNS::TY_GREEN_WARP), chipT, i, j);
 		if (warpGreen == -1) warpGreen = objMax - 1;
 		else addWarp(warpGreen, objMax - 1);
 		break;
-	case 'S': //黄ワープ
-		addObject(new Warp(entityNS::YELLOW_WARP), chipT, i, j);
+	case 32: //黄ワープ
+		addObject(new Warp(entityNS::TY_YELLOW_WARP), chipT, i, j);
 		if (warpYellow == -1) warpYellow = objMax - 1;
 		else addWarp(warpYellow, objMax - 1);
 		break;
-	case 'T': //空気箱
-		addObject(new AirBox(), chipT, i, j);
-		break;
-	case 'U': //フレーム箱
-		addObject(new FrameBox(), chipT, i, j);
-		break;
-	case 'V': //機雷
-		addObject(new Mine(),chipT,i,j);
-		break;
-	case 'W': //霊はこ
-		addObject(new GoastBox(),chipT,i,j);
-		break;
-	case 'X': //ゴール
+	case 33: //ゴール
 		addObject(new Goal(), chipT, i, j);
 		break;
-	case 'Z': //デブ
+	case 34: //デブ
 		map[i][j] = 0;
 		if (!debu->initialize(this, &debuT, input, i, j))
 			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));

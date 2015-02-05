@@ -38,10 +38,12 @@
 #define DT_CB DT_SINGLELINE | DT_CENTER | DT_BOTTOM
 #define MAP_NAME(x) "map" + std::to_string(x)
 #define FOR(x) for(int i = 0; i < x; i++)
-#define FOR_D(x,y) for(int i = 0; i < x; i++) for(int j = i + 1; j < y; j++)
+#define FOR_2(x,y) for(int i=0;i<x;i++) for(int j=0;j<y;j++)
+#define FOR_EACH(x) for(int i = 0; i < x; i++) for(int j = i + 1; j < x; j++)
 #define ALL_OBJ FOR(objMax)
-#define ALL_OBJ_D FOR_D(objMax,objMax)
+#define ALL_OBJ_EACH FOR_EACH(objMax)
 #define INC(x,t) x = static_cast<t>(x + 1)
+#define TOBOOL(i) (i)?true:false
 
 //îƒópíËêî
 const int WINDOW_W = 800;
@@ -68,7 +70,7 @@ const std::string IMG_FILE_BLAST = "blast.png";
 const std::string IMG_FILE_ENEMY = "enemy.png";
 const std::string IMG_FILE_TITLE = "title.png";
 const std::string MAP_FILE_DIR = "map";
-const std::string MAP_FILE_EXT = ".chip";
+const std::string MAP_FILE_EXT = ".chp";
 const std::string SAV_FILE = "save.dat";
 
 //îƒópä÷êî

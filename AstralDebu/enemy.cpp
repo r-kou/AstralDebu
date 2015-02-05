@@ -5,10 +5,10 @@ using namespace enemyNS;
 
 //コンストラクタ
 Enemy::Enemy(){
-	state = STAND;
+	state = ST_STAND;
 	renderOrder = RO_ENEMY;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	size = CHIP_SIZE;
+	col = COL_ENEMY;
 	img = 1;
 	edgeX = EDGE_X;
 	edgeY = EDGE_Y;
@@ -27,7 +27,7 @@ bool Enemy::initialize(Game *game, Texture *t, Debu *d, int i, int j){
 //移動
 void Enemy::move(float frameTime){
 	//空中にいるか死亡時なら落下
-	if (state == JUMP || state == DEAD) vel.y += GRAVITY_RATE * frameTime;
+	if (state == ST_JUMP || state == ST_DEAD) vel.y += GRAVITY_RATE * frameTime;
 	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
 
 	//歩行では床から落ちない
@@ -59,25 +59,25 @@ void Enemy::collideObj(Entity *e, UCHAR t){
 
 	//敵固有の衝突判定
 	switch (e->getType()){
-	case WOOD_BOX:
-	case STEEL_BOX:
-	case LEAD_BOX:
-	case BOMB_BOX:
-	case HIBOMB_BOX:
-	case AIR_BOX:
-	case FRAME_BOX:
-	case BOMB:
-	case HIBOMB:
-	case HAMMER:
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_BOMB:
+	case TY_HIBOMB:
+	case TY_HAMMER:
 		//箱にはぶつかる
 		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
 		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
 		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
 		if ((diffBottom(e, true) <= marginY) &&
-			((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == JUMP)) ||
-			((diffVelY(e) > 0) && (state == KNOCK))))) setRes(RES_BOTTOM); //空中にいたら着地判定
+			((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP)) ||
+			((diffVelY(e) > 0) && (state == ST_KNOCK))))) setRes(RES_BOTTOM); //空中にいたら着地判定
 		//向こうからぶつかってきたら死亡
-		if ((e->getState() == HOLD_HAMMER) ||
+		if ((e->getState() == ST_HAMMER) ||
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
@@ -85,7 +85,7 @@ void Enemy::collideObj(Entity *e, UCHAR t){
 			setRes(RES_DEAD, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, 0);
 		}
 		break;
-	case BLAST:
+	case TY_BLAST:
 		//吹っ飛ばされて死亡
 		animInterval = 1.0f;
 		setRes(RES_DEAD, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
@@ -97,16 +97,16 @@ void Enemy::collideObj(Entity *e, UCHAR t){
 void Enemy::changeImage(){
 	//現在の状態を確認
 	switch (state){
-	case STAND:
+	case ST_STAND:
 		image.setFlipH(direct);
 		//動いているか停止しているかで判断
 		if (vel.x == 0.0f) setImage(IMG_STAND);
 		else setImage(IMG_WALK_START, IMG_WALK_END, true);
 		break;
-	case JUMP:
+	case ST_JUMP:
 		setImage(IMG_STAND);
 		break;
-	case DEAD:
+	case ST_DEAD:
 		if (vel.x*(direct ? -1 : 1) > 0.0) setImage(IMG_DEAD_FRONT);
 		else setImage(IMG_DEAD_BACK);
 		break;
@@ -115,28 +115,28 @@ void Enemy::changeImage(){
 
 //コンストラクタ
 Enemy1::Enemy1(){
-	type = EN_1;
+	type = TY_ENEMY_1;
 }
 
 //移動
 void Enemy1::move(float frameTime){
-	if (state == STAND){
+	if (state == ST_STAND){
 		if (direct) vel.x = -VEL_WALK;
 		else vel.x = VEL_WALK;
 	}
-	else if (state != DEAD) vel.x = 0;
+	else if (state != ST_DEAD) vel.x = 0;
 
 	Enemy::move(frameTime);
 }
 
 //コンストラクタ
 Enemy2::Enemy2(){
-	type = EN_2;
+	type = TY_ENEMY_2;
 }
 
 //移動
 void Enemy2::move(float frameTime){
-	if (state == STAND){
+	if (state == ST_STAND){
 		//同じ高さなら突進
 		if (ChipCY() == debu->ChipCY()){
 			action = true;
@@ -155,23 +155,23 @@ void Enemy2::move(float frameTime){
 			else vel.x = VEL_WALK;
 		}
 	}
-	else if (state != DEAD) vel.x = 0;
+	else if (state != ST_DEAD) vel.x = 0;
 
 	Enemy::move(frameTime);
 }
 
 //コンストラクタ
 Enemy3::Enemy3(){
-	type = EN_3;
+	type = TY_ENEMY_3;
 }
 
 //移動
 void Enemy3::move(float frameTime){
 	//動かない
-	if (state != DEAD) vel.x = 0;
+	if (state != ST_DEAD) vel.x = 0;
 
 	//同じ高さなら発砲 向きも合わせる
-	if ((state == STAND) && (!action) && (ChipCY() == debu->ChipCY()) && (animInterval == 0)){
+	if ((state == ST_STAND) && (!action) && (ChipCY() == debu->ChipCY()) && (animInterval == 0)){
 		if (getPosX() > debu->getPosX()) direct = true;
 		else direct = false;
 		animInterval = 1.0f;
@@ -186,7 +186,7 @@ void Enemy3::changeImage(){
 	Enemy::changeImage();
 
 	//現在の状態を確認
-	if (state == STAND) {
+	if (state == ST_STAND) {
 		if (animInterval > 0.8f) setImage(IMG_ACTION);
 	}
 }
@@ -194,16 +194,16 @@ void Enemy3::changeImage(){
 
 //コンストラクタ
 Enemy5::Enemy5(){
-	type = EN_5;
+	type = TY_ENEMY_5;
 }
 
 //移動
 void Enemy5::move(float frameTime){
 	//動かない
-	if (state != DEAD) vel.x = 0;
+	if (state != ST_DEAD) vel.x = 0;
 
 	//同じ高さなら発砲 向きも合わせる
-	if ((state == STAND) && (!action) && (ChipCY() == debu->ChipCY()) && (animInterval == 0)){
+	if ((state == ST_STAND) && (!action) && (ChipCY() == debu->ChipCY()) && (animInterval == 0)){
 		if (getPosX() > debu->getPosX()) direct = true;
 		else direct = false;
 		animInterval = 1.0f;
@@ -218,16 +218,16 @@ void Enemy5::changeImage(){
 	Enemy::changeImage();
 
 	//現在の状態を確認
-	if (state == STAND) {
+	if (state == ST_STAND) {
 		if (animInterval > 0.8f) setImage(IMG_ACTION);
 	}
 }
 
 //コンストラクタ
 BulletE::BulletE(){
-	state = KNOCK;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	state = ST_KNOCK;
+	size = CHIP_SIZE;
+	col = COL_ENEMY;
 }
 
 //地形への接触
@@ -235,7 +235,7 @@ void BulletE::collideMap(UCHAR t){
 	//消滅する
 	if (((t & LEFT) && (vel.x < 0.0f)) ||
 		((t & RIGHT) && (vel.x > 0.0f))) {
-		state = DEAD;
+		state = ST_DEAD;
 	}
 }
 
@@ -246,19 +246,19 @@ void BulletE::collideObj(Entity *e, UCHAR t){
 
 	//とりあえず消滅する
 	switch (e->getType()){
-	case DEBU:
-	case WOOD_BOX:
-	case STEEL_BOX:
-	case LEAD_BOX:
-	case BOMB_BOX:
-	case HIBOMB_BOX:
-	case AIR_BOX:
-	case FRAME_BOX:
-	case ROCK:
-	case BOMB:
-	case HIBOMB:
-	case HAMMER:
-	case BLAST:
+	case TY_DEBU:
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_ROCK:
+	case TY_BOMB:
+	case TY_HIBOMB:
+	case TY_HAMMER:
+	case TY_BLAST:
 		setRes(RES_DEAD);
 		break;
 	}
@@ -272,7 +272,7 @@ void BulletE::changeImage(){
 
 //コンストラクタ
 Bullet::Bullet(){
-	type = BULLET;
+	type = TY_BULLET;
 	renderOrder = RO_ENEMY;
 	img = IMG_BULLET;
 	edgeX = BULLET_X;
@@ -283,7 +283,7 @@ Bullet::Bullet(){
 
 //移動
 void Bullet::move(float frameTime){
-	if (state == KNOCK){
+	if (state == ST_KNOCK){
 		if (direct) vel.x = -VEL_BULLET;
 		else vel.x = VEL_BULLET;
 	}
@@ -294,7 +294,7 @@ void Bullet::move(float frameTime){
 
 //コンストラクタ
 Missile::Missile(){
-	type = MISSILE;
+	type = TY_MISSILE;
 	renderOrder = RO_ENEMY;
 	img = IMG_MISSILE;
 	edgeX = MISSILE_X;
@@ -305,7 +305,7 @@ Missile::Missile(){
 
 //移動
 void Missile::move(float frameTime){
-	if (state == KNOCK){
+	if (state == ST_KNOCK){
 		if (direct) vel.x = -VEL_MISSILE;
 		else vel.x = VEL_MISSILE;
 	}

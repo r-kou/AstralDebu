@@ -5,10 +5,10 @@ using namespace boxNS;
 
 //コンストラクタ
 Box::Box(){
-	state = STAND;
+	state = ST_STAND;
 	renderOrder = RO_BOX;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	size = CHIP_SIZE;
+	col = COL_CHIP;
 	edgeX = EDGE_X;
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
@@ -18,7 +18,7 @@ Box::Box(){
 //移動
 void Box::move(float frameTime){
 	//空中にいるなら落下
-	if (state == JUMP) vel.y += GRAVITY_RATE * frameTime;
+	if (state == ST_JUMP) vel.y += GRAVITY_RATE * frameTime;
 	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
 
 	Entity::move(frameTime);
@@ -27,7 +27,7 @@ void Box::move(float frameTime){
 //地形への接触
 void Box::collideMap(UCHAR t){
 	Entity::collideMap(t);
-	if ((t & BOTTOM) && (state == STAND)) {
+	if ((t & BOTTOM) && (state == ST_STAND)) {
 		//地面でぴったり止まる
 		setCX();
 		vel.x = 0.0f;
@@ -41,28 +41,28 @@ void Box::collideObj(Entity *e, UCHAR t){
 
 	//箱類固有の衝突判定
 	switch (e->getType()){
-	case WOOD_BOX:
-	case STEEL_BOX:
-	case LEAD_BOX:
-	case BOMB_BOX:
-	case HIBOMB_BOX:
-	case AIR_BOX:
-	case FRAME_BOX:
-	case GOAST_BOX:
-	case HAMMER:
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_GOAST_BOX:
+	case TY_HAMMER:
 		//箱同士はぶつかる
 		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
 		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
 		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
-		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == JUMP)) ||
-			((diffVelY(e) > 0) && (state == KNOCK)))) setRes(RES_BOTTOM_CHIP); //空中にいたら着地判定
+		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP)) ||
+			((diffVelY(e) > 0) && (state == ST_KNOCK)))) setRes(RES_BOTTOM_CHIP); //空中にいたら着地判定
 		break;
 	}
 }
 
 //コンストラクタ
 WoodBox::WoodBox(){
-	type = WOOD_BOX;
+	type = TY_WOOD_BOX;
 	img = IMG_WOOD_BOX;
 }
 
@@ -70,24 +70,24 @@ WoodBox::WoodBox(){
 void WoodBox::collideObj(Entity *e, UCHAR t){
 	//木箱固有の衝突判定
 	switch (e->getType()){
-	case BLAST:
+	case TY_BLAST:
 		//爆発で壊れる
 		setRes(RES_DEAD);
 		break;
-	case HAMMER:
+	case TY_HAMMER:
 		//鉄球からぶつかってきたら壊れる
-		if ((e->getState() == HOLD_HAMMER) ||
+		if ((e->getState() == ST_HAMMER) ||
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
 			setRes(RES_DEAD);
 		}
 		break;
-	case EN_1:
-	case EN_2:
-	case EN_3:
-	case EN_4:
-	case EN_5:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
 		//敵にぶつかると壊れる
 		if (((t & LEFT) && (vel.x < 0.0f)) ||
 			((t & RIGHT) && (vel.x > 0.0f)) ||
@@ -105,7 +105,7 @@ void WoodBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 SteelBox::SteelBox(){
-	type = STEEL_BOX;
+	type = TY_STEEL_BOX;
 	img = IMG_STEEL_BOX;
 }
 
@@ -113,24 +113,24 @@ SteelBox::SteelBox(){
 void SteelBox::collideObj(Entity *e, UCHAR t){
 	//箱固有の衝突判定
 	switch (e->getType()){
-	case BLAST:
+	case TY_BLAST:
 		//爆発で飛んでいく
 		setRes(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
 		break;
-	case HAMMER:
+	case TY_HAMMER:
 		//鉄球からぶつかってきたら壊れる
-		if ((e->getState() == HOLD_HAMMER) ||
+		if ((e->getState() == ST_HAMMER) ||
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
 			setRes(RES_DEAD);
 		}
 		break;
-	case EN_1:
-	case EN_2:
-	case EN_3:
-	case EN_4:
-	case EN_5:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
 		//敵にぶつかったら止まる
 		if (((t & LEFT) && (vel.x < 0.0f)) ||
 			((t & RIGHT) && (vel.x > 0.0f)) ||
@@ -147,7 +147,7 @@ void SteelBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 LeadBox::LeadBox(){
-	type = LEAD_BOX;
+	type = TY_LEAD_BOX;
 	img = IMG_LEAD_BOX;
 }
 
@@ -162,7 +162,7 @@ void LeadBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 BombBox::BombBox(){
-	type = BOMB_BOX;
+	type = TY_BOMB_BOX;
 	img = IMG_BOMB_BOX;
 }
 
@@ -170,23 +170,23 @@ BombBox::BombBox(){
 void BombBox::collideObj(Entity *e, UCHAR t){
 	//爆弾箱固有の衝突判定
 	switch (e->getType()){
-	case BLAST:
+	case TY_BLAST:
 		//爆発で壊れる　てか誘爆
 		setRes(RES_DEAD);
-	case HAMMER:
+	case TY_HAMMER:
 		//鉄球からぶつかってきたら壊れる
-		if ((e->getState() == HOLD_HAMMER) ||
+		if ((e->getState() == ST_HAMMER) ||
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
 			setRes(RES_DEAD);
 		}
 		break;
-	case EN_1:
-	case EN_2:
-	case EN_3:
-	case EN_4:
-	case EN_5:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
 		//敵にぶつかったら壊れる
 		if (((t & LEFT) && (vel.x < 0.0f)) ||
 			((t & RIGHT) && (vel.x > 0.0f)) ||
@@ -203,7 +203,7 @@ void BombBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 HibombBox::HibombBox(){
-	type = HIBOMB_BOX;
+	type = TY_HIBOMB_BOX;
 	img = IMG_HIBOMB_BOX;
 }
 
@@ -211,7 +211,7 @@ HibombBox::HibombBox(){
 void HibombBox::collideObj(Entity *e, UCHAR t){
 	//超爆弾箱固有の衝突判定
 	switch (e->getType()){
-	case BLAST:
+	case TY_BLAST:
 		//爆発で壊れる 鉄球では壊れない
 		setRes(RES_DEAD);
 		break;
@@ -223,7 +223,7 @@ void HibombBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 AirBox::AirBox(){
-	type = AIR_BOX;
+	type = TY_AIR_BOX;
 	img = IMG_AIR_BOX;
 }
 
@@ -238,24 +238,24 @@ void AirBox::move(float frameTime){
 void AirBox::collideObj(Entity *e, UCHAR t){
 	//箱固有の衝突判定
 	switch (e->getType()){
-	case BLAST:
+	case TY_BLAST:
 		//爆発で飛んでいく
 		setRes(RES_KNOCK, blastX(e,VEL_BOMB_X), blastY(e,VEL_BOMB_A));
 		break;
-	case HAMMER:
+	case TY_HAMMER:
 		//鉄球からぶつかってきたら壊れる
-		if ((e->getState() == HOLD_HAMMER) ||
+		if ((e->getState() == ST_HAMMER) ||
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
 			setRes(RES_DEAD);
 		}
 		break;
-	case EN_1:
-	case EN_2:
-	case EN_3:
-	case EN_4:
-	case EN_5:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
 		//敵にぶつかったら止まる
 		if (((t & LEFT) && (vel.x < 0.0f)) ||
 			((t & RIGHT) && (vel.x > 0.0f)) ||
@@ -280,7 +280,7 @@ void AirBox::draw(){
 
 //コンストラクタ
 FrameBox::FrameBox(){
-	type = FRAME_BOX;
+	type = TY_FRAME_BOX;
 	img = IMG_FRAME_BOX;
 }
 
@@ -292,17 +292,17 @@ void FrameBox::collideMap(UCHAR t){
 		((t & TOP) && (vel.y < 0.0f))){
 		vel.x = 0.0f;
 		vel.y = 0.0f;
-		state = DEAD;
+		state = ST_DEAD;
 	}
 	if (t & BOTTOM) {
 		//空中にいたら着地判定　壊れる
-		if ((vel.y > 0.0f) && ((state == KNOCK) || (state == JUMP))){
-			state = DEAD;
+		if ((vel.y > 0.0f) && ((state == ST_KNOCK) || (state == ST_JUMP))){
+			state = ST_DEAD;
 		}
 	}
-	else if ((state != KNOCK) && (state != DEAD)) {
+	else if ((state != ST_KNOCK) && (state != ST_DEAD)) {
 		//下に何もないなら落下
-		state = JUMP;
+		state = ST_JUMP;
 	}
 }
 
@@ -310,44 +310,44 @@ void FrameBox::collideMap(UCHAR t){
 void FrameBox::collideObj(Entity *e, UCHAR t){
 	//フレームはとりあえず壊れる
 	switch (e->getType()){
-	case WOOD_BOX:
-	case STEEL_BOX:
-	case LEAD_BOX:
-	case BOMB_BOX:
-	case HIBOMB_BOX:
-	case AIR_BOX:
-	case FRAME_BOX:
-	case ROCK:
-		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == JUMP)) setRes(RES_BOTTOM_CHIP);
-	case BOMB:
-	case HIBOMB:
-	case HAMMER:
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_ROCK:
+		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == ST_JUMP)) setRes(RES_BOTTOM_CHIP);
+	case TY_BOMB:
+	case TY_HIBOMB:
+	case TY_HAMMER:
 		//移動してたら壊れる
 		if (((t & LEFT) && (diffVelX(e) < 0)) ||
 			((t & RIGHT) && (diffVelX(e) > 0)) ||
 			((t & TOP) && (diffVelY(e) < 0)) ||
-			((t & BOTTOM) && (diffVelY(e) > 0) && (state == JUMP || state == KNOCK))) setRes(RES_DEAD);
+			((t & BOTTOM) && (diffVelY(e) > 0) && (state == ST_JUMP || state == ST_KNOCK))) setRes(RES_DEAD);
 		break;
-	case EN_1:
-	case EN_2:
-	case EN_3:
-	case EN_4:
-	case EN_5:
-	case BULLET:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
+	case TY_BULLET:
 		//左右にはこっちが動いていたら、上下は問答無用で壊れる
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
 			(t & TOP) || (t & BOTTOM)) setRes(RES_DEAD);
 		break;
-	case BLAST:
+	case TY_BLAST:
 		//爆風は速度とか関係ない
 		setRes(RES_DEAD);
 		break;
-	case DEBU:
+	case TY_DEBU:
 		//デブが乗っても壊れる
 		if (t & TOP) {
 			if ((diffTop(e, true) >= -marginY) &&
-				((diffVelY(e) < 0) && (e->getState() == JUMP || e->getState() == LADDER || e->getState() == KNOCK))){
+				((diffVelY(e) < 0) && (e->getState() == ST_JUMP || e->getState() == ST_LADDER || e->getState() == ST_KNOCK))){
 				setRes(RES_DEAD);
 			}
 		}
@@ -360,7 +360,7 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 GoastBox::GoastBox(){
-	type = GOAST_BOX;
+	type = TY_GOAST_BOX;
 	img = IMG_GOAST_BOX;
 }
 
@@ -374,7 +374,7 @@ void GoastBox::move(float frameTime){
 void GoastBox::collideObj(Entity *e, UCHAR t){
 	//霊箱固有の衝突判定
 	switch (e->getType()){
-	case BLAST:
+	case TY_BLAST:
 		//爆発でのみ壊れる
 		setRes(RES_DEAD);
 		break;

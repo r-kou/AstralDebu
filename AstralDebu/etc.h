@@ -9,16 +9,18 @@ namespace etcNS{
 	const float VEL_HAM = 300;
 
 	const int IMG_ROCK_AREA1 = 4;
-	const int IMG_ROCK_AREA2 = 9;
-	const int IMG_ROCK_AREA3 = 14;
-	const int IMG_MEAT = 31;
-	const int IMG_HIMEAT = 32;
-	const int IMG_HAMMER = 27;
+	const int IMG_ROCK_AREA2 = 12;
+	const int IMG_ROCK_AREA3 = 20;
+	const int IMG_ROCK_AREA4 = 28;
+	const int IMG_MEAT = 44;
+	const int IMG_HIMEAT = 45;
+	const int IMG_HAMMER = 42;
+	const int IMG_LADDER = 46;
 
-	const int IMG_SIZE = 32;
-	const int IMG_COL = 10;
 	const int EDGE_ROCK_X = entityNS::EDGE_MAX;
 	const int EDGE_ROCK_Y = entityNS::EDGE_MAX;
+	const int EDGE_LADDER_X = 12;
+	const int EDGE_LADDER_Y = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_X = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_Y = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_HOLDED_X = entityNS::EDGE_MAX * 2;
@@ -30,12 +32,32 @@ namespace etcNS{
 }
 
 class Rock : public Entity{
+private:
+	bool chipTop, chipBottom;
 public:
 	//コンストラクタ ステージによって色が変わる
 	Rock(int stage);
 
+	//地形への接触判定
+	virtual void touchMap(int map[MAP_COL][MAP_ROW]);
+
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
+
+	//描画する画像を変更
+	virtual void changeImage();
+};
+
+class Ladder :public Entity {
+public:
+	//コンストラクタ
+	Ladder();
+
+	//地形への接触（何もしない）
+	virtual void collideMap(UCHAR t){}
+
+	//他オブジェクトへの接触（何もしない）
+	virtual void collideObj(Entity *e, UCHAR t){}
 };
 
 class Meat : public Entity{

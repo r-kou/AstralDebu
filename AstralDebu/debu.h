@@ -7,7 +7,7 @@
 namespace debuNS{
 	const float VEL_RATE = 800;
 	const float VEL_MAX_WALK = 140;
-	const float VEL_JUMP = -300;
+	const float VEL_JUMP = -280;
 	const float VEL_DUMP = 2000;
 	const float VEL_RATE_JUMP = 600;
 	const float VEL_LADDER = 100;
@@ -15,8 +15,6 @@ namespace debuNS{
 	const float VEL_BOMB_Y = 250;
 	const float VEL_KNOCK_X = 250;
 
-	const int IMG_SIZE = 32;
-	const int IMG_COL = 7;
 	const int IMG_STAND = 0;
 	const int IMG_HOLD = 1;
 	const int IMG_WALK_START = 2;
@@ -53,9 +51,6 @@ private:
 	bool hold;
 	//ハンマー専用の向き
 	bool directHammer;
-
-	//はしごに捕まる
-	void getLadder();
 public:
 	//コンストラクタ
 	Debu();
@@ -66,14 +61,11 @@ public:
 	//移動
 	virtual void move(float frameTime);
 
-	//上下左右の衝突判定
-	virtual UCHAR touchMapDirect(int c, UCHAR t);
-
-	//地形への接触
-	virtual void collideMap(UCHAR t);
-
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
+
+	//他オブジェクトへの反応
+	virtual void responseObj();
 
 	//描画する画像を変更
 	virtual void changeImage();

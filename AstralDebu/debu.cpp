@@ -5,11 +5,11 @@ using namespace debuNS;
 
 //コンストラクタ
 Debu::Debu(){
-	state = STAND;
-	type = DEBU;
+	state = ST_STAND;
+	type = TY_DEBU;
 	renderOrder = RO_DEBU;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	size = CHIP_SIZE;
+	col = COL_DEBU;
 	edgeX = EDGE_X;
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
@@ -30,23 +30,23 @@ void Debu::move(float frameTime){
 		if (!input->isKeyDown(VK_RIGHT)){
 			//左キーのみの状態
 			switch (state){
-			case STAND:
+			case ST_STAND:
 				//切り返しは早い
 				if (vel.x <= 0) vel.x -= VEL_RATE * frameTime;
 				else vel.x -= VEL_DUMP * frameTime;
 				setDirect(true);
 				break;
-			case JUMP:
+			case ST_JUMP:
 				//空中制御はやや緩やか
 				if (vel.x > -VEL_MAX_WALK)
 					vel.x -= VEL_RATE_JUMP * frameTime;
 				break;
-			case LADDER:
+			case ST_LADDER:
 				//はしごでの速度は固定
 				vel.x = -VEL_LADDER;
 				setDirect(true);
 				break;
-			case HOLD_HAMMER:
+			case ST_HAMMER:
 				//移動不可
 				setDirect(true);
 				break;
@@ -57,20 +57,20 @@ void Debu::move(float frameTime){
 		if (input->isKeyDown(VK_RIGHT)){
 			//右キーのみの状態
 			switch (state){
-			case STAND:
+			case ST_STAND:
 				if (vel.x >= 0) vel.x += VEL_RATE * frameTime;
 				else vel.x += VEL_DUMP * frameTime;
 				setDirect(false);
 				break;
-			case JUMP:
+			case ST_JUMP:
 				if (vel.x < VEL_MAX_WALK)
 					vel.x += VEL_RATE_JUMP * frameTime;
 				break;
-			case LADDER:
+			case ST_LADDER:
 				vel.x = VEL_LADDER;
 				setDirect(false);
 				break;
-			case HOLD_HAMMER:
+			case ST_HAMMER:
 				//移動不可
 				setDirect(false);
 				break;
@@ -79,12 +79,12 @@ void Debu::move(float frameTime){
 		else {
 			//キー入力無し
 			switch (state){
-			case STAND:
+			case ST_STAND:
 				//ブレーキをかける
 				vel.x *= 0.9f;
 				if (fabs(vel.x) < 10) vel.x = 0.0f;
 				break;
-			case LADDER:
+			case ST_LADDER:
 				//梯子はすぐに止まる
 				vel.x = 0.0f;
 				break;
@@ -93,7 +93,7 @@ void Debu::move(float frameTime){
 	}
 
 	//梯子は上下移動可能
-	if (state == LADDER){
+	if (state == ST_LADDER){
 		if (input->isKeyDown(VK_UP)){
 			if (!input->isKeyDown(VK_DOWN)) vel.y = -VEL_LADDER;
 		}
@@ -105,43 +105,22 @@ void Debu::move(float frameTime){
 	}
 
 	//空中にいるか死亡時なら落下
-	if (state == JUMP || state == DEAD) vel.y += GRAVITY_RATE * frameTime;
+	if (state == ST_JUMP || state == ST_DEAD) vel.y += GRAVITY_RATE * frameTime;
 
 	//地上では速度制限
-	if (state == STAND){
+	if (state == ST_STAND){
 		if (vel.x > VEL_MAX_WALK) vel.x = VEL_MAX_WALK;
 		else if (vel.x < -VEL_MAX_WALK) vel.x = -VEL_MAX_WALK;
 	}
 	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
 
 	//クリア時は動かない
-	if (state == CLEAR) {
+	if (state == ST_CLEAR) {
 		vel.x = 0;
 		vel.y = 0;
 	}
 
 	Entity::move(frameTime);
-}
-
-//上下左右の衝突判定
-UCHAR Debu::touchMapDirect(int c, UCHAR t){
-	//梯子に捕まる判定あり
-	if (c == 0) return 0;
-	else if (c == CHIP_LADDER) {
-		if (t & (TOP | BOTTOM)) return GETLADDER;
-		else return 0;
-	}
-	else return t;
-}
-
-//地形への接触
-void Debu::collideMap(UCHAR t){
-	Entity::collideMap(t);
-
-	if (t & GETLADDER){
-		//はしごに捕まる
-		getLadder();
-	}
 }
 
 //他オブジェクトへの接触
@@ -151,32 +130,35 @@ void Debu::collideObj(Entity *e, UCHAR t){
 
 	//デブ固有の衝突判定
 	switch (e->getType()){
-	case WOOD_BOX:
-	case STEEL_BOX:
-	case LEAD_BOX:
-	case BOMB_BOX:
-	case HIBOMB_BOX:
-	case AIR_BOX:
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
 		//箱は上に乗れる 横にはすり抜ける 霊箱は当たらない
 		if ((t & BOTTOM) && ((diffBottom(e, true) <= marginY) &&
-			(((diffVelY(e) >= 0) && (state == JUMP || (state == LADDER))) ||
-			((diffVelY(e) > 0) && (state == KNOCK))))) setRes(RES_BOTTOM);
+			(((diffVelY(e) >= 0) && (state == ST_JUMP || (state == ST_LADDER))) ||
+			((diffVelY(e) > 0) && (state == ST_KNOCK))))) setRes(RES_BOTTOM);
 		break;
-	case EN_1:
-	case EN_2:
-	case EN_3:
-	case EN_4:
-	case EN_5:
-	case BULLET:
+	case TY_LADDER:
+		setRes(RES_LADDER);
+		break;
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
+	case TY_BULLET:
 		//吹っ飛ばされる
 		setRes(RES_JUMP, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, 0);
 		break;
-	case MISSILE:
-	case BLAST:
+	case TY_MISSILE:
+	case TY_BLAST:
 		//吹っ飛ばされる
 		setRes(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
 		break;
-	case GOAL:
+	case TY_GOAL:
 		//クリアする
 		setRes(RES_CLEAR);
 		break;
@@ -187,7 +169,7 @@ void Debu::collideObj(Entity *e, UCHAR t){
 void Debu::changeImage(){
 	//現在の状態を確認
 	switch (state){
-	case STAND:
+	case ST_STAND:
 		image.setFlipH(direct);
 		//動いているか停止しているかで判断
 		if (vel.x == 0.0f){
@@ -200,7 +182,7 @@ void Debu::changeImage(){
 			else setImage(IMG_WALK_START, IMG_WALK_END, true);
 		}
 		break;
-	case JUMP:
+	case ST_JUMP:
 		//下降中
 		if (vel.y > 0){
 			//前後移動で判断
@@ -226,21 +208,21 @@ void Debu::changeImage(){
 			}
 		}
 		break;
-	case LADDER:
+	case ST_LADDER:
 		//動いているか停止しているかで判断 向きの区別は無し
 		if (vel.x == 0.0f && vel.y == 0.0f) setImage(IMG_LADDER);
 		else setImage(IMG_LADDER_START, IMG_LADDER_END, true);
 		break;
-	case HOLD_HAMMER:
+	case ST_HAMMER:
 		image.setFlipH(directHammer);
 		setImage(IMG_HOLD);
 		break;
-	case CLEAR:
+	case ST_CLEAR:
 		//アニメが終了したらクリア
 		image.setDelay(0.33f);
 		setImage(IMG_CLEAR_START, IMG_CLEAR_END, false);
 		break;
-	case DEAD:
+	case ST_DEAD:
 		//アニメが終了したらやり直し
 		image.setDelay(0.25f);
 		setImage(IMG_DEAD_START, IMG_DEAD_END, false);
@@ -250,9 +232,11 @@ void Debu::changeImage(){
 
 }
 
-//はしごに捕まる　デブ専用
-void Debu::getLadder(){
-	//ジャンプしたり持ってると捕まれない
-	if (input->isKeyDown('Z') || hold || state == DEAD || state == CLEAR) return;
-	state = LADDER;
+//他オブジェクトへの反応
+void Debu::responseObj(){
+	Entity::responseObj();
+	if (getRes(RES_LADDER)){
+		if (input->isKeyDown('Z') || hold || state == ST_DEAD || state == ST_CLEAR) return;
+		state = ST_LADDER;
+	}
 }

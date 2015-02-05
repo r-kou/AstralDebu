@@ -5,25 +5,25 @@ using namespace warpNS;
 
 //コンストラクタ
 Warp::Warp(ENTITY_TYPE t){
-	state = STAND;
+	state = ST_STAND;
 	//選択した色になる
 	type = t;
 	renderOrder = RO_BASE;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	size = CHIP_SIZE;
+	col = COL_CHIP;
 	edgeX = EDGE_X;
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
 	//色を変える
 	switch (type){
-	case RED_WARP:
+	case TY_RED_WARP:
 		img = IMG_RED_WARP;
 		break;
-	case GREEN_WARP:
+	case TY_GREEN_WARP:
 		img = IMG_GREEN_WARP;
 		break;
-	case YELLOW_WARP:
+	case TY_YELLOW_WARP:
 		img = IMG_YELLOW_WARP;
 		break;
 	}
@@ -54,11 +54,11 @@ void Warp::setEdge(){
 
 //コンストラクタ
 Goal::Goal(){
-	state = STAND;
-	type = GOAL;
+	state = ST_STAND;
+	type = TY_GOAL;
 	renderOrder = RO_BASE;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	size = CHIP_SIZE;
+	col = COL_CHIP;
 	edgeX = EDGE_X;
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;

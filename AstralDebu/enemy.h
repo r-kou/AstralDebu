@@ -14,8 +14,6 @@ namespace enemyNS{
 	const float VEL_BOMB_Y = 250;
 	const float VEL_KNOCK_X = 250;
 
-	const int IMG_SIZE = 32;
-	const int IMG_COL = 7;
 	const int IMG_STAND = 0;
 	const int IMG_ACTION = 1;
 	const int IMG_WALK_START = 2;

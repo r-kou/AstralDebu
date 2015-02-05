@@ -18,37 +18,40 @@
 #include "blast.h"
 
 namespace astralNS {
+	//配列の大きさ
 	const int OBJ_SIZE = 64;
 	const int STG_SIZE = 40;
 
-	const int IMG_COL_CHIP = 10;
+	//各画像の横枚数
+	const int IMG_COL_CHIP = 8;
 	const int IMG_COL_DEBU = 7;
 	const int IMG_COL_BLAST = 6;
 	const int IMG_COL_ENEMY = 7;
 
-	const int CHIP_ROCK = 5;
-	const int CHIP_BOX_W = 20;
-	const int CHIP_BOX_S = 21;
-	const int CHIP_BOX_L = 22;
-	const int CHIP_BOX_B = 23;
-	const int CHIP_BOX_H = 24;
-	const int CHIP_BOMB = 25;
-	const int CHIP_HIBOMB = 26;
-	const int CHIP_HAMMER = 27;
-	const int CHIP_LADDER = 30;
-	const int CHIP_MEAT = 31;
-	const int CHIP_HIMEAT = 32;
-	const int CHIP_WARP_R = 35;
-	const int CHIP_WARP_G = 36;
-	const int CHIP_WARP_Y = 37;
-	const int CHIP_WARP_E = 38;
-	const int CHIP_CURSOR = 40;
-	const int CHIP_GOAL = 41;
+	//画像チップの対応値
+	const int CHIP_WOOD_BOX = 32;
+	const int CHIP_STEEL_BOX = 33;
+	const int CHIP_LEAD_BOX = 34;
+	const int CHIP_BOMB_BOX = 35;
+	const int CHIP_HIBOMB_BOX = 36;
+	const int CHIP_AIR_BOX = 37;
+	const int CHIP_FRAME_BOX = 38;
+	const int CHIP_GOAST_BOX = 39;
+	const int CHIP_BOMB = 40;
+	const int CHIP_HIBOMB = 41;
+	const int CHIP_HAMMER = 42;
+	const int CHIP_MINE = 43;
+	const int CHIP_MEAT = 44;
+	const int CHIP_HIMEAT = 45;
+	const int CHIP_LADDER = 46;
+	const int CHIP_CURSOR = 47;
 
+	//所持オブジェクトの位置補正
 	const float HOLD_MAR_X = 8;
 	const float HOLD_MAR_Y = 16;
 	const float VEL_THROW = 300;
 
+	//短径描画の位置
 	const int LIFE_MAR_X = 120;
 	const int LIFE_MAR_Y = 48;
 	const int LIFE_LEN_X = 400;
@@ -64,14 +67,23 @@ namespace astralNS {
 	const int STG_LEN_Y = LIFE_LEN_Y;
 
 	//色
-	const ARGB S1 = D3DCOLOR_ARGB(255, 136, 255, 255);
-	const ARGB S2 = D3DCOLOR_ARGB(255, 255, 255, 255);
-	const ARGB S3 = D3DCOLOR_ARGB(255, 17, 34, 34);
-	const ARGB S4 = D3DCOLOR_ARGB(255, 192, 255, 255);
-	const ARGB LIFE = D3DCOLOR_ARGB(255, 221, 221, 0);
+	const ARGB BLACK = D3DCOLOR_ARGB(255, 0, 0, 0);
+	const ARGB WHITE = D3DCOLOR_ARGB(255, 255, 255, 255);
+	const ARGB RED = D3DCOLOR_ARGB(255, 255, 0, 0);
+	const ARGB GREEN = D3DCOLOR_ARGB(255, 0, 255, 0);
+	const ARGB BLUE = D3DCOLOR_ARGB(255, 0, 0, 255);
+	const ARGB STG1_BACK = D3DCOLOR_ARGB(255, 128, 224, 255);
+	const ARGB STG2_BACK = D3DCOLOR_ARGB(255, 255, 255, 255);
+	const ARGB STG3_BACK = D3DCOLOR_ARGB(255, 32, 48, 48);
+	const ARGB STG4_BACK = D3DCOLOR_ARGB(255, 192, 255, 255);
+	const ARGB LIFE_GAUGE = D3DCOLOR_ARGB(255, 224, 224, 0);
+	const ARGB LIFE_VITAL_PLUS = D3DCOLOR_ARGB(255, 0, 224, 0);
+	const ARGB LIFE_VITAL_MINUS = D3DCOLOR_ARGB(255, 224, 0, 0);
 	const ARGB MENU_BACK = D3DCOLOR_ARGB(255, 192, 96, 32);
-	const ARGB MENU_TEXT = D3DCOLOR_ARGB(255, 214, 214, 32);
-	const ARGB MENU_HIDE = D3DCOLOR_ARGB(255, 80, 64, 32);
+	const ARGB MENU_TEXT = D3DCOLOR_ARGB(255, 224, 224, 32);
+	const ARGB MENU_HIDE = D3DCOLOR_ARGB(255, 96, 64, 32);
+	const ARGB HINT_ARROW = D3DCOLOR_ARGB(255, 255, 255, 32);
+	const ARGB HINT_PANEL = D3DCOLOR_ARGB(255, 64, 192, 64);
 
 	const std::string FONT = "メイリオ";
 
@@ -156,7 +168,8 @@ private:
 	//ステージ読み込み
 	void loadStage();
 	//チップ割り当て
-	void loadChip(int, int, char);
+	void loadChip(int, int, short);
+	//void loadChip(int, int, char);
 	//ステージに合わせてチップを選択
 	int setChipImage(int);
 
@@ -220,6 +233,10 @@ private:
 	void drawArrowVertical(float cx, float cy, bool d, ARGB c);
 	//ヒント用パネルを描画
 	void drawPanel(std::string str, float cx, float cy, float len, ARGB c);
+	//画像つきヒント用パネルを描画
+	void drawPanel(int img,float cx,float cy,ARGB c);
+	//描画する画像を選択
+
 
 	//カーソルの位置を返す
 	int getCursorChipX();
@@ -238,6 +255,8 @@ private:
 	void subLife(int i);
 	//未使用のオブジェクトを取得
 	int getEmptyIndex();
+	//マップチップのでコード
+	short decodeChip(short c, int i, int j) {return (c - ((i*(j + 1)) << 4)) / ((i + 1) * 11);}
 public:
 	//コンストラクタ
 	AstralDebu();

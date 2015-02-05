@@ -10,7 +10,7 @@ void AstralDebu::readCommand(){
 	//地上で素手ならジャンプできる
 	//チート時はいつでも可能
 	if (input->isKeyPressed('Z')){
-		if ((cheat1) || ((debu->getState() == entityNS::STAND) && (!debu->getHold()))){
+		if ((cheat1) || ((debu->getState() == entityNS::ST_STAND) && (!debu->getHold()))){
 			debu->setVelY(debuNS::VEL_JUMP);
 			subLife(10);
 		}
@@ -25,7 +25,7 @@ void AstralDebu::readCommand(){
 	//以下チートコマンド
 	//クリア
 	if (input->isKeyPressed('W') && (cheat1)){
-		debu->setState(entityNS::CLEAR);
+		debu->setState(entityNS::ST_CLEAR);
 		debu->setVelX(0.0f);
 		debu->setVelY(0.0f);
 	}
@@ -85,13 +85,14 @@ void AstralDebu::handleObject(){
 	int exist = -1;
 
 	//立ってる時かハンマー所持時だけ有効
-	if ((debu->getState() != entityNS::STAND) && (debu->getState() != entityNS::HOLD_HAMMER)) return;
+	if ((debu->getState() != entityNS::ST_STAND) && (debu->getState() != entityNS::ST_HAMMER)) return;
 	//地形には何もできない
-	if ((map[getCursorChipX()][getCursorChipY()] != 0) && (map[getCursorChipX()][getCursorChipY()] != CHIP_LADDER))  return;
+	if (map[getCursorChipX()][getCursorChipY()])  return;
 
 	//存在しているオブジェクトを見る
 	ALL_OBJ{
 		if ((i != objHolded) &&
+		(object[i]->getType() != entityNS::TY_LADDER) &&
 		(object[i]->ChipCX() == getCursorChipX()) &&
 		(object[i]->ChipCY() == getCursorChipY()) &&
 		canTouch(object[i])) {
@@ -124,10 +125,10 @@ void AstralDebu::holdObject(int i){
 
 	if (canEat(e)){
 		//肉は20回復 超にくは全回復
-		if (e->getType() == entityNS::MEAT) addLife(30);
+		if (e->getType() == entityNS::TY_MEAT) addLife(30);
 		else life = 100;
-		e->setState(entityNS::EMPTY);
-		e->setType(entityNS::NONE);
+		e->setState(entityNS::ST_EMPTY);
+		e->setType(entityNS::TY_NONE);
 	}
 	else {
 		objHolded = i;
@@ -137,27 +138,27 @@ void AstralDebu::holdObject(int i){
 		e->setVelY(0.0f);
 		moveHold(i);
 
-		if (e->getType() == entityNS::HAMMER) ((Hammer*)e)->setHold(debu);
-		else e->setState(entityNS::LOCK);
+		if (e->getType() == entityNS::TY_HAMMER) ((Hammer*)e)->setHold(debu);
+		else e->setState(entityNS::ST_LOCK);
 
 		e->setRenderOrder(entityNS::RO_HOLD);
 
 		switch (e->getType()){
-		case entityNS::WOOD_BOX:
-		case entityNS::BOMB_BOX:
-		case entityNS::AIR_BOX:
+		case entityNS::TY_WOOD_BOX:
+		case entityNS::TY_BOMB_BOX:
+		case entityNS::TY_AIR_BOX:
 			subLife(5);
 			break;
-		case entityNS::STEEL_BOX:
-		case entityNS::BOMB:
-		case entityNS::HIBOMB:
+		case entityNS::TY_STEEL_BOX:
+		case entityNS::TY_BOMB:
+		case entityNS::TY_HIBOMB:
 			subLife(10);
 			break;
-		case entityNS::LEAD_BOX:
-		case entityNS::HIBOMB_BOX:
+		case entityNS::TY_LEAD_BOX:
+		case entityNS::TY_HIBOMB_BOX:
 			subLife(20);
 			break;
-		case entityNS::HAMMER:
+		case entityNS::TY_HAMMER:
 			//ハンマーは持つだけでは体力減らない
 			break;
 		}
@@ -170,9 +171,9 @@ void AstralDebu::putObject(){
 
 	objHolded = -1;
 	debu->setHold(false);
-	debu->setState(entityNS::STAND);
+	debu->setState(entityNS::ST_STAND);
 
-	if (e->getType() == entityNS::HAMMER){
+	if (e->getType() == entityNS::TY_HAMMER){
 		if (e->getDirect()) e->setPosX((debu->ChipCX() - 0.5f) * CHIP_SIZE);
 		else e->setPosX((debu->ChipCX() + 1.5f) * CHIP_SIZE);
 	}
@@ -182,7 +183,7 @@ void AstralDebu::putObject(){
 	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
-	e->setState(entityNS::STAND);
+	e->setState(entityNS::ST_STAND);
 	e->setRenderOrder(entityNS::RO_OBJECT);
 	e->setEdge();
 
@@ -194,7 +195,7 @@ void AstralDebu::pushObject(int exist){
 	Entity *e = object[exist];
 
 	//ハンマーとにくは押せない
-	if ((e->getType() == entityNS::HAMMER) || (canEat(e))) return;
+	if ((e->getType() == entityNS::TY_HAMMER) || (canEat(e))) return;
 
 	if (debu->getDirect()) {
 		if (debu->ChipCX() > 1) cursorNX = debu->ChipCX() - 2;
@@ -206,34 +207,35 @@ void AstralDebu::pushObject(int exist){
 	}
 
 	//押す先に何かあったら不可
-	if ((map[cursorNX][getCursorChipY()] != 0) && (map[cursorNX][getCursorChipY()] != CHIP_LADDER)) return;
+	if (map[cursorNX][getCursorChipY()]) return;
 	ALL_OBJ{
-		if ((object[i]->ChipCX() == cursorNX) &&
-		(object[i]->ChipCY() == getCursorChipY()) &&
-		canTouch(object[i])) return;
+		if (canTouch(object[i])&&
+		(object[i]->getType() != entityNS::TY_LADDER) &&
+		(object[i]->ChipCX() == cursorNX) &&
+		(object[i]->ChipCY() == getCursorChipY())) return;
 	}
 
 	e->setPosX((cursorNX + 0.5f) * CHIP_SIZE);
 	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
-	e->setState(entityNS::STAND);
+	e->setState(entityNS::ST_STAND);
 	e->setEdge();
 
 	//体力減少
 	switch (e->getType()){
-	case entityNS::WOOD_BOX:
-	case entityNS::BOMB_BOX:
-	case entityNS::AIR_BOX:
+	case entityNS::TY_WOOD_BOX:
+	case entityNS::TY_BOMB_BOX:
+	case entityNS::TY_AIR_BOX:
 		//木箱は体力減少なし
 		break;
-	case entityNS::STEEL_BOX:
-	case entityNS::BOMB:
-	case entityNS::HIBOMB:
+	case entityNS::TY_STEEL_BOX:
+	case entityNS::TY_BOMB:
+	case entityNS::TY_HIBOMB:
 		subLife(5);
 		break;
-	case entityNS::LEAD_BOX:
-	case entityNS::HIBOMB_BOX:
+	case entityNS::TY_LEAD_BOX:
+	case entityNS::TY_HIBOMB_BOX:
 		subLife(10);
 		break;
 	}
@@ -245,34 +247,34 @@ void AstralDebu::throwObject(){
 
 	objHolded = -1;
 	debu->setHold(false);
-	debu->setState(entityNS::STAND);
+	debu->setState(entityNS::ST_STAND);
 
 	e->setPosX((getCursorChipX() + 0.5f) * CHIP_SIZE);
 	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
 	if (debu->getDirect()) e->setVelX(-VEL_THROW);
 	else e->setVelX(VEL_THROW);
 	e->setVelY(0.0f);
-	e->setState(entityNS::KNOCK);
+	e->setState(entityNS::ST_KNOCK);
 	e->setEdge();
 	e->setRenderOrder(entityNS::RO_OBJECT);
 
 	//体力減少
 	switch (e->getType()){
-	case entityNS::WOOD_BOX:
-	case entityNS::BOMB_BOX:
-	case entityNS::AIR_BOX:
+	case entityNS::TY_WOOD_BOX:
+	case entityNS::TY_BOMB_BOX:
+	case entityNS::TY_AIR_BOX:
 		subLife(5);
 		break;
-	case entityNS::STEEL_BOX:
-	case entityNS::BOMB:
-	case entityNS::HIBOMB:
+	case entityNS::TY_STEEL_BOX:
+	case entityNS::TY_BOMB:
+	case entityNS::TY_HIBOMB:
 		subLife(10);
 		break;
-	case entityNS::LEAD_BOX:
-	case entityNS::HIBOMB_BOX:
+	case entityNS::TY_LEAD_BOX:
+	case entityNS::TY_HIBOMB_BOX:
 		subLife(20);
 		break;
-	case entityNS::HAMMER:
+	case entityNS::TY_HAMMER:
 		subLife(40);
 		break;
 	}
@@ -282,7 +284,7 @@ void AstralDebu::throwObject(){
 void AstralDebu::moveHold(int i){
 	Entity *e = object[i];
 
-	if (e->getType() == entityNS::HAMMER) {
+	if (e->getType() == entityNS::TY_HAMMER) {
 		debu->setHammer(debu->getPosX() >= e->getPosX());
 	}
 	else {
@@ -299,18 +301,18 @@ void AstralDebu::deadObject(int i){
 	int x = e->ChipCX(), y = e->ChipCY();
 
 	switch (e->getType()){
-	case entityNS::BOMB:
-	case entityNS::BOMB_BOX:
-	case entityNS::MISSILE:
-	case entityNS::MINE:
+	case entityNS::TY_BOMB:
+	case entityNS::TY_BOMB_BOX:
+	case entityNS::TY_MISSILE:
+	case entityNS::TY_MINE:
 		//消去してから爆風を生成する
 		SAFE_DELETE(e);
 		object[i] = new Blast(false);
 		if (!object[i]->initialize(this, &bombT, x, y))
 			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
 		break;
-	case entityNS::HIBOMB:
-	case entityNS::HIBOMB_BOX:
+	case entityNS::TY_HIBOMB:
+	case entityNS::TY_HIBOMB_BOX:
 		//消去してからすごい爆風を生成する
 		SAFE_DELETE(e);
 		object[i] = new Blast(true);
@@ -319,8 +321,8 @@ void AstralDebu::deadObject(int i){
 		break;
 	default:
 		//消去 配列からの削除はしない
-		e->setState(entityNS::EMPTY);
-		e->setType(entityNS::NONE);
+		e->setState(entityNS::ST_EMPTY);
+		e->setType(entityNS::TY_NONE);
 		break;
 	}
 }
@@ -330,7 +332,7 @@ void AstralDebu::actionObject(int i){
 	Entity *e = object[i];
 	int tmp;
 	switch (e->getType()){
-	case entityNS::EN_3:
+	case entityNS::TY_ENEMY_3:
 		//銃弾生成
 		e->setAction(false);
 		tmp = getEmptyIndex();
@@ -339,11 +341,11 @@ void AstralDebu::actionObject(int i){
 		if (!object[tmp]->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
 			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
 		object[tmp]->setDirect(e->getDirect());
-		object[tmp]->setState(entityNS::KNOCK);
+		object[tmp]->setState(entityNS::ST_KNOCK);
 		break;
-	case entityNS::EN_4:
+	case entityNS::TY_ENEMY_4:
 		break;
-	case entityNS::EN_5:
+	case entityNS::TY_ENEMY_5:
 		//ミサイル生成
 		e->setAction(false);
 		tmp = getEmptyIndex();
@@ -352,7 +354,7 @@ void AstralDebu::actionObject(int i){
 		if (!object[tmp]->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
 			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
 		object[tmp]->setDirect(e->getDirect());
-		object[tmp]->setState(entityNS::KNOCK);
+		object[tmp]->setState(entityNS::ST_KNOCK);
 		break;
 	}
 }

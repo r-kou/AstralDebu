@@ -5,10 +5,10 @@ using namespace bombNS;
 
 //コンストラクタ
 BombE::BombE(){
-	state = STAND;
+	state = ST_STAND;
 	renderOrder = RO_OBJECT;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	size = CHIP_SIZE;
+	col = COL_CHIP;
 	edgeX = EDGE_X;
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
@@ -18,7 +18,7 @@ BombE::BombE(){
 //移動
 void BombE::move(float frameTime){
 	//空中にいるなら落下
-	if (state == JUMP) vel.y += GRAVITY_RATE * frameTime;
+	if (state == ST_JUMP) vel.y += GRAVITY_RATE * frameTime;
 	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
 
 	Entity::move(frameTime);
@@ -30,27 +30,27 @@ void BombE::collideMap(UCHAR t){
 	if ((t & LEFT) && (vel.x < 0.0f)) {
 		setLeft(false);
 		vel.x = 0.0f;
-		state = DEAD;
+		state = ST_DEAD;
 	}
 	if ((t & RIGHT) && (vel.x > 0.0f)) {
 		setRight(false);
 		vel.x = 0.0f;
-		state = DEAD;
+		state = ST_DEAD;
 	}
 	if ((t & TOP) && (vel.y < 0.0f)) {
 		setTop(false);
 		vel.y = 0.0f;
-		state = DEAD;
+		state = ST_DEAD;
 	}
 	if (t & BOTTOM) {
 		//空中にいたら着地判定
-		if ((vel.y > 0.0f) && ((state == KNOCK) || (state == JUMP))){
-			state = DEAD;
+		if ((vel.y > 0.0f) && ((state == ST_KNOCK) || (state == ST_JUMP))){
+			state = ST_DEAD;
 		}
 	}
-	else if ((state != KNOCK) && (state != DEAD)) {
+	else if ((state != ST_KNOCK) && (state != ST_DEAD)) {
 		//下に何もないなら落下
-		state = JUMP;
+		state = ST_JUMP;
 	}
 }
 
@@ -58,39 +58,39 @@ void BombE::collideMap(UCHAR t){
 void BombE::collideObj(Entity *e, UCHAR t){
 	//爆弾はとりあえず爆発する
 	switch (e->getType()){
-	case WOOD_BOX:
-	case STEEL_BOX:
-	case LEAD_BOX:
-	case BOMB_BOX:
-	case HIBOMB_BOX:
-	case AIR_BOX:
-	case FRAME_BOX:
-	case GOAST_BOX:
-	case ROCK:
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_GOAST_BOX:
+	case TY_ROCK:
 		//静止してたら止まる
-		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == JUMP)) setRes(RES_BOTTOM);
-	case BOMB:
-	case HIBOMB:
-	case HAMMER:
+		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == ST_JUMP)) setRes(RES_BOTTOM);
+	case TY_BOMB:
+	case TY_HIBOMB:
+	case TY_HAMMER:
 		//移動してたら爆発する
 		if (((t & LEFT) && (diffVelX(e) < 0)) ||
 			((t & RIGHT) && (diffVelX(e) > 0)) ||
 			((t & TOP) && (diffVelY(e) < 0)) ||
-			((t & BOTTOM) && (diffVelY(e) > 0) && (state == JUMP || state == KNOCK))) setRes(RES_DEAD);
+			((t & BOTTOM) && (diffVelY(e) > 0) && (state == ST_JUMP || state == ST_KNOCK))) setRes(RES_DEAD);
 		break;
-	case EN_1:
-	case EN_2:
-	case EN_3:
-	case EN_4:
-	case EN_5:
-	case BULLET:
-	case MISSILE:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
+	case TY_BULLET:
+	case TY_MISSILE:
 		//左右にはこっちが動いていたら、上下は問答無用で爆発する
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
 			(t & TOP) || (t & BOTTOM)) setRes(RES_DEAD);
 		break;
-	case BLAST:
+	case TY_BLAST:
 		//爆風は速度とか関係ない
 		setRes(RES_BOTTOM);
 		break;
@@ -103,24 +103,24 @@ void BombE::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 Bomb::Bomb(){
-	type = BOMB;
+	type = TY_BOMB;
 	img = IMG_BOMB;
 }
 
 //コンストラクタ
 Hibomb::Hibomb(){
-	type = HIBOMB;
+	type = TY_HIBOMB;
 	img = IMG_HIBOMB;
 }
 
 //コンストラクタ
 Mine::Mine(){
-	state = STAND;
-	type = MINE;
+	state = ST_STAND;
+	type = TY_MINE;
 	renderOrder = RO_OBJECT;
-	img = 33;
-	size = IMG_SIZE;
-	col = IMG_COL;
+	img = IMG_MINE;
+	size = CHIP_SIZE;
+	col = COL_CHIP;
 	edgeX = EDGE_X;
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;

@@ -10,29 +10,28 @@
 
 namespace entityNS{
 	enum ENTITY_TYPE {
-		NONE, DEBU,
-		WOOD_BOX, STEEL_BOX,
-		LEAD_BOX, BOMB_BOX,
-		HIBOMB_BOX, AIR_BOX,
-		FRAME_BOX, GOAST_BOX,
-		BOMB, HIBOMB,
-		MINE, ROCK,
-		HAMMER, MEAT,
-		HIMEAT, EN_1,
-		EN_2, EN_3,
-		EN_4, EN_5,
-		BULLET, MISSILE,
-		RED_WARP, GREEN_WARP,
-		YELLOW_WARP,
-		GOAL, BLAST
+		TY_NONE, TY_DEBU,
+		TY_WOOD_BOX, TY_STEEL_BOX,
+		TY_LEAD_BOX, TY_BOMB_BOX,
+		TY_HIBOMB_BOX, TY_AIR_BOX,
+		TY_FRAME_BOX, TY_GOAST_BOX,
+		TY_BOMB, TY_HIBOMB,
+		TY_MINE, TY_ROCK,
+		TY_HAMMER, TY_MEAT,
+		TY_HIMEAT, TY_ENEMY_1,
+		TY_ENEMY_2, TY_ENEMY_3,
+		TY_ENEMY_4, TY_ENEMY_5,
+		TY_BULLET, TY_MISSILE,
+		TY_RED_WARP, TY_GREEN_WARP,
+		TY_YELLOW_WARP, TY_LADDER,
+		TY_GOAL, TY_BLAST
 	};
 	enum ENTITY_STATE {
-		EMPTY, LOCK,
-		STAND, JUMP,
-		CLEAR, KNOCK,
-		DEAD, LADDER,
-		HOLD_HAMMER,
-		ACT
+		ST_EMPTY, ST_LOCK,
+		ST_STAND, ST_JUMP,
+		ST_CLEAR, ST_KNOCK,
+		ST_DEAD, ST_LADDER,
+		ST_HAMMER, ST_ACTION
 	};
 	enum RENDER_ORDER {
 		RO_BASE, RO_BOX,
@@ -45,14 +44,18 @@ namespace entityNS{
 	const UCHAR TOP = 2;
 	const UCHAR RIGHT = 4;
 	const UCHAR BOTTOM = 8;
-	const UCHAR GETLADDER = 16;
 	//衝突判定の四隅
 	const UCHAR EDGE1 = LEFT + TOP;
 	const UCHAR EDGE2 = RIGHT + TOP;
 	const UCHAR EDGE3 = RIGHT + BOTTOM;
 	const UCHAR EDGE4 = LEFT + BOTTOM;
-	//はしご
-	const int CHIP_LADDER = 30;
+	//爆発画像のチップの大きさ
+	const int BLAST_SIZE = 96;
+	//各画像の横チップ数
+	const int COL_CHIP = 8;
+	const int COL_DEBU = 7;
+	const int COL_BLAST = 6;
+	const int COL_ENEMY = 7;
 	//edgeの最大値
 	const int EDGE_MAX = 16;
 	//落下速度
@@ -75,7 +78,8 @@ namespace entityNS{
 	const UINT RES_KNOCK = 8;
 	const UINT RES_JUMP = 9;
 	const UINT RES_DEAD = 10;
-	const UINT RES_CLEAR = 11;
+	const UINT RES_LADDER = 11;
+	const UINT RES_CLEAR = 12;
 }
 
 class Entity{
@@ -168,7 +172,7 @@ public:
 	virtual void touchMap(int map[MAP_COL][MAP_ROW]);
 
 	//上下左右の衝突判定
-	virtual UCHAR touchMapDirect(int c, UCHAR t);
+	virtual UCHAR touchMapDirect(int c, UCHAR t) { return (c!=0) ? t : 0; }
 
 	//地形への接触
 	virtual void collideMap(UCHAR t);
@@ -201,7 +205,7 @@ public:
 	virtual void setEdge();
 
 	//死亡判定
-	virtual bool isDead() { return (state == entityNS::DEAD) && (animInterval == 0.0f); }
+	virtual bool isDead() { return (state == entityNS::ST_DEAD) && (animInterval == 0.0f); }
 
 	//左の接地判定を求める
 	bool collideBottomLeft(Entity *e) { return (getLeft(true) >= e->getLeft(false)) && (getLeft(true) <= e->getRight(false)) && (getBottom(false) >= e->getTop(false)); }
