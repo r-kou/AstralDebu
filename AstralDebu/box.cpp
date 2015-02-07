@@ -55,7 +55,10 @@ void Box::collideObj(Entity *e, UCHAR t){
 		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
 		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP)) ||
-			((diffVelY(e) > 0) && (state == ST_KNOCK)))) setRes(RES_BOTTOM_CHIP); //空中にいたら着地判定
+			((diffVelY(e) > 0) && (state == ST_KNOCK)))) {
+			//空中にいたら着地判定
+			setRes(RES_BOTTOM_CHIP);
+		}
 		break;
 	}
 }
@@ -64,6 +67,8 @@ void Box::collideObj(Entity *e, UCHAR t){
 WoodBox::WoodBox(){
 	type = TY_WOOD_BOX;
 	img = IMG_WOOD_BOX;
+	putSound = audioNS::PUT_WOOD;
+	deadSound = audioNS::BRAKE_WOOD;
 }
 
 //他オブジェクトへの接触
@@ -107,6 +112,8 @@ void WoodBox::collideObj(Entity *e, UCHAR t){
 SteelBox::SteelBox(){
 	type = TY_STEEL_BOX;
 	img = IMG_STEEL_BOX;
+	putSound = audioNS::PUT_STEEL;
+	deadSound = audioNS::BRAKE_STEEL;
 }
 
 //他オブジェクトへの接触
@@ -149,6 +156,7 @@ void SteelBox::collideObj(Entity *e, UCHAR t){
 LeadBox::LeadBox(){
 	type = TY_LEAD_BOX;
 	img = IMG_LEAD_BOX;
+	putSound = audioNS::PUT_LEAD;
 }
 
 //他オブジェクトへの接触
@@ -164,6 +172,7 @@ void LeadBox::collideObj(Entity *e, UCHAR t){
 BombBox::BombBox(){
 	type = TY_BOMB_BOX;
 	img = IMG_BOMB_BOX;
+	putSound = audioNS::PUT_WOOD;
 }
 
 //他オブジェクトへの接触
@@ -205,6 +214,7 @@ void BombBox::collideObj(Entity *e, UCHAR t){
 HibombBox::HibombBox(){
 	type = TY_HIBOMB_BOX;
 	img = IMG_HIBOMB_BOX;
+	putSound = audioNS::PUT_WOOD;
 }
 
 //他オブジェクトへの接触
@@ -282,6 +292,8 @@ void AirBox::draw(){
 FrameBox::FrameBox(){
 	type = TY_FRAME_BOX;
 	img = IMG_FRAME_BOX;
+	putSound = audioNS::PUT_STEEL;
+	deadSound = audioNS::BRAKE_STEEL;
 }
 
 //地形への接触

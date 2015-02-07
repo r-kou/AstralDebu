@@ -6,6 +6,7 @@
 #include "graphics.h"
 #include "input.h"
 #include "texture.h"
+#include "audio.h"
 #include "game.h"
 
 namespace entityNS{
@@ -62,10 +63,10 @@ namespace entityNS{
 	const float GRAVITY_RATE = 1000.0f;
 	//吹っ飛び時の微妙な浮き
 	const float VEL_KNOCK_JUMP = 150;
-	//吹っ飛び時の上方向への最大速度
+	//吹っ飛び時の上方向への最大速度(KNOCK_JUMP差引き)
 	const float VEL_MAX_JUMP = 250;
 	//吹っ飛び時の最大速度
-	const float VEL_MAX = 350;
+	const float VEL_MAX = 400;
 	//反応の対応値
 	const UINT RES_LEFT = 0;
 	const UINT RES_RIGHT = 1;
@@ -86,6 +87,8 @@ class Entity{
 protected:
 	//グラフィックスポインタ
 	Graphics *graphics;
+	//音声ポインタ
+	Audio *audio;
 	//使う画像
 	Texture *texture;
 	Image image;
@@ -130,6 +133,10 @@ protected:
 	int response;
 	//オブジェクトへの反応のオプション
 	VC2 responseVC[32];
+	//置いた時の音
+	std::string putSound;
+	//破壊時の音
+	std::string deadSound;
 
 	//速度の差を求める
 	float diffVelX(Entity *e) { return vel.x - e->getVelX(); }
@@ -216,6 +223,12 @@ public:
 	//左右の接地判定
 	void checkBottom(bool d, Entity *e);
 
+	//着地音を鳴らす
+	void playPut() { if (putSound != "") audio->playCue(putSound.c_str()); }
+
+	//死亡音を鳴らす
+	void playDead() { if (deadSound != "") audio->playCue(deadSound.c_str()); }
+
 	//getter
 	const entityNS::ENTITY_STATE getState() { return state; }
 	const entityNS::ENTITY_TYPE getType() { return type; }
@@ -240,6 +253,7 @@ public:
 	const float getWarp() { return warpInterval; }
 	const bool getAction() { return action; }
 	const int getResponse() { return response; }
+	const std::string getPut() { return putSound; }
 
 	//マップ上での座標を返す
 	const int ChipX(float x) { return (int)x / CHIP_SIZE; }

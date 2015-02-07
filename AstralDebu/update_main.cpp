@@ -54,32 +54,6 @@ void AstralDebu::readCommand(){
 	}
 }
 
-//オブジェクトの追加
-void AstralDebu::addObject(Entity *e, Texture &t, int i, int j){
-	map[i][j] = 0;
-	object[objMax] = e;
-	if (!e->initialize(this, &t, i, j))
-		throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
-	objMax++;
-}
-
-//敵の追加　デブの位置を入れる
-void AstralDebu::addEnemy(Enemy *e, Texture &t, Debu *d, int i, int j){
-	map[i][j] = 0;
-	object[objMax] = e;
-	if (!e->initialize(this, &t, d, i, j))
-		throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
-	objMax++;
-}
-
-//ワープの追加
-void AstralDebu::addWarp(int i, int j){
-	object[i]->setPartnerX(object[j]->ChipCX());
-	object[i]->setPartnerY(object[j]->ChipCY());
-	object[j]->setPartnerX(object[i]->ChipCX());
-	object[j]->setPartnerY(object[i]->ChipCY());
-}
-
 //オブジェクトの取得判定
 void AstralDebu::handleObject(){
 	int exist = -1;
@@ -125,8 +99,14 @@ void AstralDebu::holdObject(int i){
 
 	if (canEat(e)){
 		//肉は20回復 超にくは全回復
-		if (e->getType() == entityNS::TY_MEAT) addLife(30);
-		else life = 100;
+		if (e->getType() == entityNS::TY_MEAT) {
+			addLife(30);
+			audio->playCue(audioNS::EAT_1);
+		}
+		else{
+			life = 100;
+			audio->playCue(audioNS::EAT_2);
+		}
 		e->setState(entityNS::ST_EMPTY);
 		e->setType(entityNS::TY_NONE);
 	}
@@ -186,6 +166,7 @@ void AstralDebu::putObject(){
 	e->setState(entityNS::ST_STAND);
 	e->setRenderOrder(entityNS::RO_OBJECT);
 	e->setEdge();
+	if ((e->ChipCY() == MAP_ROW - 1) || (map[e->ChipCX()][e->ChipCY() + 1]) != 0) e->playPut();
 
 }
 
@@ -221,6 +202,7 @@ void AstralDebu::pushObject(int exist){
 	e->setVelY(0.0f);
 	e->setState(entityNS::ST_STAND);
 	e->setEdge();
+	e->playPut();
 
 	//体力減少
 	switch (e->getType()){
@@ -264,11 +246,13 @@ void AstralDebu::throwObject(){
 	case entityNS::TY_BOMB_BOX:
 	case entityNS::TY_AIR_BOX:
 		subLife(5);
+		audio->playCue(audioNS::THROW);
 		break;
 	case entityNS::TY_STEEL_BOX:
 	case entityNS::TY_BOMB:
 	case entityNS::TY_HIBOMB:
 		subLife(10);
+		audio->playCue(audioNS::THROW);
 		break;
 	case entityNS::TY_LEAD_BOX:
 	case entityNS::TY_HIBOMB_BOX:
@@ -310,6 +294,7 @@ void AstralDebu::deadObject(int i){
 		object[i] = new Blast(false);
 		if (!object[i]->initialize(this, &bombT, x, y))
 			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+		audio->playCue(audioNS::BLAST1);
 		break;
 	case entityNS::TY_HIBOMB:
 	case entityNS::TY_HIBOMB_BOX:
@@ -318,6 +303,7 @@ void AstralDebu::deadObject(int i){
 		object[i] = new Blast(true);
 		if (!object[i]->initialize(this, &bombT, x, y))
 			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+		audio->playCue(audioNS::BLAST2);
 		break;
 	default:
 		//消去 配列からの削除はしない

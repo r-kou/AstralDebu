@@ -14,6 +14,7 @@ Enemy::Enemy(){
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
+	deadSound = audioNS::KNOCK;
 	debu = NULL;
 }
 
@@ -46,8 +47,8 @@ void Enemy::move(float frameTime){
 //’nŒ`‚Ö‚ÌÚG
 void Enemy::collideMap(UCHAR t){
 	//Œü‚«‚ğ•Ï‚¦‚é
-	if ((t & LEFT) && (vel.x <= 0.0f)&&(!action)) direct = false;
-	if ((t & RIGHT) && (vel.x >= 0.0f)&&(!action)) direct = true;
+	if ((t & LEFT) && (vel.x < 0.0f)&&(!action)) direct = false;
+	if ((t & RIGHT) && (vel.x > 0.0f)&&(!action)) direct = true;
 
 	Entity::collideMap(t);
 }

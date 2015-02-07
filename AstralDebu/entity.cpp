@@ -4,6 +4,9 @@ using namespace entityNS;
 
 //コンストラクタ
 Entity::Entity(){
+	graphics = NULL;
+	audio = NULL;
+	texture = NULL;
 	state = ST_EMPTY;
 	type = TY_NONE;
 	pos.x = 0.0f;
@@ -25,6 +28,8 @@ Entity::Entity(){
 	bottomObj[1] = false;
 	action = false;
 	response = 0;
+	putSound = "";
+	deadSound = "";
 	FOR(32) {
 		responseVC[i].x = 0;
 		responseVC[i].y = 0;
@@ -40,6 +45,7 @@ bool Entity::initialize(Game *game, Texture *t, int i, int j){
 	try{
 		//グラフィックとかいろいろ初期化
 		graphics = game->getGraphics();
+		audio = game->getAudio();
 		texture = t;
 		image.initialize(graphics, texture, size, size, col);
 		image.setDelay(0.2f);
@@ -93,8 +99,14 @@ void Entity::touchMap(int map[MAP_COL][MAP_ROW]){
 		c_b = ChipY((float)getBottom(false)), c_bn = ChipY((float)getBottom(true));
 
 	//画面外か検査
-	if (pos.x <= edgeX) t_o |= LEFT;
-	if (pos.x >= WINDOW_W - edgeX) t_o |= RIGHT;
+	if (pos.x <= edgeX) {
+		t_o |= LEFT;
+		bottomObj[0] = true;
+	}
+	if (pos.x >= WINDOW_W - edgeX) {
+		t_o |= RIGHT;
+		bottomObj[1] = true;
+	}
 	if (pos.y <= DATA_LEN + edgeY) t_o |= TOP;
 	if (pos.y >= WINDOW_H - edgeY) t_o |= BOTTOM;
 
@@ -130,17 +142,26 @@ void Entity::collideMap(UCHAR t){
 	if ((t & LEFT) && (vel.x <= 0.0f)) {
 		setLeft(false);
 		vel.x = 0.0f;
-		if (state == ST_KNOCK) state = ST_STAND;
+		if (state == ST_KNOCK) {
+			state = ST_STAND;
+			playPut();
+		}
 	}
 	if ((t & RIGHT) && (vel.x >= 0.0f)) {
 		setRight(false);
 		vel.x = 0.0f;
-		if (state == ST_KNOCK) state = ST_STAND;
+		if (state == ST_KNOCK) {
+			state = ST_STAND;
+			playPut();
+		}
 	}
 	if ((t & TOP) && (vel.y <= 0.0f)) {
 		setTop(false);
 		vel.y = 0.0f;
-		if (state == ST_KNOCK) state = ST_STAND;
+		if (state == ST_KNOCK) {
+			state = ST_STAND;
+			playPut();
+		}
 	}
 	if (t & BOTTOM) {
 		//空中にいたら着地判定
@@ -150,6 +171,7 @@ void Entity::collideMap(UCHAR t){
 			if (state == ST_DEAD) vel.x = 0.0f;
 			else state = ST_STAND;
 			setBottom(false);
+			if (vel.y>0.0f)	playPut();
 			vel.y = 0.0f;
 		}
 	}
@@ -259,25 +281,35 @@ void Entity::responseObj(){
 		//左に衝突
 		setLeft(false);
 		vel.x = 0.0f;
-		if (!action) direct = false;
-		if (state == ST_KNOCK) state = ST_STAND;
+		if (!action||type!=TY_DEBU) direct = false;
+		if (state == ST_KNOCK) {
+			state = ST_STAND;
+			playPut();
+		}
 	}
 	if (getRes(RES_RIGHT)) {
 		//右に衝突
 		setRight(false);
 		vel.x = 0.0f;
-		if (!action) direct = true;
-		if (state == ST_KNOCK) state = ST_STAND;
+		if (!action || type != TY_DEBU) direct = false;
+		if (state == ST_KNOCK) {
+			state = ST_STAND;
+			playPut();
+		}
 	}
 	if (getRes(RES_TOP)) {
 		//上に衝突
 		setTop(false);
 		vel.y = 0.0f;
-		if (state == ST_KNOCK) state = ST_STAND;
+		if (state == ST_KNOCK) {
+			state = ST_STAND;
+			playPut();
+		}
 	}
 	if (getRes(RES_BOTTOM)) {
 		//下に衝突
 		setBottom(false);
+		if (vel.y > 0) playPut();
 		vel.y = 0.0f;
 		state = ST_STAND;
 	}
@@ -285,6 +317,7 @@ void Entity::responseObj(){
 		//下に衝突 マスにぴったり
 		setCX();
 		setBottom(false);
+		if (vel.y > 0) playPut();
 		vel.y = 0.0f;
 		vel.x = 0.0f;
 		state = ST_STAND;
@@ -308,6 +341,7 @@ void Entity::responseObj(){
 		warpInterval = 0.5f;
 		pos.x = getResX(RES_WARP);
 		pos.y = getResY(RES_WARP);
+		audio->playCue(audioNS::WARP);
 	}
 	if (getRes(RES_KNOCK)) {
 		state = ST_KNOCK;
@@ -323,11 +357,13 @@ void Entity::responseObj(){
 		state = ST_DEAD;
 		vel.x = setLimit(getResX(RES_DEAD), VEL_MAX);
 		vel.y = setLimit(getResY(RES_DEAD), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
+		playDead();
 	}
 	if (getRes(RES_CLEAR)){
 		state = ST_CLEAR;
 		vel.x = 0.0f;
 		vel.y = 0.0f;
+		audio->playCue(audioNS::GOAL);
 	}
 
 }

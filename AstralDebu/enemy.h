@@ -23,7 +23,7 @@ namespace enemyNS{
 	const int IMG_BULLET = 7;
 	const int IMG_MISSILE = 8;
 
-	const int EDGE_X = 7;
+	const int EDGE_X = 10;
 	const int EDGE_Y = entityNS::EDGE_MAX;
 	const int EDGE_MAR_X = 4;
 	const int EDGE_MAR_Y = 6;

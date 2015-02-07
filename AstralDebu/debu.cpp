@@ -14,6 +14,7 @@ Debu::Debu(){
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
+	putSound = audioNS::PUT_DEBU;
 }
 
 //初期化
@@ -105,7 +106,7 @@ void Debu::move(float frameTime){
 	}
 
 	//空中にいるか死亡時なら落下
-	if (state == ST_JUMP || state == ST_DEAD) vel.y += GRAVITY_RATE * frameTime;
+	if (state == ST_JUMP || state == ST_KNOCK || state == ST_DEAD) vel.y += GRAVITY_RATE * frameTime;
 
 	//地上では速度制限
 	if (state == ST_STAND){
@@ -151,12 +152,12 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case TY_ENEMY_5:
 	case TY_BULLET:
 		//吹っ飛ばされる
-		setRes(RES_JUMP, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, 0);
+		setRes(RES_KNOCK, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, -VEL_KNOCK_JUMP);
 		break;
 	case TY_MISSILE:
 	case TY_BLAST:
 		//吹っ飛ばされる
-		setRes(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
+		setRes(RES_KNOCK, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y) - VEL_KNOCK_JUMP);
 		break;
 	case TY_GOAL:
 		//クリアする
@@ -236,7 +237,7 @@ void Debu::changeImage(){
 void Debu::responseObj(){
 	Entity::responseObj();
 	if (getRes(RES_LADDER)){
-		if (input->isKeyDown('Z') || hold || state == ST_DEAD || state == ST_CLEAR) return;
+		if (input->isKeyDown('Z') || hold || state == ST_KNOCK || state == ST_DEAD || state == ST_CLEAR) return;
 		state = ST_LADDER;
 	}
 }

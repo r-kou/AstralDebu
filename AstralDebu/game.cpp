@@ -4,6 +4,8 @@
 Game::Game(){
 	graphics = NULL;
 	input = NULL;
+	text = NULL;
+	audio = NULL;
 	pause = false;
 	fps = 100;
 	fpsOn = false;
@@ -78,6 +80,15 @@ void Game::initialize(HWND hw){
 	input = new Input();
 	input->initialize(hwnd);
 
+	//音声初期化
+	audio = new Audio();
+	if (FAILED(hr = audio->initialize())){
+		if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
+			throw(GameError(gameErrorNS::FATAL, "Error initialize sound, file not found"));
+		else
+			throw(GameError(gameErrorNS::FATAL, "Error initialize sound"));
+	}
+
 	//汎用フォント初期化
 	text = new Text();
 	if (text->initialize(
@@ -125,6 +136,9 @@ void Game::run(HWND hw){
 	//描画
 	renderGame();
 
+	//音声
+	audio->run();
+
 	//入力を初期化
 	input->clear(inputNS::KEYS_PRESSED+inputNS::MOUSE_PRESSED);
 }
@@ -143,15 +157,6 @@ void Game::renderGame(){
 		if (fpsOn){
 			_snprintf_s(buffer, BUF_SIZE, "FPS : %3.3f", fps);
 			text->print(buffer, WINDOW_W - gameNS::DBG_MAR_X, 0, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
-		}
-		if (cheat1){
-			text->print("スゴイデブ", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
-		}
-		if (cheat2){
-			text->print("ハンテイ", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y * 2, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
-		}
-		if (cheat3){
-			text->print("ジバク", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y * 3, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
 		}
 		//描画終了
 		graphics->spriteEnd();
@@ -198,5 +203,6 @@ void Game::deleteAll(){
 	SAFE_DELETE(graphics);
 	SAFE_DELETE(input);
 	SAFE_DELETE(text);
+	SAFE_DELETE(audio);
 	initialized = false;
 }

@@ -11,8 +11,10 @@ void AstralDebu::updateTitle(){
 			if(clearedStage == 0)count = 0;
 			else count = 1;
 			stateNumber = 2;
+			audio->playCue(audioNS::OK);
 		}
 	} else if (stateNumber == 2){
+		if (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)) audio->playCue(audioNS::SELECT);
 		if (clearedStage){
 			if (input->isKeyPressed(VK_UP)) count -= (count != 0)?1:-2;
 			if (input->isKeyPressed(VK_DOWN)) count += (count != 2)? 1: -2;
@@ -36,16 +38,26 @@ void AstralDebu::updateTitle(){
 			case 3:
 				break;
 			}
+			audio->playCue(audioNS::OK);
+		}
+		if (input->isKeyPressed('X')) {
+			stateNumber = 1;
+			audio->playCue(audioNS::CANCEL);
 		}
 	}
 	else if (stateNumber == 3) {
-		if (input->isKeyPressed(VK_UP)) stage += (stage != clearedStage)  ? 1 : -clearedStage + 1;
+		if (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)) audio->playCue(audioNS::SELECT);
+		if (input->isKeyPressed(VK_UP)) stage += (stage != clearedStage) ? 1 : -clearedStage + 1;
 		if (input->isKeyPressed(VK_DOWN)) stage -= (stage != 1) ? 1 : -clearedStage + 1;
 		if (input->isKeyPressed('Z')) {
 			state = S_STAGE;
 			read = false;
+			audio->playCue(audioNS::OK);
 		}
-		if (input->isKeyPressed('X')) stateNumber = 2;
+		if (input->isKeyPressed('X')) {
+			stateNumber = 2;
+			audio->playCue(audioNS::CANCEL);
+		}
 	}
 }
 
@@ -60,6 +72,7 @@ void AstralDebu::updateStage(){
 		vitalLife = 100;
 		state = S_MAIN;
 		clearTimeStart = timeGetTime();
+		audio->playCue(audioNS::OK);
 	}
 }
 

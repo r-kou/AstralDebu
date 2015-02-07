@@ -5,11 +5,11 @@
 #include "entity.h"
 
 namespace debuNS{
-	const float VEL_RATE = 800;
-	const float VEL_MAX_WALK = 140;
-	const float VEL_JUMP = -280;
+	const float VEL_RATE = 900;
+	const float VEL_MAX_WALK = 145;
+	const float VEL_JUMP = -285;
 	const float VEL_DUMP = 2000;
-	const float VEL_RATE_JUMP = 600;
+	const float VEL_RATE_JUMP = 700;
 	const float VEL_LADDER = 100;
 	const float VEL_BOMB_X = 350;
 	const float VEL_BOMB_Y = 250;

@@ -13,6 +13,7 @@ BombE::BombE(){
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
+	putSound = audioNS::PUT_STEEL;
 }
 
 //ˆÚ“®

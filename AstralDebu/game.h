@@ -9,6 +9,7 @@
 #include "input.h"
 #include "graphics.h"
 #include "text.h"
+#include "audio.h"
 
 namespace gameNS {
 	const std::string FONT = "Arial";
@@ -24,6 +25,7 @@ protected:
 	Graphics *graphics;
 	Input *input;
 	Text *text;
+	Audio *audio;
 	//ウィンドウハンドラ
 	HWND hwnd;
 	HRESULT hr;
@@ -65,6 +67,7 @@ public:
 
 	//getter
 	Graphics* getGraphics() { return graphics; }
+	Audio* getAudio() { return audio; }
 	Input* getInput() { return input; }
 	//終了メッセージ
 	void exitGame() { PostMessage(hwnd, WM_DESTROY, 0, 0); }
