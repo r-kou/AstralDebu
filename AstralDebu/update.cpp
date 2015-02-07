@@ -13,9 +13,9 @@ void AstralDebu::updateTitle(){
 			stateNumber = 2;
 		}
 	} else if (stateNumber == 2){
-		if (clearedStage != 0){
-			if (input->isKeyPressed(VK_UP)) count -= (count != 0) ? 1 : -2;
-			if (input->isKeyPressed(VK_DOWN)) count += (count != 2) ? 1 : -2;
+		if (clearedStage){
+			if (input->isKeyPressed(VK_UP)) count -= (count != 0)?1:-2;
+			if (input->isKeyPressed(VK_DOWN)) count += (count != 2)? 1: -2;
 		}
 		if (input->isKeyPressed('Z')){
 			switch (count){

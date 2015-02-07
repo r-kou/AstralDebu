@@ -43,7 +43,8 @@
 #define ALL_OBJ FOR(objMax)
 #define ALL_OBJ_EACH FOR_EACH(objMax)
 #define INC(x,t) x = static_cast<t>(x + 1)
-#define TOBOOL(i) (i)?true:false
+#define COND(s,t,f) ((s)?t:f)
+#define TOBOOL(i) COND(i,true,false)
 
 //îƒópíËêî
 const int WINDOW_W = 800;

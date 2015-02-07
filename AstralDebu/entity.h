@@ -172,7 +172,7 @@ public:
 	virtual void touchMap(int map[MAP_COL][MAP_ROW]);
 
 	//ã‰º¶‰E‚ÌÕ“Ë”»’è
-	virtual UCHAR touchMapDirect(int c, UCHAR t) { return (c!=0) ? t : 0; }
+	virtual UCHAR touchMapDirect(int c, UCHAR t) { return c ? t : 0; }
 
 	//’nŒ`‚Ö‚ÌÚG
 	virtual void collideMap(UCHAR t);

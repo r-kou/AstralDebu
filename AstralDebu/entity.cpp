@@ -222,7 +222,7 @@ void Entity::touchObj(Entity *e){
 	}
 
 	//Õ“Ë”»’è
-	if (t != 0){
+	if (t){
 		collideObj(e, t);
 		e->collideObj(this, et);
 	}

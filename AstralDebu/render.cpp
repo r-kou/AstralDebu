@@ -193,7 +193,7 @@ void AstralDebu::renderChip(){
 	for (int j = 0; j < MAP_ROW; j++){
 		chip.setY((float)(j*CHIP_SIZE) + DATA_LEN);
 		for (int i = 0; i < MAP_COL; i++){
-			if (map[i][j] != 0){
+			if (map[i][j]){
 				chip.setX((float)i*CHIP_SIZE);
 				if (map[i][j] <= 12) chip.setCurrentFrame(setChipImage(map[i][j]));
 				else chip.setCurrentFrame(map[i][j]);
