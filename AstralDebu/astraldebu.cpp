@@ -6,8 +6,11 @@ using namespace astralNS;
 AstralDebu::AstralDebu(){
 	stage = 0;
 	count = 0;
+	fCount = 0;
 	life = 0;
 	vitalLife = 0;
+	bgmVolume = 0.0f;
+	soundVolume = 0.0f;
 	read = false;
 	clear = false;
 	bgm = false;

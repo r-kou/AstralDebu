@@ -123,16 +123,13 @@ void AstralDebu::playBgm(){
 
 //bgm’â~
 void AstralDebu::stopBgm(){
-	std::string playBgm;
 	if (!bgm) return;
 
-	if (stage == 11) playBgm = audioNS::BGM1;
-	else if (stage == 21) playBgm = audioNS::BGM2;
-	else if (stage == 31) playBgm = audioNS::BGM3;
-	else playBgm = audioNS::BGM4;
-
-	if (!audio->isPlaying(playBgm.c_str())) return;
-	audio->stopCue(playBgm.c_str());
+	if (audio->isPlaying(audioNS::BGM_TITLE)) audio->stopCue(audioNS::BGM_TITLE);
+	if (audio->isPlaying(audioNS::BGM1)) audio->stopCue(audioNS::BGM1);
+	if (audio->isPlaying(audioNS::BGM2)) audio->stopCue(audioNS::BGM2);
+	if (audio->isPlaying(audioNS::BGM3)) audio->stopCue(audioNS::BGM3);
+	if (audio->isPlaying(audioNS::BGM4)) audio->stopCue(audioNS::BGM4);
 
 	bgm = false;
 }
@@ -149,4 +146,10 @@ void AstralDebu::resetObject(){
 	FOR_2(MAP_COL, MAP_ROW){
 		map[i][j] = 0;
 	}
+}
+
+//float‚ğ®”‚É‚µ‚Ä•¶š—ñ‰»
+std::string AstralDebu::floatToString(float f){
+	int i = (int)(f * 100);
+	return std::to_string(i);
 }

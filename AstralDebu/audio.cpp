@@ -8,6 +8,7 @@ Audio::Audio(){
 	cueIndex = 0;
 	map = NULL;
 	data = NULL;
+	global = NULL;
 	 
 	HRESULT hr = CoInitializeEx(NULL, COINIT_MULTITHREADED);
 	if (SUCCEEDED(hr)) initialized = true;
@@ -35,6 +36,7 @@ HRESULT Audio::initialize(){
 	HANDLE hFile;
 	DWORD fileSize;
 	DWORD bytesRead;
+	DWORD globalSize;
 	HANDLE hMapFile;
 
 	if (!initialized) return result;
@@ -42,13 +44,37 @@ HRESULT Audio::initialize(){
 	result = XACT3CreateEngine(0, &xact);
 	if (FAILED(result) || xact == NULL) return E_FAIL;
 
+	hFile = CreateFile((WAV_FILE_DIR + "\\" + WAV_FILE_GLOBAL).c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+	if (hFile)
+	{
+		//ファイルサイズを取得
+		globalSize = GetFileSize(hFile, NULL);
+
+		//ファイルサイズ取得判定
+		if (globalSize != INVALID_FILE_SIZE)
+		{
+			global = CoTaskMemAlloc(globalSize);
+			if (global)
+			{
+				DWORD byteRead;
+				//ファイルを読み込む
+				ReadFile(hFile, global, globalSize, &byteRead, NULL);
+			}
+		}
+		//ファイルハンドルを閉じる
+		CloseHandle(hFile);
+	}
+
 	XACT_RUNTIME_PARAMETERS param = {0};
 	param.lookAheadTime = XACT_ENGINE_LOOKAHEAD_DEFAULT;
+	param.pGlobalSettingsBuffer = global;
+	param.globalSettingsBufferSize = globalSize;
+	param.globalSettingsFlags = XACT_FLAG_GLOBAL_SETTINGS_MANAGEDATA;
 	result = xact->Initialize(&param);
 	if (FAILED(result)) return result;
 
 	result = E_FAIL;
-	hFile = CreateFile(WAVE_BANK, GENERIC_READ,
+	hFile = CreateFile((WAV_FILE_DIR + "\\" + WAV_FILE_WAVE).c_str(), GENERIC_READ,
 		FILE_SHARE_READ, NULL, OPEN_EXISTING
 		, 0, NULL);
 	if (hFile != INVALID_HANDLE_VALUE) {
@@ -70,7 +96,7 @@ HRESULT Audio::initialize(){
 	if (FAILED(result)) return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
 
 	result = E_FAIL;
-    hFile = CreateFile( SOUND_BANK, GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL );
+	hFile = CreateFile((WAV_FILE_DIR + "\\" + WAV_FILE_SOUND).c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     if( hFile != INVALID_HANDLE_VALUE )
     {
         fileSize = GetFileSize( hFile, NULL );
@@ -85,8 +111,8 @@ HRESULT Audio::initialize(){
         }
         CloseHandle( hFile );
     }
-    if( FAILED( result ) )
-        return HRESULT_FROM_WIN32( ERROR_FILE_NOT_FOUND );
+    if( FAILED( result ) ) return HRESULT_FROM_WIN32( ERROR_FILE_NOT_FOUND );
+
 
     return S_OK;
 }
@@ -115,4 +141,15 @@ bool Audio::isPlaying(const char cue[]){
 
 	sound->GetCueProperties(cueIndex,&prop);
 	return (prop.currentInstances>0);
+}
+
+void Audio::setVolumeBgm(float volume){
+	if (sound == NULL) return;
+	category = xact->GetCategory(CT_BGM);
+	xact->SetVolume(category, volume);
+}
+
+void Audio::setVolumeSound(float volume){
+	category = xact->GetCategory(CT_DEFAULT);
+	xact->SetVolume(category, volume);
 }

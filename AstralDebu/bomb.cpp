@@ -93,7 +93,7 @@ void BombE::collideObj(Entity *e, UCHAR t){
 		break;
 	case TY_BLAST:
 		//”š•—‚Í‘¬“x‚Æ‚©ŠÖŒW‚È‚¢
-		setRes(RES_BOTTOM);
+		setRes(RES_DEAD);
 		break;
 	}
 

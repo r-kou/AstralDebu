@@ -6,8 +6,9 @@
 #include "const.h"
 
 namespace audioNS{
-	const char WAVE_BANK[] = "audio\\wave.xwb";
-	const char SOUND_BANK[] = "audio\\sound.xsb";
+	const char CT_MUSIC[] = "Music";
+	const char CT_DEFAULT[] = "Default";
+	const char CT_BGM[] = "bgm";
 
 	const char BLAST1[] = "blast_1";
 	const char BLAST2[] = "blast_2";
@@ -42,8 +43,10 @@ private:
 	IXACT3WaveBank* wave;
 	IXACT3SoundBank* sound;
 	XACTINDEX cueIndex;
+	XACTCATEGORY category;
 	void* map;
 	void* data;
+	void* global;
 	bool initialized;
 public:
 	Audio();
@@ -59,6 +62,10 @@ public:
 	void stopCue(const char cue[]);
 
 	bool isPlaying(const char cue[]);
+
+	void setVolumeBgm(float volume);
+
+	void setVolumeSound(float volume);
 };
 
 #endif

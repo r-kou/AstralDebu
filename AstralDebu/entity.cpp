@@ -281,7 +281,7 @@ void Entity::responseObj(){
 		//ç∂Ç…è’ìÀ
 		setLeft(false);
 		vel.x = 0.0f;
-		if (!action||type!=TY_DEBU) direct = false;
+		if (!action&&type!=TY_DEBU) direct = false;
 		if (state == ST_KNOCK) {
 			state = ST_STAND;
 			playPut();
@@ -291,7 +291,7 @@ void Entity::responseObj(){
 		//âEÇ…è’ìÀ
 		setRight(false);
 		vel.x = 0.0f;
-		if (!action || type != TY_DEBU) direct = false;
+		if (!action && type != TY_DEBU) direct = true;
 		if (state == ST_KNOCK) {
 			state = ST_STAND;
 			playPut();

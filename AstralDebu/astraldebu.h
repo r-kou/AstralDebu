@@ -119,6 +119,8 @@ class AstralDebu :public Game{
 private:
 	//汎用アニメカウンタ
 	int count;
+	//汎用アニメカウンタ
+	float fCount;
 	//現在のステージ
 	int stage;
 	//読み込み判定
@@ -139,6 +141,8 @@ private:
 	bool bgm;
 	//メニュー画面
 	bool menu;
+	//音量
+	float bgmVolume, soundVolume;
 
 	//ステージクリア
 	bool clear;
@@ -236,6 +240,8 @@ private:
 	void renderTitleMenu();
 	//ステージセレクトを描画
 	void renderTitleSelect();
+	//音量選択を描画
+	void renderTitleVolume();
 	//背景と上のを描画
 	void renderBack();
 	//マップチップを描画
@@ -289,6 +295,8 @@ private:
 	void playBgm();
 	//bgm停止
 	void stopBgm();
+	//floatを整数にして文字列化
+	std::string floatToString(float f);
 public:
 	//コンストラクタ
 	AstralDebu();

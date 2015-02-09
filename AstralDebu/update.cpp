@@ -6,6 +6,7 @@ using namespace astralNS;
 void AstralDebu::updateTitle(){
 	if (stateNumber == 0) {
 		audio->playCue(audioNS::BGM_TITLE);
+		bgm = true;
 		loadData();
 	}
 	else if (stateNumber == 1){
@@ -19,8 +20,12 @@ void AstralDebu::updateTitle(){
 	} else if (stateNumber == 2){
 		if (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)) audio->playCue(audioNS::SELECT);
 		if (clearedStage){
-			if (input->isKeyPressed(VK_UP)) count -= (count != 0)?1:-2;
-			if (input->isKeyPressed(VK_DOWN)) count += (count != 2)? 1: -2;
+			if (input->isKeyPressed(VK_UP)) count -= (count == 0) ? -4 : 1;
+			if (input->isKeyPressed(VK_DOWN)) count += (count == 4) ? -4 : 1;
+		}
+		else {
+			if (input->isKeyPressed(VK_UP)) count -= (count == 0) ? -4 : (count == 3) ? 3 : 1;
+			if (input->isKeyPressed(VK_DOWN)) count += (count == 4) ? -4 : (count == 0) ? 3 : 1;
 		}
 		if (input->isKeyPressed('Z')){
 			switch (count){
@@ -28,19 +33,25 @@ void AstralDebu::updateTitle(){
 				state = S_STAGE;
 				stage = 1;
 				read = false;
-				audio->stopCue(audioNS::BGM_TITLE);
+				stopBgm();
 				break;
 			case 1:
 				state = S_STAGE;
 				stage = clearedStage+1;
-				audio->stopCue(audioNS::BGM_TITLE);
 				read = false;
+				stopBgm();
 				break;
 			case 2:
 				stateNumber = 3;
 				stage = clearedStage;
 				break;
 			case 3:
+				stateNumber = 4;
+				count = 0;
+				break;
+			case 4:
+				stopBgm();
+				PostQuitMessage(0);
 				break;
 			}
 			audio->playCue(audioNS::OK);
@@ -57,11 +68,82 @@ void AstralDebu::updateTitle(){
 		if (input->isKeyPressed('Z')) {
 			state = S_STAGE;
 			read = false;
-			audio->stopCue(audioNS::BGM_TITLE);
+			stopBgm();
 			audio->playCue(audioNS::OK);
 		}
 		if (input->isKeyPressed('X')) {
 			stateNumber = 2;
+			audio->playCue(audioNS::CANCEL);
+		}
+	}
+	else if (stateNumber == 4){
+		if (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)) audio->playCue(audioNS::SELECT);
+		if (input->isKeyPressed(VK_UP)) count -= (count != 0) ? 1 : -2;
+		if (input->isKeyPressed(VK_DOWN)) count += (count != 2) ? 1 : -2;
+		if (input->isKeyPressed('Z')) {
+			switch (count){
+			case 0:
+				stateNumber = 5;
+				fCount = 0.0f;
+				audio->playCue(audioNS::OK);
+				break;
+			case 1:
+				stateNumber = 6;
+				fCount = 0.0f;
+				audio->playCue(audioNS::OK);
+				break;
+			case 2:
+				count = 3;
+				stateNumber = 2;
+				audio->playCue(audioNS::CANCEL);
+				break;
+			}
+		}
+		if (input->isKeyPressed('X')) {
+			count = 3;
+			stateNumber = 2;
+			audio->playCue(audioNS::CANCEL);
+		}
+	}
+	else if (stateNumber == 5){
+		if (fCount == 0.0f){
+			if (input->isKeyDown(VK_UP) || input->isKeyDown(VK_DOWN)) {
+				audio->playCue(audioNS::SELECT);
+				fCount = 0.05f;
+			}
+			if (input->isKeyDown(VK_UP)) bgmVolume += (bgmVolume < 1.0f) ? 0.01f : 0.0f;
+			if (input->isKeyDown(VK_DOWN)) bgmVolume -= (bgmVolume > 0.0f) ? 0.01f : 0.0f;
+		}
+		else {
+			fCount -= frameTime;
+			if (fCount < 0.0f) fCount = 0.0f;
+		}
+
+		audio->setVolumeBgm(bgmVolume);
+		if ((input->isKeyPressed('Z')) || (input->isKeyPressed('X'))) {
+			stateNumber = 4;
+			saveData();
+			audio->playCue(audioNS::CANCEL);
+		}
+	}
+	else if (stateNumber == 6){
+		if (fCount == 0.0f){
+			if (input->isKeyDown(VK_UP) || input->isKeyDown(VK_DOWN)) {
+				audio->playCue(audioNS::SELECT);
+				fCount = 0.05f;
+			}
+			if (input->isKeyDown(VK_UP)) soundVolume += (soundVolume < 1.0f) ? 0.01f : 0.0f;
+			if (input->isKeyDown(VK_DOWN)) soundVolume -= (soundVolume > 0.0f) ? 0.01f : 0.0f;
+		}
+		else {
+			fCount -= frameTime;
+			if (fCount < 0.0f) fCount = 0.0f;
+		}
+
+		audio->setVolumeBgm(soundVolume);
+		if ((input->isKeyPressed('Z')) || (input->isKeyPressed('X'))) {
+			stateNumber = 4;
+			saveData();
 			audio->playCue(audioNS::CANCEL);
 		}
 	}
@@ -82,7 +164,7 @@ void AstralDebu::updateStage(){
 		menu = false;
 		clearTimeStart = timeGetTime();
 		audio->playCue(audioNS::OK);
-		stopBgm();
+		if (stage % 10 == 1) stopBgm();
 		playBgm();
 	}
 }
@@ -202,27 +284,40 @@ void AstralDebu::updateMenu(){
 //セーブデータの読み込み
 void AstralDebu::loadData(){
 	std::ifstream load;
-	int buf_stage;
-	double buf_time;
+	int bufStage;
+	float bufVolume;
+	double bufTime;
 	try{
 		load.open(SAV_FILE, std::ios::in | std::ios::binary);
 		if (load){
 				//クリアしたステージを読み込み
-				load.read((char *)&buf_stage, sizeof(int));
-				clearedStage = buf_stage;
+				load.read((char *)&bufStage, sizeof(int));
+				clearedStage = bufStage;
+				//音量を読み込み
+				load.read((char *)&bufVolume, sizeof(float));
+				bgmVolume = bufVolume;
+				audio->setVolumeBgm(bgmVolume);
+				load.read((char *)&bufVolume, sizeof(float));
+				soundVolume = bufVolume;
+				audio->setVolumeSound(soundVolume);
 				//クリア時間を読み込み
 				FOR(STG_SIZE) {
-					load.read((char *)&buf_time, sizeof(double));
-					clearTime[i] = buf_time;
+					load.read((char *)&bufTime, sizeof(double));
+					clearTime[i] = bufTime;
 				}
-				load.close();
 		}
 		else {
 			//クリアしたステージを初期化
 			clearedStage = 0;
+			//音量を初期化
+			bgmVolume = 1.0f;
+			audio->setVolumeBgm(bgmVolume);
+			soundVolume = 1.0f;
+			audio->setVolumeSound(soundVolume);
 			//クリア時間を初期化
 			FOR(STG_SIZE) clearTime[i] = 0;
 		}
+		load.close();
 	}
 	catch (...){
 		load.close();
@@ -234,13 +329,20 @@ void AstralDebu::loadData(){
 //セーブデータの書き込み
 void AstralDebu::saveData(){
 	std::ofstream save;
-	int buf_stage = clearedStage;
+	int bufStage;
+	float bufVolume;
 	try{
 		save.open(SAV_FILE, std::ios::out | std::ios::binary | std::ios::trunc);
 		if (save){
-			//クリアしたステージを読み込み
-			save.write((char *)&buf_stage, sizeof(int));
-			//クリア時間を読み込み
+			//クリアしたステージを書き込み
+			bufStage = clearedStage;
+			save.write((char *)&bufStage, sizeof(int));
+			//音量を書き込み
+			bufVolume = bgmVolume;
+			save.write((char *)&bufVolume, sizeof(float));
+			bufVolume = soundVolume;
+			save.write((char *)&bufVolume, sizeof(float));
+			//クリア時間を書き込み
 			FOR(STG_SIZE) {
 				save.write((char *)&clearTime[i], sizeof(double));
 			}

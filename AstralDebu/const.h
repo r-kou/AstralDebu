@@ -74,6 +74,12 @@ const std::string IMG_FILE_TITLE = "title.png";
 const std::string MAP_FILE_DIR = "map";
 const std::string MAP_FILE_EXT = ".chp";
 const std::string SAV_FILE = "save.dat";
+const std::string WAV_FILE_DIR = "audio";
+const std::string WAV_FILE_WAVE = "wave.xwb";
+const std::string WAV_FILE_SOUND = "sound.xsb";
+const std::string WAV_FILE_GLOBAL = "global.xgs";
+
+
 
 //îƒópä÷êî
 #endif
