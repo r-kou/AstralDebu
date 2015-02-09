@@ -167,11 +167,11 @@ void Entity::collideMap(UCHAR t){
 		//空中にいたら着地判定
 		if (((vel.y >= 0.0f) && (state == ST_JUMP || state == ST_LADDER)) ||
 			((vel.y > 0.0f) && (state == ST_KNOCK || state == ST_DEAD))){
+			if ((vel.y > 0) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 			//生きてたら着地　死んでたら停止
 			if (state == ST_DEAD) vel.x = 0.0f;
 			else state = ST_STAND;
 			setBottom(false);
-			if (vel.y>0.0f)	playPut();
 			vel.y = 0.0f;
 		}
 	}
@@ -309,7 +309,8 @@ void Entity::responseObj(){
 	if (getRes(RES_BOTTOM)) {
 		//下に衝突
 		setBottom(false);
-		if (vel.y > 0) playPut();
+		//はしごの速度ではならない
+		if (((vel.y > 0) && (vel.y != 100)) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 		vel.y = 0.0f;
 		state = ST_STAND;
 	}
@@ -317,7 +318,7 @@ void Entity::responseObj(){
 		//下に衝突 マスにぴったり
 		setCX();
 		setBottom(false);
-		if (vel.y > 0) playPut();
+		if ((vel.y > 0) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 		vel.y = 0.0f;
 		vel.x = 0.0f;
 		state = ST_STAND;

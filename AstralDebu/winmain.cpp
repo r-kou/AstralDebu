@@ -51,7 +51,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	catch (...){
 		game->deleteAll();
 		DestroyWindow(hwnd);
-		MessageBox(NULL, "Unknown Error Occured in Game", "Error", MB_OK);
+		MessageBox(NULL, "—\Šú‚¹‚ÊƒGƒ‰[‚ª”­¶‚µ‚Ü‚µ‚½", "Error", MB_OK);
 	}
 	SAFE_DELETE(game);
 	return 0;

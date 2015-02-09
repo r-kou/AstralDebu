@@ -35,7 +35,7 @@ void AstralDebu::readCommand(){
 		SAFE_DELETE(object[tmp]);
 		object[tmp] = new Blast(true);
 		if (!object[tmp]->initialize(this, &bombT, debu->ChipCX(), debu->ChipCY()))
-			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 	}
 	//デブがすごくなる
 	if (str == "tabata") {
@@ -246,20 +246,22 @@ void AstralDebu::throwObject(){
 	case entityNS::TY_BOMB_BOX:
 	case entityNS::TY_AIR_BOX:
 		subLife(5);
-		audio->playCue(audioNS::THROW);
+		audio->playCue(audioNS::THROW_WOOD);
 		break;
 	case entityNS::TY_STEEL_BOX:
 	case entityNS::TY_BOMB:
 	case entityNS::TY_HIBOMB:
 		subLife(10);
-		audio->playCue(audioNS::THROW);
+		audio->playCue(audioNS::THROW_STEEL);
 		break;
 	case entityNS::TY_LEAD_BOX:
 	case entityNS::TY_HIBOMB_BOX:
 		subLife(20);
+		audio->playCue(audioNS::THROW_LEAD);
 		break;
 	case entityNS::TY_HAMMER:
 		subLife(40);
+		audio->playCue(audioNS::THROW_HAMMER);
 		break;
 	}
 }
@@ -293,7 +295,7 @@ void AstralDebu::deadObject(int i){
 		SAFE_DELETE(e);
 		object[i] = new Blast(false);
 		if (!object[i]->initialize(this, &bombT, x, y))
-			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 		audio->playCue(audioNS::BLAST1);
 		break;
 	case entityNS::TY_HIBOMB:
@@ -302,7 +304,7 @@ void AstralDebu::deadObject(int i){
 		SAFE_DELETE(e);
 		object[i] = new Blast(true);
 		if (!object[i]->initialize(this, &bombT, x, y))
-			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 		audio->playCue(audioNS::BLAST2);
 		break;
 	default:
@@ -325,7 +327,7 @@ void AstralDebu::actionObject(int i){
 		SAFE_DELETE(object[tmp]);
 		object[tmp] = new Bullet();
 		if (!object[tmp]->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
-			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 		object[tmp]->setDirect(e->getDirect());
 		object[tmp]->setState(entityNS::ST_KNOCK);
 		break;
@@ -338,7 +340,7 @@ void AstralDebu::actionObject(int i){
 		SAFE_DELETE(object[tmp]);
 		object[tmp] = new Missile();
 		if (!object[tmp]->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
-			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 		object[tmp]->setDirect(e->getDirect());
 		object[tmp]->setState(entityNS::ST_KNOCK);
 		break;

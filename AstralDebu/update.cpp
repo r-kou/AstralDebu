@@ -4,7 +4,10 @@ using namespace astralNS;
 
 //タイトル画面の更新
 void AstralDebu::updateTitle(){
-	if (stateNumber == 0) loadData();
+	if (stateNumber == 0) {
+		audio->playCue(audioNS::BGM_TITLE);
+		loadData();
+	}
 	else if (stateNumber == 1){
 		count = count++ % 30;
 		if (input->isKeyPressed('Z')){
@@ -25,10 +28,12 @@ void AstralDebu::updateTitle(){
 				state = S_STAGE;
 				stage = 1;
 				read = false;
+				audio->stopCue(audioNS::BGM_TITLE);
 				break;
 			case 1:
 				state = S_STAGE;
 				stage = clearedStage+1;
+				audio->stopCue(audioNS::BGM_TITLE);
 				read = false;
 				break;
 			case 2:
@@ -52,6 +57,7 @@ void AstralDebu::updateTitle(){
 		if (input->isKeyPressed('Z')) {
 			state = S_STAGE;
 			read = false;
+			audio->stopCue(audioNS::BGM_TITLE);
 			audio->playCue(audioNS::OK);
 		}
 		if (input->isKeyPressed('X')) {
@@ -63,7 +69,9 @@ void AstralDebu::updateTitle(){
 
 //ステージ表示画面の更新
 void AstralDebu::updateStage(){
-	if (!read) loadStage();
+	if (!read) {
+		loadStage();
+	}
 
 	if (input->isKeyPressed('Z') && read){
 		cheat = false;
@@ -73,6 +81,8 @@ void AstralDebu::updateStage(){
 		state = S_MAIN;
 		clearTimeStart = timeGetTime();
 		audio->playCue(audioNS::OK);
+		stopBgm();
+		playBgm();
 	}
 }
 
@@ -158,76 +168,97 @@ void AstralDebu::updateClear(){
 
 //セーブデータの読み込み
 void AstralDebu::loadData(){
-	std::ifstream save(SAV_FILE, std::ios::in | std::ios::binary);
+	std::ifstream load;
 	int buf_stage;
 	double buf_time;
-	if (save){
-		try{
-			//クリアしたステージを読み込み
-			save.read((char *)&buf_stage, sizeof(int));
-			clearedStage = buf_stage;
-			//クリア時間を読み込み
-			FOR(STG_SIZE) {
-				save.read((char *)&buf_time, sizeof(double));
-				clearTime[i] = buf_time;
-			}
-			save.close();
+	try{
+		load.open(SAV_FILE, std::ios::in | std::ios::binary);
+		if (load){
+				//クリアしたステージを読み込み
+				load.read((char *)&buf_stage, sizeof(int));
+				clearedStage = buf_stage;
+				//クリア時間を読み込み
+				FOR(STG_SIZE) {
+					load.read((char *)&buf_time, sizeof(double));
+					clearTime[i] = buf_time;
+				}
+				load.close();
 		}
-		catch (...){
-			save.close();
-			throw(GameError(gameErrorNS::FATAL, "Error loading data."));
+		else {
+			//クリアしたステージを初期化
+			clearedStage = 0;
+			//クリア時間を初期化
+			FOR(STG_SIZE) clearTime[i] = 0;
 		}
 	}
-	else {
-		//クリアしたステージを初期化
-		clearedStage = 0;
-		//クリア時間を初期化
-		FOR(STG_SIZE) clearTime[i] = 0;
+	catch (...){
+		load.close();
+		throw(GameError(gameErrorNS::FATAL, "セーブデータの読み込みに失敗しました"));
 	}
 	stateNumber = 1;
 }
 
 //セーブデータの書き込み
 void AstralDebu::saveData(){
-	std::ofstream save(SAV_FILE, std::ios::out | std::ios::binary | std::ios::trunc);
+	std::ofstream save;
 	int buf_stage = clearedStage;
-	if (save){
-		//クリアしたステージを読み込み
-		save.write((char *)&buf_stage, sizeof(int));
-		//クリア時間を読み込み
-		FOR(STG_SIZE) {
-			save.write((char *)&clearTime[i], sizeof(double));
+	try{
+		save.open(SAV_FILE, std::ios::out | std::ios::binary | std::ios::trunc);
+		if (save){
+			//クリアしたステージを読み込み
+			save.write((char *)&buf_stage, sizeof(int));
+			//クリア時間を読み込み
+			FOR(STG_SIZE) {
+				save.write((char *)&clearTime[i], sizeof(double));
+			}
+			save.close();
 		}
-		save.close();
+		else {
+			save.close();
+			throw(GameError(gameErrorNS::FATAL, "セーブデータの書き込みに失敗しました．"));
+		}
 	}
-	else throw(GameError(gameErrorNS::FATAL, "Error saving data."));
+	catch (...){
+		save.close();
+		throw(GameError(gameErrorNS::FATAL, "セーブデータの書き込みに失敗しました．"));
+	}
+	
 }
 
 
 //ステージの読み込み
 void AstralDebu::loadStage(){
 	short buf[MAP_COL];
-	std::ifstream file(MAP_FILE_DIR + "\\" + MAP_NAME(stage) + MAP_FILE_EXT, std::ios::in | std::ios::binary);
+	std::string fileName = MAP_FILE_DIR + "\\" + MAP_NAME(stage) + MAP_FILE_EXT;
+	std::ifstream file;
 
-	if (file.fail())
-		throw(GameError(gameErrorNS::FATAL, "Error reading map file"));
-
-	//古いオブジェクトをすべて消去
-	ALL_OBJ	SAFE_DELETE(object[i]);
-	objMax = 0;
-	objHolded = -1;
-	warpRed = -1;
-	warpGreen = -1;
-	warpYellow = -1;
-
-	for (int j = 0; j < MAP_ROW; j++){
-		file.read((char *)&buf, sizeof(short) * MAP_COL);
-		for (int i = 0; i < MAP_COL; i++){
-			loadChip(i, j, decodeChip(buf[i],i,j));
+	try{
+		file.open(fileName, std::ios::in | std::ios::binary);
+		if (!file){
+			file.close();
+			throw(GameError(gameErrorNS::FATAL, ("マップデータ" + fileName + "の読み込みに失敗しました")));
 		}
+		//古いオブジェクトをすべて消去
+		ALL_OBJ	SAFE_DELETE(object[i]);
+		objMax = 0;
+		objHolded = -1;
+		warpRed = -1;
+		warpGreen = -1;
+		warpYellow = -1;
+
+		for (int j = 0; j < MAP_ROW; j++){
+			file.read((char *)&buf, sizeof(short) * MAP_COL);
+			for (int i = 0; i < MAP_COL; i++){
+				loadChip(i, j, decodeChip(buf[i], i, j));
+			}
+		}
+		file.close();
+		read = true;
 	}
-	file.close();
-	read = true;
+	catch (...){
+		file.close();
+		throw(GameError(gameErrorNS::FATAL, ("マップデータ" + fileName + "の読み込みに失敗しました")));
+	}
 }
 
 //チップ割り当て
@@ -344,7 +375,7 @@ void AstralDebu::loadChip(int i,int j,short c){
 	case 34: //デブ
 		map[i][j] = 0;
 		if (!debu->initialize(this, &debuT, input, i, j))
-			throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+			throw(GameError(gameErrorNS::FATAL, "オブジェクトの生成に失敗しました"));
 		break;
 	default:
 		map[i][j] = 0;

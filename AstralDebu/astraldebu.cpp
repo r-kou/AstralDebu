@@ -10,6 +10,7 @@ AstralDebu::AstralDebu(){
 	vitalLife = 0;
 	read = false;
 	clear = false;
+	bgm = false;
 	state = S_TITLE;
 	stateNumber = 0;
 	clearTimeStart = 0;
@@ -51,9 +52,9 @@ void AstralDebu::initialize(HWND hwnd){
 
 	//画像を設定
 	if (!title.initialize(graphics, &titleT, 0, 0, 0))
-		throw(GameError(gameErrorNS::FATAL, "Error initializing image."));
+		throw(GameError(gameErrorNS::FATAL, "画像の初期化に失敗しました"));
 	if (!chip.initialize(graphics, &chipT, CHIP_SIZE, CHIP_SIZE, IMG_COL_CHIP))
-		throw(GameError(gameErrorNS::FATAL, "Error initializing image."));
+		throw(GameError(gameErrorNS::FATAL, "画像の初期化に失敗しました"));
 
 	//フォントを設定
 	initFont(stageF, 80);
@@ -69,13 +70,13 @@ void AstralDebu::initialize(HWND hwnd){
 //テクスチャの初期化
 void AstralDebu::initTexture(Texture &t, std::string file){
 	if (!t.initialize(graphics, (IMG_FILE_DIR + "\\" + file).c_str()))
-		throw(GameError(gameErrorNS::FATAL, "Error initializing texture."));
+		throw(GameError(gameErrorNS::FATAL, "画像の初期化に失敗しました"));
 }
 
 //フォントの初期化
 void AstralDebu::initFont(Text &t, int point){
 	if (t.initialize(graphics, point, true, false, FONT) == false)
-		throw(GameError(gameErrorNS::FATAL, "Error initializing font."));
+		throw(GameError(gameErrorNS::FATAL, "フォントの初期化に失敗しました"));
 	t.setFontColor(WHITE);
 }
 

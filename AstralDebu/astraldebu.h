@@ -19,7 +19,7 @@
 
 namespace astralNS {
 	//配列の大きさ
-	const int OBJ_SIZE = 64;
+	const int OBJ_SIZE = 128;
 	const int STG_SIZE = 40;
 
 	//各画像の横枚数
@@ -112,6 +112,8 @@ private:
 	double clearTime[astralNS::STG_SIZE];
 	//クリアした最後のステージ
 	int clearedStage;
+	//音楽の初期化とか
+	bool bgm;
 
 	//ステージクリア
 	bool clear;
@@ -169,7 +171,6 @@ private:
 	void loadStage();
 	//チップ割り当て
 	void loadChip(int, int, short);
-	//void loadChip(int, int, char);
 	//ステージに合わせてチップを選択
 	int setChipImage(int);
 
@@ -235,8 +236,6 @@ private:
 	void drawPanel(std::string str, float cx, float cy, float len, ARGB c);
 	//画像つきヒント用パネルを描画
 	void drawPanel(int img,float cx,float cy,ARGB c);
-	//描画する画像を選択
-
 
 	//カーソルの位置を返す
 	int getCursorChipX();
@@ -257,6 +256,10 @@ private:
 	int getEmptyIndex();
 	//マップチップのでコード
 	short decodeChip(short c, int i, int j) {return (c - ((i*(j + 1)) << 4)) / ((i + 1) * 11);}
+	//bgm再生
+	void playBgm();
+	//bgm停止
+	void stopBgm();
 public:
 	//コンストラクタ
 	AstralDebu();

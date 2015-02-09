@@ -107,3 +107,12 @@ void Audio::stopCue(const char cue[]){
 	cueIndex = sound->GetCueIndex(cue);
 	sound->Stop(cueIndex, XACT_FLAG_SOUNDBANK_STOP_IMMEDIATE);
 }
+
+bool Audio::isPlaying(const char cue[]){
+	XACT_CUE_PROPERTIES prop;
+	if (sound == NULL) return false;
+	cueIndex = sound->GetCueIndex(cue);
+
+	sound->GetCueProperties(cueIndex,&prop);
+	return (prop.currentInstances>0);
+}

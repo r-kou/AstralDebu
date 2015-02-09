@@ -8,7 +8,7 @@ void AstralDebu::addObject(Entity *e, Texture &t, int i, int j){
 	map[i][j] = 0;
 	object[objMax] = e;
 	if (!e->initialize(this, &t, i, j))
-		throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+		throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 	objMax++;
 }
 
@@ -17,7 +17,7 @@ void AstralDebu::addEnemy(Enemy *e, Texture &t, Debu *d, int i, int j){
 	map[i][j] = 0;
 	object[objMax] = e;
 	if (!e->initialize(this, &t, d, i, j))
-		throw(GameError(gameErrorNS::FATAL, "Error initializing entity."));
+		throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 	objMax++;
 }
 
@@ -103,4 +103,36 @@ int AstralDebu::getEmptyIndex(){
 	}
 	if (tmp == objMax) objMax++;
 	return tmp;
+}
+
+//bgm再生
+void AstralDebu::playBgm(){
+	std::string playBgm;
+	if (bgm) return;
+
+	if (stage <= 10) playBgm = audioNS::BGM1;
+	else if (stage <= 20) playBgm = audioNS::BGM2;
+	else if (stage <= 30) playBgm = audioNS::BGM3;
+	else playBgm = audioNS::BGM4;
+
+	if (audio->isPlaying(playBgm.c_str())) return;
+	audio->playCue(playBgm.c_str());
+
+	bgm = true;
+}
+
+//bgm停止
+void AstralDebu::stopBgm(){
+	std::string playBgm;
+	if (!bgm) return;
+
+	if (stage == 11) playBgm = audioNS::BGM1;
+	else if (stage == 21) playBgm = audioNS::BGM2;
+	else if (stage == 31) playBgm = audioNS::BGM3;
+	else playBgm = audioNS::BGM4;
+
+	if (!audio->isPlaying(playBgm.c_str())) return;
+	audio->stopCue(playBgm.c_str());
+
+	bgm = false;
 }

@@ -84,9 +84,9 @@ void Game::initialize(HWND hw){
 	audio = new Audio();
 	if (FAILED(hr = audio->initialize())){
 		if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
-			throw(GameError(gameErrorNS::FATAL, "Error initialize sound, file not found"));
+			throw(GameError(gameErrorNS::FATAL, "音声ファイルが見つかりませんでした．"));
 		else
-			throw(GameError(gameErrorNS::FATAL, "Error initialize sound"));
+			throw(GameError(gameErrorNS::FATAL, "音声の初期化に失敗しました"));
 	}
 
 	//汎用フォント初期化
@@ -94,12 +94,12 @@ void Game::initialize(HWND hw){
 	if (text->initialize(
 		graphics, gameNS::POINT_SIZE,
 		false, false, gameNS::FONT) == false)
-		throw(GameError(gameErrorNS::FATAL, "Error initializing font"));
+		throw(GameError(gameErrorNS::FATAL, "フォントの初期化に失敗しました"));
 	text->setFontColor(gameNS::FONT_COLOR);
 
 	//タイマー初期化
 	if (QueryPerformanceFrequency(&timeFreq) == false)
-		throw(GameError(gameErrorNS::FATAL, "Error initializing timer."));
+		throw(GameError(gameErrorNS::FATAL, "タイマの初期化に失敗しました"));
 	QueryPerformanceCounter(&timeStart);
 	initialized = true;
 }
