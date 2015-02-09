@@ -11,6 +11,7 @@ AstralDebu::AstralDebu(){
 	read = false;
 	clear = false;
 	bgm = false;
+	menu = false;
 	state = S_TITLE;
 	stateNumber = 0;
 	clearTimeStart = 0;

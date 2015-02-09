@@ -79,6 +79,7 @@ void AstralDebu::updateStage(){
 		life = 100;
 		vitalLife = 100;
 		state = S_MAIN;
+		menu = false;
 		clearTimeStart = timeGetTime();
 		audio->playCue(audioNS::OK);
 		stopBgm();
@@ -88,6 +89,12 @@ void AstralDebu::updateStage(){
 
 //メインの更新
 void AstralDebu::updateMain(){
+	if (menu) {
+		//メニュー時は更新しない
+		updateMenu();
+		return;
+	}
+
 	if (vitalLife > life) vitalLife--;
 	else if (vitalLife < life) vitalLife++;
 
@@ -166,6 +173,32 @@ void AstralDebu::updateClear(){
 
 }
 
+//メニュー画面の更新
+void AstralDebu::updateMenu(){
+	if (input->isKeyPressed(VK_SPACE) || (input->isKeyPressed('X'))) {
+		menu = false;
+		audio->playCue(audioNS::CANCEL);
+	}
+	if ((input->isKeyPressed(VK_LEFT)) || (input->isKeyPressed(VK_RIGHT))) {
+		count = (count?0:1);
+		audio->playCue(audioNS::SELECT);
+	}
+	if (input->isKeyPressed('Z')){
+		if (count) {
+			resetObject();
+			stateNumber = 1;
+			state = S_TITLE;
+			stopBgm();
+			audio->playCue(audioNS::OK);
+			audio->playCue(audioNS::BGM_TITLE);
+		}
+		else {
+			menu = false;
+			audio->playCue(audioNS::CANCEL);
+		}
+	}
+}
+
 //セーブデータの読み込み
 void AstralDebu::loadData(){
 	std::ifstream load;
@@ -238,13 +271,8 @@ void AstralDebu::loadStage(){
 			file.close();
 			throw(GameError(gameErrorNS::FATAL, ("マップデータ" + fileName + "の読み込みに失敗しました")));
 		}
-		//古いオブジェクトをすべて消去
-		ALL_OBJ	SAFE_DELETE(object[i]);
-		objMax = 0;
-		objHolded = -1;
-		warpRed = -1;
-		warpGreen = -1;
-		warpYellow = -1;
+
+		resetObject();
 
 		for (int j = 0; j < MAP_ROW; j++){
 			file.read((char *)&buf, sizeof(short) * MAP_COL);

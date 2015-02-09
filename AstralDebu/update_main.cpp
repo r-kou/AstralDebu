@@ -2,7 +2,6 @@
 
 using namespace astralNS;
 
-
 //コマンド読み込み
 void AstralDebu::readCommand(){
 	std::string str = input->getTextIn();
@@ -21,6 +20,13 @@ void AstralDebu::readCommand(){
 
 	//やり直し
 	if (input->isKeyPressed('Q')) life = 0;
+
+	//メニュー表示
+	if (input->isKeyPressed(VK_SPACE)) {
+		menu = true;
+		count = 0;
+		audio->playCue(audioNS::OK);
+	}
 
 	//以下チートコマンド
 	//クリア

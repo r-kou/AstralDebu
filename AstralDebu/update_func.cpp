@@ -136,3 +136,17 @@ void AstralDebu::stopBgm(){
 
 	bgm = false;
 }
+
+//オブジェクトデータとかを初期化
+void AstralDebu::resetObject(){
+	//古いオブジェクトをすべて消去
+	ALL_OBJ	SAFE_DELETE(object[i]);
+	objMax = 0;
+	objHolded = -1;
+	warpRed = -1;
+	warpGreen = -1;
+	warpYellow = -1;
+	FOR_2(MAP_COL, MAP_ROW){
+		map[i][j] = 0;
+	}
+}

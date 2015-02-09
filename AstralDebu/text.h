@@ -28,6 +28,8 @@ public:
 	virtual int print(const std::string &str, RECT &rect, UINT format);
 	//位置，範囲，色，フォーマットをまとめて指定して描画
 	virtual int print(const std::string &str, int l, int t, int r, int b, ARGB c, UINT format);
+	//位置，範囲，色，フォーマットをまとめて指定して描画
+	virtual int print(const std::string &str, float l, float t, float r, float b, ARGB c, UINT format);
 
 	//setter
 	virtual void setDegrees(float deg) { angle = deg*(180.0f / (float)PI); }

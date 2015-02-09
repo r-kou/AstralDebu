@@ -39,12 +39,48 @@ void AstralDebu::renderMain(){
 	//オブジェクト描画
 	renderObject();
 
+	//判定表示（チート時）
 	if (cheat2) drawEdge();
+
+	//メニュー表示（メニュー時）
+	if (menu) renderMenu();
 }
 
 //クリア画面の描画
 void AstralDebu::renderClear(){
 	graphics->spriteBegin();
+
+	graphics->spriteEnd();
+}
+
+//メニュー画面の描画
+void AstralDebu::renderMenu(){
+	graphics->spriteBegin();
+	drawQuad(MENU_MAR_X - MENU_FRAME, MENU_MAR_Y - MENU_FRAME, MENU_LEN_X + MENU_FRAME * 2, MENU_FRAME, MENU_BACK);
+	drawQuad(MENU_MAR_X - MENU_FRAME, MENU_MAR_Y + MENU_LEN_Y, MENU_LEN_X + MENU_FRAME * 2, MENU_FRAME, MENU_BACK);
+	drawQuad(MENU_MAR_X - MENU_FRAME, MENU_MAR_Y, MENU_FRAME, MENU_LEN_Y, MENU_BACK);
+	drawQuad(MENU_MAR_X + MENU_LEN_X, MENU_MAR_Y, MENU_FRAME, MENU_LEN_Y, MENU_BACK);
+	drawQuad(MENU_MAR_X, MENU_MAR_Y, MENU_LEN_X, MENU_LEN_Y, MENU_BACK&graphicsNS::ALPHA90);
+
+	numberF.print("Ｚ：ジャンプ", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
+	numberF.print("Ｘ：アイテムを持ち上げる", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
+	numberF.print("　　持ち上げ時は置く", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 2, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
+	numberF.print("Ｃ：アイテムを押す", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 3, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
+	numberF.print("　：持ち上げ時は投げる", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 4, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
+	numberF.print("Ｑ：やり直す", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 5, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
+	numberF.print("ゲームを続ける", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 7, MENU_TEXT_SEP_X, MENU_TEXT_SEP_Y, BLACK, DT_CC);
+	numberF.print("タイトルに戻る", MENU_TEXT_MAR_X + MENU_TEXT_SEP_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 7, MENU_TEXT_SEP_X, MENU_TEXT_SEP_Y, BLACK, DT_CC);
+	
+	//矢印描画
+	drawQuad(MENU_ARROW_QUA_MAR_X + (count ? MENU_TEXT_SEP_X : 0), MENU_ARROW_QUA_MAR_Y, MENU_ARROW_QUA_LEN_X, MENU_ARROW_QUA_LEN_Y, BLACK);
+	drawTriangle(MENU_ARROW_TRI_X_L + (count ? MENU_TEXT_SEP_X : 0), MENU_ARROW_TRI_Y_T, MENU_ARROW_TRI_X_R + (count ? MENU_TEXT_SEP_X : 0), MENU_ARROW_TRI_Y_M,
+		MENU_ARROW_TRI_X_L + (count ? MENU_TEXT_SEP_X : 0), MENU_ARROW_TRI_Y_B, BLACK);
+	drawQuad(MENU_ARROW_QUA_MAR_X + (count ? MENU_TEXT_SEP_X : 0)+2, MENU_ARROW_QUA_MAR_Y+2, MENU_ARROW_QUA_LEN_X, MENU_ARROW_QUA_LEN_Y-4, RED);
+	drawTriangle(MENU_ARROW_TRI_X_L + (count ? MENU_TEXT_SEP_X : 0)+2, MENU_ARROW_TRI_Y_T+4, MENU_ARROW_TRI_X_R + (count ? MENU_TEXT_SEP_X : 0)-3, MENU_ARROW_TRI_Y_M,
+		MENU_ARROW_TRI_X_L + (count ? MENU_TEXT_SEP_X : 0)+2, MENU_ARROW_TRI_Y_B-4, RED);
+	//drawQuad(8.25f*CHIP_SIZE + 2, (8.25f + count)*CHIP_SIZE + DATA_LEN + 2, (float)CHIP_SIZE, (0.5f*CHIP_SIZE) - 4, RED);
+	//drawTriangle((9.25f)*CHIP_SIZE + 2, (8.0f + count)*CHIP_SIZE + DATA_LEN + 4, (9.75f)*CHIP_SIZE - 3, (8.5f + count)*CHIP_SIZE + DATA_LEN,
+	//	(9.25f)*CHIP_SIZE + 2, (9.0f + count)*CHIP_SIZE + DATA_LEN - 4, RED);
 
 	graphics->spriteEnd();
 }

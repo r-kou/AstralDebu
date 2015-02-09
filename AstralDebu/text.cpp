@@ -64,6 +64,11 @@ int Text::print(const std::string &str, int l, int t, int r, int b, ARGB c, UINT
 	return print(str, rect, format);
 }
 
+//位置，範囲，色をまとめて指定して描画　中央上部揃え
+int Text::print(const std::string &str, float l, float t, float r, float b, ARGB c, UINT format){
+	return print(str, (int)l,(int)t,(int)r,(int)b,c,format);
+}
+
 //デバイス削除
 void Text::onLostDevice(){
 	if (font == NULL) return;

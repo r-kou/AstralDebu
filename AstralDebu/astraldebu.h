@@ -52,19 +52,42 @@ namespace astralNS {
 	const float VEL_THROW = 300;
 
 	//短径描画の位置
-	const int LIFE_MAR_X = 120;
-	const int LIFE_MAR_Y = 48;
-	const int LIFE_LEN_X = 400;
-	const int LIFE_LEN_Y = 64;
-	const int WORD_MAR_X = 40;
-	const int WORD_MAR_Y = 64;
-	const int WORD_LEN_X = LIFE_MAR_X - WORD_MAR_X;
-	const int WORD_LEN_Y = 24;
-	const int DATA_MAR = 4;
-	const int STG_MAR_X = 520;
-	const int STG_MAR_Y = LIFE_MAR_Y;
-	const int STG_LEN_X = WINDOW_W - STG_MAR_X;
-	const int STG_LEN_Y = LIFE_LEN_Y;
+	const float LIFE_MAR_X = 120;
+	const float LIFE_MAR_Y = 48;
+	const float LIFE_LEN_X = 400;
+	const float LIFE_LEN_Y = 64;
+	const float WORD_MAR_X = 40;
+	const float WORD_MAR_Y = 64;
+	const float WORD_LEN_X = LIFE_MAR_X - WORD_MAR_X;
+	const float WORD_LEN_Y = 24;
+	const float DATA_MAR = 4;
+	const float STG_MAR_X = 520;
+	const float STG_MAR_Y = LIFE_MAR_Y;
+	const float STG_LEN_X = WINDOW_W - STG_MAR_X;
+	const float STG_LEN_Y = LIFE_LEN_Y;
+	const float MENU_FRAME = 5;
+	const float MENU_MAR_X = 50;
+	const float MENU_MAR_Y = 50;
+	const float MENU_LEN_X = WINDOW_W - MENU_MAR_X * 2;
+	const float MENU_LEN_Y = WINDOW_H - MENU_MAR_Y * 2;
+	const float MENU_TEXT_MAR_X = 100;
+	const float MENU_TEXT_MAR_Y = 100;
+	const float MENU_TEXT_LEN_X = WINDOW_W - MENU_TEXT_MAR_X * 2;
+	const float MENU_TEXT_LEN_Y = WINDOW_H - MENU_TEXT_MAR_Y * 2;
+	const float MENU_TEXT_SEP_X = MENU_TEXT_LEN_X / 2;
+	const float MENU_TEXT_SEP_Y = MENU_TEXT_LEN_Y / 8;
+	const float MENU_ARROW_MAR_X = MENU_TEXT_MAR_X - CHIP_SIZE*0.5f;
+	const float MENU_ARROW_MAR_Y = MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 7 + 10.0f;
+	const float MENU_ARROW_QUA_MAR_X = MENU_ARROW_MAR_X;
+	const float MENU_ARROW_QUA_MAR_Y = MENU_ARROW_MAR_Y +CHIP_SIZE * 0.25f;
+	const float MENU_ARROW_QUA_LEN_X = CHIP_SIZE * 1.0f;
+	const float MENU_ARROW_QUA_LEN_Y = CHIP_SIZE * 0.5f;
+	const float MENU_ARROW_TRI_X_L = MENU_ARROW_MAR_X + CHIP_SIZE * 1.0f;
+	const float MENU_ARROW_TRI_X_R = MENU_ARROW_MAR_X + CHIP_SIZE * 1.5f;
+	const float MENU_ARROW_TRI_Y_T = MENU_ARROW_MAR_Y;
+	const float MENU_ARROW_TRI_Y_M = MENU_ARROW_MAR_Y + CHIP_SIZE * 0.5f;
+	const float MENU_ARROW_TRI_Y_B = MENU_ARROW_MAR_Y + CHIP_SIZE * 1.0f;
+
 
 	//色
 	const ARGB BLACK = D3DCOLOR_ARGB(255, 0, 0, 0);
@@ -79,7 +102,7 @@ namespace astralNS {
 	const ARGB LIFE_GAUGE = D3DCOLOR_ARGB(255, 224, 224, 0);
 	const ARGB LIFE_VITAL_PLUS = D3DCOLOR_ARGB(255, 0, 224, 0);
 	const ARGB LIFE_VITAL_MINUS = D3DCOLOR_ARGB(255, 224, 0, 0);
-	const ARGB MENU_BACK = D3DCOLOR_ARGB(255, 192, 96, 32);
+	const ARGB MENU_BACK = D3DCOLOR_ARGB(255, 160, 64, 16);
 	const ARGB MENU_TEXT = D3DCOLOR_ARGB(255, 224, 224, 32);
 	const ARGB MENU_HIDE = D3DCOLOR_ARGB(255, 96, 64, 32);
 	const ARGB HINT_ARROW = D3DCOLOR_ARGB(255, 255, 255, 32);
@@ -114,6 +137,8 @@ private:
 	int clearedStage;
 	//音楽の初期化とか
 	bool bgm;
+	//メニュー画面
+	bool menu;
 
 	//ステージクリア
 	bool clear;
@@ -155,10 +180,12 @@ private:
 	void updateStage();
 	void updateMain();
 	void updateClear();
+	void updateMenu();
 	void renderTitle();
 	void renderStage();
 	void renderMain();
 	void renderClear();
+	void renderMenu();
 
 	//セーブデータ読み込み
 	void loadData();
@@ -198,6 +225,8 @@ private:
 	void deadObject(int i);
 	//オブジェクトの特殊行動
 	void actionObject(int i);
+	//オブジェクトデータとかを初期化
+	void resetObject();
 
 	//タイトルと背景を描画
 	void renderTitleBack();

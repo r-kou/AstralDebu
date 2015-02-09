@@ -36,6 +36,7 @@
 #define DT_CT DT_SINGLELINE | DT_CENTER | DT_TOP
 #define DT_CC DT_SINGLELINE | DT_CENTER | DT_VCENTER
 #define DT_CB DT_SINGLELINE | DT_CENTER | DT_BOTTOM
+#define DT_LC DT_SINGLELINE | DT_LEFT | DT_VCENTER
 #define MAP_NAME(x) "map" + std::to_string(x)
 #define FOR(x) for(int i = 0; i < x; i++)
 #define FOR_2(x,y) for(int i=0;i<x;i++) for(int j=0;j<y;j++)
