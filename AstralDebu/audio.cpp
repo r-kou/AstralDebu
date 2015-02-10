@@ -150,6 +150,7 @@ void Audio::setVolumeBgm(float volume){
 }
 
 void Audio::setVolumeSound(float volume){
+	if (sound == NULL) return;
 	category = xact->GetCategory(CT_DEFAULT);
 	xact->SetVolume(category, volume);
 }

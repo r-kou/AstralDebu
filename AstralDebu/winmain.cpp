@@ -28,6 +28,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (!CreateMainWindow(hwnd, hInstance, nCmdShow)) return 1;
 	try{
 		game->initialize(hwnd);
+		//ウィンドウ表示
+		ShowWindow(hwnd, nCmdShow);
+
 		//QUITが出るまでぐるぐる回る
 		int done = 0;
 		while (!done){
@@ -40,17 +43,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 				game->run(hwnd);
 			}
 		}
+		DestroyWindow(hwnd);
 		SAFE_DELETE(game);
 		return msg.wParam;
 	}
 	catch (const GameError &e){
-		game->deleteAll();
 		DestroyWindow(hwnd);
+		game->deleteAll();
 		MessageBox(NULL, e.getMessage(), "Error", MB_OK);
 	}
 	catch (...){
-		game->deleteAll();
 		DestroyWindow(hwnd);
+		game->deleteAll();
 		MessageBox(NULL, "予期せぬエラーが発生しました", "Error", MB_OK);
 	}
 	SAFE_DELETE(game);
@@ -93,7 +97,5 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow){
 		0, WINDOW_W + (WINDOW_W - clientRect.right),
 		WINDOW_H + (WINDOW_H - clientRect.bottom), TRUE);
 
-	//ウィンドウ表示
-	ShowWindow(hwnd, nCmdShow);
 	return true;
 }

@@ -74,5 +74,6 @@ public:
 	//‰¼‘zŠÖ”
 	virtual void update() = 0;
 	virtual void render() = 0;
+
 };
 #endif

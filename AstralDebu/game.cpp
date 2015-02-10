@@ -82,6 +82,7 @@ void Game::initialize(HWND hw){
 	input->initialize(hwnd);
 
 	//‰¹º‰Šú‰»
+	
 	audio = new Audio();
 	if (FAILED(hr = audio->initialize())){
 		if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
@@ -204,9 +205,9 @@ void Game::resetAll(){
 
 void Game::deleteAll(){
 	releaseAll();
+	SAFE_DELETE(audio);
 	SAFE_DELETE(graphics);
 	SAFE_DELETE(input);
 	SAFE_DELETE(text);
-	SAFE_DELETE(audio);
 	initialized = false;
 }
