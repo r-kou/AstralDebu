@@ -50,8 +50,8 @@ bool Entity::initialize(Game *game, Texture *t, int i, int j){
 		image.initialize(graphics, texture, size, size, col);
 		image.setDelay(0.2f);
 		setImage(img);
-		pos.x = (float)(i + 0.5f)*CHIP_SIZE;
-		pos.y = (float)(j + 0.5f)*CHIP_SIZE + DATA_LEN;
+		pos.x = CHIP(i + 0.5f);
+		pos.y = CHIP_D(j + 0.5f);
 		vel.x = 0.0f;
 		vel.y = 0.0f;
 		direct = false;
@@ -270,7 +270,7 @@ void Entity::collideObj(Entity *e, UCHAR t){
 	case TY_GREEN_WARP:
 	case TY_YELLOW_WARP:
 		//ワープは発動後一定期間内無効
-		if (warpInterval == 0.0f) setRes(RES_WARP,(e->getPartnerX() + 0.5f) * CHIP_SIZE,(e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+		if (warpInterval == 0.0f) setRes(RES_WARP,CHIP(e->getPartnerX() + 0.5f),CHIP_D(e->getPartnerY() + 0.5f));
 		break;
 	}
 }
@@ -336,6 +336,9 @@ void Entity::responseObj(){
 		vel.x = 0.0f;
 		vel.y = 0.0f;
 		state = ST_STAND;
+	}
+	if (getRes(RES_COLLIDE)){
+		if (!action) direct = !direct;
 	}
 	if (getRes(RES_WARP)){
 		//ワープ

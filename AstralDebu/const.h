@@ -46,6 +46,8 @@
 #define INC(x,t) x = static_cast<t>(x + 1)
 #define COND(s,t,f) ((s)?t:f)
 #define TOBOOL(i) COND(i,true,false)
+#define CHIP(x) ((x) * CHIP_SIZE) 
+#define CHIP_D(x) ((x) * CHIP_SIZE + DATA_LEN) 
 
 //îƒópíËêî
 const int WINDOW_W = 800;

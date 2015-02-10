@@ -9,8 +9,8 @@ AstralDebu::AstralDebu(){
 	fCount = 0;
 	life = 0;
 	vitalLife = 0;
-	bgmVolume = 0.0f;
-	soundVolume = 0.0f;
+	bgmVolume = 0.0;
+	soundVolume = 0.0;
 	read = false;
 	clear = false;
 	bgm = false;

@@ -65,30 +65,25 @@ namespace astralNS {
 	const float STG_MAR_Y = LIFE_MAR_Y;
 	const float STG_LEN_X = WINDOW_W - STG_MAR_X;
 	const float STG_LEN_Y = LIFE_LEN_Y;
-	const float MENU_FRAME = 5;
-	const float MENU_MAR_X = 50;
-	const float MENU_MAR_Y = 50;
-	const float MENU_LEN_X = WINDOW_W - MENU_MAR_X * 2;
-	const float MENU_LEN_Y = WINDOW_H - MENU_MAR_Y * 2;
-	const float MENU_TEXT_MAR_X = 100;
-	const float MENU_TEXT_MAR_Y = 100;
-	const float MENU_TEXT_LEN_X = WINDOW_W - MENU_TEXT_MAR_X * 2;
-	const float MENU_TEXT_LEN_Y = WINDOW_H - MENU_TEXT_MAR_Y * 2;
-	const float MENU_TEXT_SEP_X = MENU_TEXT_LEN_X / 2;
-	const float MENU_TEXT_SEP_Y = MENU_TEXT_LEN_Y / 8;
-	const float MENU_ARROW_MAR_X = MENU_TEXT_MAR_X - CHIP_SIZE*0.5f;
-	const float MENU_ARROW_MAR_Y = MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 7 + 10.0f;
-	const float MENU_ARROW_QUA_MAR_X = MENU_ARROW_MAR_X;
-	const float MENU_ARROW_QUA_MAR_Y = MENU_ARROW_MAR_Y +CHIP_SIZE * 0.25f;
-	const float MENU_ARROW_QUA_LEN_X = CHIP_SIZE * 1.0f;
-	const float MENU_ARROW_QUA_LEN_Y = CHIP_SIZE * 0.5f;
-	const float MENU_ARROW_TRI_X_L = MENU_ARROW_MAR_X + CHIP_SIZE * 1.0f;
-	const float MENU_ARROW_TRI_X_R = MENU_ARROW_MAR_X + CHIP_SIZE * 1.5f;
-	const float MENU_ARROW_TRI_Y_T = MENU_ARROW_MAR_Y;
-	const float MENU_ARROW_TRI_Y_M = MENU_ARROW_MAR_Y + CHIP_SIZE * 0.5f;
-	const float MENU_ARROW_TRI_Y_B = MENU_ARROW_MAR_Y + CHIP_SIZE * 1.0f;
-
-
+	namespace mainMenuNS{
+		const float FRAME = 10;
+		const float SHADOW = 2.5f;
+		const float MAR_X = 50;
+		const float MAR_Y = 50;
+		const float LEN_X = WINDOW_W - MAR_X * 2;
+		const float LEN_Y = WINDOW_H - MAR_Y * 2;
+		const float TEX_MAR_X = 100;
+		const float TEX_MAR_Y = 100;
+		const float TEX_LEN_X = WINDOW_W - TEX_MAR_X * 2;
+		const float TEX_LEN_Y = WINDOW_H - TEX_MAR_Y * 2;
+		const float TEX_SEP_X = TEX_LEN_X / 2;
+		const float TEX_SEP_Y = TEX_LEN_Y / 8;
+		const float ARR_MAR_X = TEX_MAR_X - CHIP(0.5f);
+		const float ARR_MAR_Y = TEX_MAR_Y + TEX_SEP_Y * 7 + 10.0f;
+		const ARGB BACK = D3DCOLOR_ARGB(255, 160, 64, 16);
+		const ARGB BACK_SHADE = D3DCOLOR_ARGB(255, 144, 48, 0);
+		const ARGB BACK_LIGHT = D3DCOLOR_ARGB(255, 176, 80, 32);
+	}
 	//色
 	const ARGB BLACK = D3DCOLOR_ARGB(255, 0, 0, 0);
 	const ARGB WHITE = D3DCOLOR_ARGB(255, 255, 255, 255);
@@ -142,7 +137,7 @@ private:
 	//メニュー画面
 	bool menu;
 	//音量
-	float bgmVolume, soundVolume;
+	double bgmVolume, soundVolume;
 
 	//ステージクリア
 	bool clear;
@@ -259,18 +254,30 @@ private:
 	void setVertexTriangle(float x1, float y1, float x2, float y2, float x3, float y3, ARGB c);
 	//三角を描画
 	void drawTriangle(float x1, float y1, float x2, float y2, float x3, float y3, ARGB c);
+	//三角を描画
+	void drawTriangleHorizontal(float l, float t, float r, float b, bool d, ARGB c);
+	//三角を描画
+	void drawTriangleVertical(float l, float t, float r, float b, bool d, ARGB c);
 	//カーソルを描画
 	void drawCursor();
 	//デバッグ用 判定を描画
 	void drawEdge();
-	//ヒント用矢印を描画 横
+	//矢印を描画 横
 	void drawArrowHorizontal(float cx, float cy, bool d, ARGB c);
-	//ヒント用矢印を描画 縦
+	//矢印を描画 縦
 	void drawArrowVertical(float cx, float cy, bool d, ARGB c);
-	//ヒント用パネルを描画
+	//ヒント用矢印を描画 横
+	void drawArrowHorizontal(float l, float t, float r,float b, bool d, ARGB c);
+	//ヒント用矢印を描画 縦
+	void drawArrowVertical(float l, float t, float r, float b, bool d, ARGB c);
+	//パネルを描画
 	void drawPanel(std::string str, float cx, float cy, float len, ARGB c);
-	//画像つきヒント用パネルを描画
+	//画像つきパネルを描画
 	void drawPanel(int img,float cx,float cy,ARGB c);
+	//枠付き四角を描画
+	void drawFrame(float l, float t, float r, float b, float f, ARGB c, ARGB fc);
+	//陰あり枠付き四角を描画
+	void drawFrame(float l, float t, float r, float b, float f, float s, ARGB c, ARGB fc, ARGB fs, ARGB fl);
 
 	//カーソルの位置を返す
 	int getCursorChipX();
@@ -295,8 +302,11 @@ private:
 	void playBgm();
 	//bgm停止
 	void stopBgm();
-	//floatを整数にして文字列化
-	std::string floatToString(float f);
+	//doubleを整数にして文字列化
+	std::string doubleToString(double f);
+	//色を選択
+	ARGB menuText(bool b) { return (b ? astralNS::MENU_TEXT : astralNS::MENU_HIDE); }
+
 public:
 	//コンストラクタ
 	AstralDebu();

@@ -138,7 +138,7 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case TY_HIBOMB_BOX:
 	case TY_AIR_BOX:
 		//î†ÇÕè„Ç…èÊÇÍÇÈ â°Ç…ÇÕÇ∑ÇËî≤ÇØÇÈ óÏî†ÇÕìñÇΩÇÁÇ»Ç¢
-		if ((t & BOTTOM) && ((diffBottom(e, true) <= marginY) &&
+		if ((t & BOTTOM) && ((diffBottom(e, true) <= 3) &&
 			(((diffVelY(e) >= 0) && (state == ST_JUMP || (state == ST_LADDER))) ||
 			((diffVelY(e) > 0) && (state == ST_KNOCK))))) setRes(RES_BOTTOM);
 		break;

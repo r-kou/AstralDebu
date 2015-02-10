@@ -75,12 +75,13 @@ namespace entityNS{
 	const UINT RES_BOTTOM_CHIP = 4;
 	const UINT RES_STOP = 5;
 	const UINT RES_CHIP = 6;
-	const UINT RES_WARP = 7;
-	const UINT RES_KNOCK = 8;
-	const UINT RES_JUMP = 9;
-	const UINT RES_DEAD = 10;
-	const UINT RES_LADDER = 11;
-	const UINT RES_CLEAR = 12;
+	const UINT RES_COLLIDE = 7;
+	const UINT RES_WARP = 8;
+	const UINT RES_KNOCK = 9;
+	const UINT RES_JUMP = 10;
+	const UINT RES_DEAD = 11;
+	const UINT RES_LADDER = 12;
+	const UINT RES_CLEAR = 13;
 }
 
 class Entity{
@@ -287,13 +288,13 @@ public:
 	//描画順を指定
 	boolean isRenderOrder(entityNS::RENDER_ORDER ro){ return renderOrder == ro; }
 	//マップチップに合わせる
-	void setCX() { pos.x = (float)(ChipCX() + 0.5f) * CHIP_SIZE; }
-	void setCY() { pos.y = (float)(ChipCY() + 0.5f) * CHIP_SIZE + DATA_LEN; }
+	void setCX() { pos.x = (float)CHIP(ChipCX() + 0.5f); }
+	void setCY() { pos.y = (float)CHIP_D(ChipCY() + 0.5f); }
 	//判定をぎりぎりに抑える
-	void setLeft(bool b) { pos.x = (float)ChipCX() * CHIP_SIZE + edgeX - (b ? marginX : 0); }
-	void setRight(bool b) { pos.x = (float)(ChipCX() + 1) * CHIP_SIZE - edgeX + (b ? marginX : 0); }
-	void setTop(bool b) { pos.y = (float)ChipCY() * CHIP_SIZE + DATA_LEN + edgeY - (b ? marginY : 0); }
-	void setBottom(bool b) { pos.y = (float)(ChipCY() + 1) * CHIP_SIZE + DATA_LEN - edgeY + (b ? marginY : 0); }
+	void setLeft(bool b) { pos.x = (float)CHIP(ChipCX()) + edgeX - (b ? marginX : 0); }
+	void setRight(bool b) { pos.x = (float)CHIP(ChipCX() + 1) - edgeX + (b ? marginX : 0); }
+	void setTop(bool b) { pos.y = (float)CHIP_D(ChipCY()) + edgeY - (b ? marginY : 0); }
+	void setBottom(bool b) { pos.y = (float)CHIP_D(ChipCY() + 1) - edgeY + (b ? marginY : 0); }
 };
 
 

@@ -56,30 +56,22 @@ void AstralDebu::renderClear(){
 
 //メニュー画面の描画
 void AstralDebu::renderMenu(){
+	using namespace mainMenuNS;
 	graphics->spriteBegin();
-	drawQuad(MENU_MAR_X - MENU_FRAME, MENU_MAR_Y - MENU_FRAME, MENU_LEN_X + MENU_FRAME * 2, MENU_FRAME, MENU_BACK);
-	drawQuad(MENU_MAR_X - MENU_FRAME, MENU_MAR_Y + MENU_LEN_Y, MENU_LEN_X + MENU_FRAME * 2, MENU_FRAME, MENU_BACK);
-	drawQuad(MENU_MAR_X - MENU_FRAME, MENU_MAR_Y, MENU_FRAME, MENU_LEN_Y, MENU_BACK);
-	drawQuad(MENU_MAR_X + MENU_LEN_X, MENU_MAR_Y, MENU_FRAME, MENU_LEN_Y, MENU_BACK);
-	drawQuad(MENU_MAR_X, MENU_MAR_Y, MENU_LEN_X, MENU_LEN_Y, MENU_BACK&graphicsNS::ALPHA90);
 
-	numberF.print("Ｚ：ジャンプ", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
-	numberF.print("Ｘ：アイテムを持ち上げる", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
-	numberF.print("　　持ち上げ時は置く", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 2, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
-	numberF.print("Ｃ：アイテムを押す", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 3, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
-	numberF.print("　：持ち上げ時は投げる", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 4, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
-	numberF.print("Ｑ：やり直す", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 5, MENU_TEXT_LEN_X, MENU_TEXT_SEP_Y, BLACK, DT_LC);
-	numberF.print("ゲームを続ける", MENU_TEXT_MAR_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 7, MENU_TEXT_SEP_X, MENU_TEXT_SEP_Y, BLACK, DT_CC);
-	numberF.print("タイトルに戻る", MENU_TEXT_MAR_X + MENU_TEXT_SEP_X, MENU_TEXT_MAR_Y + MENU_TEXT_SEP_Y * 7, MENU_TEXT_SEP_X, MENU_TEXT_SEP_Y, BLACK, DT_CC);
+	drawFrame(MAR_X,MAR_Y,LEN_X,LEN_Y,FRAME,SHADOW,BACK&graphicsNS::ALPHA90,BACK,BACK_SHADE,BACK_LIGHT);
+
+	numberF.print("Ｚ：ジャンプ", TEX_MAR_X, TEX_MAR_Y, TEX_LEN_X, TEX_SEP_Y, BLACK, DT_LC);
+	numberF.print("Ｘ：アイテムを持ち上げる", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y, TEX_LEN_X, TEX_SEP_Y, BLACK, DT_LC);
+	numberF.print("　　持ち上げ時は置く", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 2, TEX_LEN_X, TEX_SEP_Y, BLACK, DT_LC);
+	numberF.print("Ｃ：アイテムを押す", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 3, TEX_LEN_X, TEX_SEP_Y, BLACK, DT_LC);
+	numberF.print("　：持ち上げ時は投げる", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 4, TEX_LEN_X, TEX_SEP_Y, BLACK, DT_LC);
+	numberF.print("Ｑ：やり直す", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 5, TEX_LEN_X, TEX_SEP_Y, BLACK, DT_LC);
+	numberF.print("ゲームを続ける", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, BLACK, DT_CC);
+	numberF.print("タイトルに戻る", TEX_MAR_X + TEX_SEP_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, BLACK, DT_CC);
 	
 	//矢印描画
-	drawQuad(MENU_ARROW_QUA_MAR_X + (count ? MENU_TEXT_SEP_X : 0), MENU_ARROW_QUA_MAR_Y, MENU_ARROW_QUA_LEN_X, MENU_ARROW_QUA_LEN_Y, BLACK);
-	drawTriangle(MENU_ARROW_TRI_X_L + (count ? MENU_TEXT_SEP_X : 0), MENU_ARROW_TRI_Y_T, MENU_ARROW_TRI_X_R + (count ? MENU_TEXT_SEP_X : 0), MENU_ARROW_TRI_Y_M,
-		MENU_ARROW_TRI_X_L + (count ? MENU_TEXT_SEP_X : 0), MENU_ARROW_TRI_Y_B, BLACK);
-	drawQuad(MENU_ARROW_QUA_MAR_X + (count ? MENU_TEXT_SEP_X : 0)+2, MENU_ARROW_QUA_MAR_Y+2, MENU_ARROW_QUA_LEN_X, MENU_ARROW_QUA_LEN_Y-4, RED);
-	drawTriangle(MENU_ARROW_TRI_X_L + (count ? MENU_TEXT_SEP_X : 0)+2, MENU_ARROW_TRI_Y_T+4, MENU_ARROW_TRI_X_R + (count ? MENU_TEXT_SEP_X : 0)-3, MENU_ARROW_TRI_Y_M,
-		MENU_ARROW_TRI_X_L + (count ? MENU_TEXT_SEP_X : 0)+2, MENU_ARROW_TRI_Y_B-4, RED);
-
+	drawArrowHorizontal(ARR_MAR_X + (count ? TEX_SEP_X : 0),ARR_MAR_Y,CHIP(1.5f),CHIP(1.0f),false,RED);
 	graphics->spriteEnd();
 }
 
@@ -119,21 +111,16 @@ void AstralDebu::renderTitleStart(){
 void AstralDebu::renderTitleMenu(){
 	graphics->spriteBegin();
 	//メニューを描画
-	drawQuad(8 * CHIP_SIZE, 7.5f*CHIP_SIZE + DATA_LEN, 9 * CHIP_SIZE, 6 * CHIP_SIZE, BLACK);
-	drawQuad(8 * CHIP_SIZE + 3, 7.5f*CHIP_SIZE + DATA_LEN + 3, 9 * CHIP_SIZE - 6, 6 * CHIP_SIZE - 6, MENU_BACK);
-	middleF.print("はじめから", (int)(9 * CHIP_SIZE), (int)(8 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, MENU_TEXT, DT_CC);
-	middleF.print("つづきから", (int)(9 * CHIP_SIZE), (int)(9 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, (clearedStage == 0) ? MENU_HIDE : MENU_TEXT, DT_CC);
-	middleF.print("ステージセレクト", (int)(9 * CHIP_SIZE), (int)(10 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, (clearedStage == 0) ? MENU_HIDE : MENU_TEXT, DT_CC);
-	middleF.print("音量設定", (int)(9 * CHIP_SIZE), (int)(11 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, MENU_TEXT, DT_CC);
-	middleF.print("終了する", (int)(9 * CHIP_SIZE), (int)(12 * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, MENU_TEXT, DT_CC);
+	drawFrame(CHIP(8), CHIP_D(7.5f), CHIP(9), CHIP(6),3.0f,MENU_BACK,BLACK);
+
+	middleF.print("はじめから", CHIP(9), CHIP_D(8), CHIP(7),CHIP(1), MENU_TEXT, DT_CC);
+	middleF.print("つづきから", CHIP(9), CHIP_D(9), CHIP(7), CHIP(1), menuText(clearedStage!=0), DT_CC);
+	middleF.print("ステージセレクト", CHIP(9), CHIP_D(10), CHIP(7), CHIP(1), menuText(clearedStage != 0), DT_CC);
+	middleF.print("音量設定", CHIP(9), CHIP_D(11), CHIP(7), CHIP(1), MENU_TEXT, DT_CC);
+	middleF.print("終了する", CHIP(9), CHIP_D(12), CHIP(7), CHIP(1), MENU_TEXT, DT_CC);
 	//矢印描画
 	if ((stateNumber >= 2) && (stateNumber <= 3)){
-		drawQuad(8.25f*CHIP_SIZE, (8.25f + count)*CHIP_SIZE + DATA_LEN, (float)CHIP_SIZE, (0.5f*CHIP_SIZE), BLACK);
-		drawTriangle((9.25f)*CHIP_SIZE, (8.0f + count)*CHIP_SIZE + DATA_LEN, (9.75f)*CHIP_SIZE, (8.5f + count)*CHIP_SIZE + DATA_LEN,
-			(9.25f)*CHIP_SIZE, (9.0f + count)*CHIP_SIZE + DATA_LEN, BLACK);
-		drawQuad(8.25f*CHIP_SIZE + 2, (8.25f + count)*CHIP_SIZE + DATA_LEN + 2, (float)CHIP_SIZE, (0.5f*CHIP_SIZE) - 4, RED);
-		drawTriangle((9.25f)*CHIP_SIZE + 2, (8.0f + count)*CHIP_SIZE + DATA_LEN + 4, (9.75f)*CHIP_SIZE - 3, (8.5f + count)*CHIP_SIZE + DATA_LEN,
-			(9.25f)*CHIP_SIZE + 2, (9.0f + count)*CHIP_SIZE + DATA_LEN - 4, RED);
+		drawArrowHorizontal(CHIP(8.25f), CHIP_D(8.0f + count), CHIP(1.5f), CHIP(1.0f),false,RED);
 	}
 
 	graphics->spriteEnd();
@@ -143,12 +130,12 @@ void AstralDebu::renderTitleMenu(){
 void AstralDebu::renderTitleSelect(){
 	graphics->spriteBegin();
 	//選択しているステージを描画
-	middleF.print(std::to_string(stage), (int)(15.0f * CHIP_SIZE), (int)(10 * CHIP_SIZE + DATA_LEN), (int)(2.0f * CHIP_SIZE), CHIP_SIZE, WHITE, DT_CC);
+	middleF.print(std::to_string(stage), CHIP(15), CHIP_D(10), CHIP(2), CHIP(1), WHITE, DT_CC);
 	//上下の矢印を描画
-	drawTriangle((15.75f)*CHIP_SIZE, (10.0f)*CHIP_SIZE + DATA_LEN, (16.0f)*CHIP_SIZE, (9.75f)*CHIP_SIZE + DATA_LEN,
-		(16.25f)*CHIP_SIZE, (10.0f)*CHIP_SIZE + DATA_LEN, MENU_TEXT);
-	drawTriangle((15.75f)*CHIP_SIZE, (11.0f)*CHIP_SIZE + DATA_LEN, (16.0f)*CHIP_SIZE, (11.25f)*CHIP_SIZE + DATA_LEN,
-		(16.25f)*CHIP_SIZE, (11.0f)*CHIP_SIZE + DATA_LEN, MENU_TEXT);
+	drawTriangle(CHIP(15.75f), CHIP_D(10.0f), CHIP(16.0f), CHIP_D(9.75f),
+		CHIP(16.25f), CHIP_D(10.0f), MENU_TEXT);
+	drawTriangle(CHIP(15.75f), CHIP_D(11.0f), CHIP(16.0f), CHIP_D(11.25f),
+		CHIP(16.25f), CHIP_D(11.0f), MENU_TEXT);
 
 	graphics->spriteEnd();
 }
@@ -157,39 +144,23 @@ void AstralDebu::renderTitleSelect(){
 void AstralDebu::renderTitleVolume(){
 	graphics->spriteBegin();
 
-	drawQuad(8.25f*CHIP_SIZE, 11.25f*CHIP_SIZE + DATA_LEN, (float)CHIP_SIZE, (0.5f*CHIP_SIZE), BLACK);
-	drawTriangle((9.25f)*CHIP_SIZE, 11.0f*CHIP_SIZE + DATA_LEN, (9.75f)*CHIP_SIZE, 11.5f*CHIP_SIZE + DATA_LEN,
-		(9.25f)*CHIP_SIZE, 12.0f*CHIP_SIZE + DATA_LEN, BLACK);
-	drawQuad(8.25f*CHIP_SIZE + 2, 11.25f*CHIP_SIZE + DATA_LEN + 2, (float)CHIP_SIZE, (0.5f*CHIP_SIZE) - 4, RED);
-	drawTriangle((9.25f)*CHIP_SIZE + 2, 11.0f*CHIP_SIZE + DATA_LEN + 4, (9.75f)*CHIP_SIZE - 3, 11.5f*CHIP_SIZE + DATA_LEN,
-		(9.25f)*CHIP_SIZE + 2, 12.0f*CHIP_SIZE + DATA_LEN - 4, RED);
+	drawFrame(CHIP(7), CHIP_D(8.0f), CHIP(11), CHIP(4), 3.0f, MENU_BACK, BLACK);
 
-	drawQuad(7 * CHIP_SIZE, 8.0f*CHIP_SIZE + DATA_LEN, 11 * CHIP_SIZE, 4 * CHIP_SIZE, BLACK);
-	drawQuad(7 * CHIP_SIZE + 3, 8.0f*CHIP_SIZE + DATA_LEN + 3, 11 * CHIP_SIZE - 6, 4 * CHIP_SIZE - 6, MENU_BACK);
-	middleF.print("ＢＧＭ", (int)(9 * CHIP_SIZE), (int)(8.5f * CHIP_SIZE + DATA_LEN), (int)(3 * CHIP_SIZE), CHIP_SIZE, MENU_TEXT, DT_CC);
-	middleF.print(floatToString(bgmVolume), 13 * CHIP_SIZE, (int)(8.5f * CHIP_SIZE + DATA_LEN), (int)(3 * CHIP_SIZE), CHIP_SIZE, WHITE, DT_CC);
-	middleF.print("効果音", (int)(9 * CHIP_SIZE), (int)(9.5f * CHIP_SIZE + DATA_LEN), (int)(3 * CHIP_SIZE), CHIP_SIZE, MENU_TEXT, DT_CC);
-	middleF.print(floatToString(soundVolume), 13 * CHIP_SIZE, (int)(9.5f * CHIP_SIZE + DATA_LEN), (int)(3 * CHIP_SIZE), CHIP_SIZE, WHITE, DT_CC);
-	middleF.print("戻る", (int)(9 * CHIP_SIZE), (int)(10.5f * CHIP_SIZE + DATA_LEN), (int)(7 * CHIP_SIZE), CHIP_SIZE, MENU_TEXT, DT_CC);
+	middleF.print("ＢＧＭ", CHIP(9), (int)CHIP_D(8.5f), CHIP(3), CHIP(1), MENU_TEXT, DT_CC);
+	middleF.print(doubleToString(bgmVolume), CHIP(13), (int)CHIP_D(8.5f), CHIP(3), CHIP(1), WHITE, DT_CC);
+	middleF.print("効果音", CHIP(9), (int)CHIP_D(9.5f), CHIP(3), CHIP(1), MENU_TEXT, DT_CC);
+	middleF.print(doubleToString(soundVolume), CHIP(13), (int)CHIP_D(9.5f), CHIP(3), CHIP(1), WHITE, DT_CC);
+	middleF.print("戻る", CHIP(9), (int)CHIP_D(10.5f), CHIP(7), CHIP(1), MENU_TEXT, DT_CC);
 
-	drawQuad(7.25f*CHIP_SIZE, (8.75f + count)*CHIP_SIZE + DATA_LEN, (float)CHIP_SIZE, (0.5f*CHIP_SIZE), BLACK);
-	drawTriangle((8.25f)*CHIP_SIZE, (8.5f + count)*CHIP_SIZE + DATA_LEN, (8.75f)*CHIP_SIZE, (9.0f + count)*CHIP_SIZE + DATA_LEN,
-		(8.25f)*CHIP_SIZE, (9.5f + count)*CHIP_SIZE + DATA_LEN, BLACK);
-	drawQuad(7.25f*CHIP_SIZE + 2, (8.75f + count)*CHIP_SIZE + DATA_LEN + 2, (float)CHIP_SIZE, (0.5f*CHIP_SIZE) - 4, RED);
-	drawTriangle((8.25f)*CHIP_SIZE + 2, (8.5f + count)*CHIP_SIZE + DATA_LEN + 4, (8.75f)*CHIP_SIZE - 3, (9.0f + count)*CHIP_SIZE + DATA_LEN,
-		(8.25f)*CHIP_SIZE + 2, (9.5f + count)*CHIP_SIZE + DATA_LEN - 4, RED);
+	drawArrowHorizontal(CHIP(7.25f), CHIP_D(8.5f+count), CHIP(1.5f), CHIP(1.0f), false, RED);
 
 	if (stateNumber == 5){
-		drawTriangle((13.0f)*CHIP_SIZE, (9.25f)*CHIP_SIZE + DATA_LEN, (13.25f)*CHIP_SIZE, (8.75f)*CHIP_SIZE + DATA_LEN,
-			(13.5f)*CHIP_SIZE, (9.25f)*CHIP_SIZE + DATA_LEN, (bgmVolume<1.0f ? MENU_TEXT : MENU_HIDE));
-		drawTriangle((15.5f)*CHIP_SIZE, (8.75f)*CHIP_SIZE + DATA_LEN, (15.75f)*CHIP_SIZE, (9.25f)*CHIP_SIZE + DATA_LEN,
-			(16.0f)*CHIP_SIZE, (8.75f)*CHIP_SIZE + DATA_LEN, (bgmVolume>0.0f ? MENU_TEXT : MENU_HIDE));
+		drawTriangleVertical(CHIP(13.0f), CHIP_D(8.75f), CHIP(0.5f), CHIP(0.5f), true, menuText(bgmVolume<1.0));
+		drawTriangleVertical(CHIP(15.5f), CHIP_D(8.75f), CHIP(0.5f), CHIP(0.5f), false, menuText(bgmVolume>0.0));
 	}
 	if (stateNumber == 6){
-		drawTriangle((13.0f)*CHIP_SIZE, (10.25f)*CHIP_SIZE + DATA_LEN, (13.25f)*CHIP_SIZE, (9.75f)*CHIP_SIZE + DATA_LEN,
-			(13.5f)*CHIP_SIZE, (10.25f)*CHIP_SIZE + DATA_LEN, (soundVolume<1.0f ? MENU_TEXT : MENU_HIDE));
-		drawTriangle((15.5f)*CHIP_SIZE, (9.75f)*CHIP_SIZE + DATA_LEN, (15.75f)*CHIP_SIZE, (10.25f)*CHIP_SIZE + DATA_LEN,
-			(16.0f)*CHIP_SIZE, (9.75f)*CHIP_SIZE + DATA_LEN, (soundVolume>0.0f ? MENU_TEXT : MENU_HIDE));
+		drawTriangleVertical(CHIP(13.0f), CHIP_D(9.75f), CHIP(0.5f), CHIP(0.5f), true, menuText(soundVolume<1.0));
+		drawTriangleVertical(CHIP(15.5f), CHIP_D(9.75f), CHIP(0.5f), CHIP(0.5f), false, menuText(soundVolume>0.0));
 	}
 
 	graphics->spriteEnd();
@@ -213,22 +184,22 @@ void AstralDebu::renderBack(){
 
 	//体力メータを描画
 	//枠
-	drawQuad((float)LIFE_MAR_X - DATA_MAR, (float)LIFE_MAR_Y - DATA_MAR,
-		(float)LIFE_LEN_X + DATA_MAR * 2, (float)LIFE_LEN_Y + DATA_MAR * 2, WHITE);
-	drawQuad((float)LIFE_MAR_X, (float)LIFE_MAR_Y,
-		(float)LIFE_LEN_X, (float)LIFE_LEN_Y, BLACK);
+	drawQuad(LIFE_MAR_X - DATA_MAR, LIFE_MAR_Y - DATA_MAR,
+		LIFE_LEN_X + DATA_MAR * 2, LIFE_LEN_Y + DATA_MAR * 2, WHITE);
+	drawQuad(LIFE_MAR_X, LIFE_MAR_Y,
+		LIFE_LEN_X, LIFE_LEN_Y, BLACK);
 
 	//体力
-	drawQuad((float)LIFE_MAR_X, (float)LIFE_MAR_Y,
-		(float)life*DATA_MAR, (float)LIFE_LEN_Y, LIFE_GAUGE);
+	drawQuad(LIFE_MAR_X, LIFE_MAR_Y,
+		life*DATA_MAR, LIFE_LEN_Y, LIFE_GAUGE);
 
 	//体力変化
 	if (vitalLife > life)
-		drawQuad((float)LIFE_MAR_X + life*DATA_MAR, (float)LIFE_MAR_Y,
-		(float)(vitalLife - life)*DATA_MAR, (float)LIFE_LEN_Y, LIFE_VITAL_MINUS);
+		drawQuad(LIFE_MAR_X + life*DATA_MAR, LIFE_MAR_Y,
+		(vitalLife - life)*DATA_MAR, LIFE_LEN_Y, LIFE_VITAL_MINUS);
 	else if (vitalLife < life)
-		drawQuad((float)LIFE_MAR_X + vitalLife*DATA_MAR, (float)LIFE_MAR_Y,
-		(float)(life - vitalLife)*DATA_MAR, (float)LIFE_LEN_Y, LIFE_VITAL_PLUS);
+		drawQuad(LIFE_MAR_X + vitalLife*DATA_MAR, LIFE_MAR_Y,
+		(life - vitalLife)*DATA_MAR, LIFE_LEN_Y, LIFE_VITAL_PLUS);
 
 	//体力表示
 	middleF.print("LIFE",
@@ -262,10 +233,10 @@ void AstralDebu::renderChip(){
 
 	//マップ描画
 	for (int j = 0; j < MAP_ROW; j++){
-		chip.setY((float)(j*CHIP_SIZE) + DATA_LEN);
+		chip.setY((float)CHIP_D(j));
 		for (int i = 0; i < MAP_COL; i++){
 			if (map[i][j]){
-				chip.setX((float)i*CHIP_SIZE);
+				chip.setX((float)CHIP(i));
 				if (map[i][j] <= 12) chip.setCurrentFrame(setChipImage(map[i][j]));
 				else chip.setCurrentFrame(map[i][j]);
 				if (stage >= 31) chip.draw(graphicsNS::ALPHA50);
@@ -316,7 +287,16 @@ void AstralDebu::renderHint(){
 
 		drawPanel(CHIP_BOMB, 10.0f, 10.5f, HINT_PANEL);
 	}
+	else if (stage == 10){
+		drawPanel(CHIP_WOOD_BOX, 6.0f, 10.5f, HINT_PANEL);
 
+		drawArrowHorizontal(5.5f, 11.5f, false, HINT_ARROW);
+
+		drawPanel(CHIP_LEAD_BOX, 15.0f, 8.5f, HINT_PANEL);
+
+		drawArrowHorizontal(14.5f, 9.5f, false, HINT_ARROW);
+	}
+	
 	graphics->spriteEnd();
 }
 
@@ -345,8 +325,8 @@ void AstralDebu::renderObject(){
 
 //カーソルを描画
 void AstralDebu::drawCursor(){
-	chip.setX((float)(getCursorChipX() * CHIP_SIZE));
-	chip.setY((float)(getCursorChipY() * CHIP_SIZE) + DATA_LEN);
+	chip.setX((float)CHIP(getCursorChipX()));
+	chip.setY((float)CHIP_D(getCursorChipY()));
 
 	chip.setCurrentFrame(CHIP_CURSOR);
 	chip.draw();

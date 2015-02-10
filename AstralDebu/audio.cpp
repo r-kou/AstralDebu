@@ -143,14 +143,14 @@ bool Audio::isPlaying(const char cue[]){
 	return (prop.currentInstances>0);
 }
 
-void Audio::setVolumeBgm(float volume){
+void Audio::setVolumeBgm(double volume){
 	if (sound == NULL) return;
 	category = xact->GetCategory(CT_BGM);
-	xact->SetVolume(category, volume);
+	xact->SetVolume(category, (float)volume);
 }
 
-void Audio::setVolumeSound(float volume){
+void Audio::setVolumeSound(double volume){
 	if (sound == NULL) return;
 	category = xact->GetCategory(CT_DEFAULT);
-	xact->SetVolume(category, volume);
+	xact->SetVolume(category, (float)volume);
 }

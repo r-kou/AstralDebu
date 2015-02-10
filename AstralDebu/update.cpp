@@ -107,12 +107,13 @@ void AstralDebu::updateTitle(){
 	}
 	else if (stateNumber == 5){
 		if (fCount == 0.0f){
+			if (input->isKeyDown(VK_UP)) bgmVolume += (bgmVolume < 1.0) ? 0.01 : 0.0;
+			if (input->isKeyDown(VK_DOWN)) bgmVolume -= (bgmVolume > 0) ? 0.01 : 0.0;
 			if (input->isKeyDown(VK_UP) || input->isKeyDown(VK_DOWN)) {
 				audio->playCue(audioNS::SELECT);
 				fCount = 0.05f;
+				if (bgmVolume < 0.01) bgmVolume = 0;
 			}
-			if (input->isKeyDown(VK_UP)) bgmVolume += (bgmVolume < 1.0f) ? 0.01f : 0.0f;
-			if (input->isKeyDown(VK_DOWN)) bgmVolume -= (bgmVolume > 0.0f) ? 0.01f : 0.0f;
 		}
 		else {
 			fCount -= frameTime;
@@ -128,12 +129,13 @@ void AstralDebu::updateTitle(){
 	}
 	else if (stateNumber == 6){
 		if (fCount == 0.0f){
+			if (input->isKeyDown(VK_UP)) soundVolume += (soundVolume < 1.0) ? 0.01 : 0.0;
+			if (input->isKeyDown(VK_DOWN)) soundVolume -= (soundVolume > 0) ? 0.01 : 0.0;
 			if (input->isKeyDown(VK_UP) || input->isKeyDown(VK_DOWN)) {
 				audio->playCue(audioNS::SELECT);
 				fCount = 0.05f;
+				if (soundVolume < 0.01) soundVolume = 0;
 			}
-			if (input->isKeyDown(VK_UP)) soundVolume += (soundVolume < 1.0f) ? 0.01f : 0.0f;
-			if (input->isKeyDown(VK_DOWN)) soundVolume -= (soundVolume > 0.0f) ? 0.01f : 0.0f;
 		}
 		else {
 			fCount -= frameTime;
@@ -273,6 +275,7 @@ void AstralDebu::updateMenu(){
 			stopBgm();
 			audio->playCue(audioNS::OK);
 			audio->playCue(audioNS::BGM_TITLE);
+			bgm = true;
 		}
 		else {
 			menu = false;
@@ -285,7 +288,7 @@ void AstralDebu::updateMenu(){
 void AstralDebu::loadData(){
 	std::ifstream load;
 	int bufStage;
-	float bufVolume;
+	double bufVolume;
 	double bufTime;
 	try{
 		load.open(SAV_FILE, std::ios::in | std::ios::binary);
@@ -294,10 +297,10 @@ void AstralDebu::loadData(){
 				load.read((char *)&bufStage, sizeof(int));
 				clearedStage = bufStage;
 				//音量を読み込み
-				load.read((char *)&bufVolume, sizeof(float));
+				load.read((char *)&bufVolume, sizeof(double));
 				bgmVolume = bufVolume;
 				audio->setVolumeBgm(bgmVolume);
-				load.read((char *)&bufVolume, sizeof(float));
+				load.read((char *)&bufVolume, sizeof(double));
 				soundVolume = bufVolume;
 				audio->setVolumeSound(soundVolume);
 				//クリア時間を読み込み
@@ -330,7 +333,7 @@ void AstralDebu::loadData(){
 void AstralDebu::saveData(){
 	std::ofstream save;
 	int bufStage;
-	float bufVolume;
+	double bufVolume;
 	try{
 		save.open(SAV_FILE, std::ios::out | std::ios::binary | std::ios::trunc);
 		if (save){
@@ -339,9 +342,9 @@ void AstralDebu::saveData(){
 			save.write((char *)&bufStage, sizeof(int));
 			//音量を書き込み
 			bufVolume = bgmVolume;
-			save.write((char *)&bufVolume, sizeof(float));
+			save.write((char *)&bufVolume, sizeof(double));
 			bufVolume = soundVolume;
-			save.write((char *)&bufVolume, sizeof(float));
+			save.write((char *)&bufVolume, sizeof(double));
 			//クリア時間を書き込み
 			FOR(STG_SIZE) {
 				save.write((char *)&clearTime[i], sizeof(double));

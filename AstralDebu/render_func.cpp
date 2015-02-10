@@ -89,6 +89,20 @@ void AstralDebu::drawTriangle(float x1, float y1, float x2, float y2, float x3, 
 	graphics->drawQuad(vertex);
 }
 
+//éOäpÇï`âÊ
+void AstralDebu::drawTriangleHorizontal(float l, float t, float r, float b, bool d, ARGB c){
+	//íZåaÇê›íË
+	if (d) drawTriangle(l, t + (b / 2.0f), l + r, t, l+r, t + b, c);
+	else drawTriangle(l+r, t + (b / 2.0f), l, t+b, l, t, c);
+}
+
+//éOäpÇï`âÊ
+void AstralDebu::drawTriangleVertical(float l, float t, float r, float b, bool d, ARGB c){
+	//íZåaÇê›íË
+	if (d) drawTriangle(l + (r / 2.0f), t, l + r, t + b, l, t + b, c);
+	else drawTriangle(l + (r / 2.0f), t + b, l, t, l + r, t, c);
+}
+
 //ÉJÅ[É\ÉãÇÃXà íuÇï‘Ç∑
 int AstralDebu::getCursorChipX(){
 	if (debu->getDirect()) {
@@ -123,59 +137,82 @@ void AstralDebu::drawEdge(){
 	}
 }
 
-//ÉqÉìÉgópÇÃñÓàÛÇï`âÊ â°
+//ñÓàÛÇï`âÊ â°
 void AstralDebu::drawArrowHorizontal(float cx, float cy, bool d, ARGB c){
-	if (d){
-		drawQuad((cx + 0.5f)*CHIP_SIZE, (cy + 0.25f)*CHIP_SIZE + DATA_LEN, (1.5f*CHIP_SIZE), (0.5f*CHIP_SIZE), BLACK);
-		drawTriangle((cx + 0.5f)*CHIP_SIZE, cy*CHIP_SIZE + DATA_LEN, (cx + 0.5f)*CHIP_SIZE, (cy + 1)*CHIP_SIZE + DATA_LEN,
-			cx*CHIP_SIZE, (cy + 0.5f)*CHIP_SIZE + DATA_LEN, BLACK);
-		drawQuad((cx + 0.5f)*CHIP_SIZE - 2, (cy + 0.25f)*CHIP_SIZE + DATA_LEN + 2, (1.5f*CHIP_SIZE), (0.5f*CHIP_SIZE) - 4, c);
-		drawTriangle((cx + 0.5f)*CHIP_SIZE - 2, cy*CHIP_SIZE + DATA_LEN + 4, (cx + 0.5f)*CHIP_SIZE - 2, (cy + 1)*CHIP_SIZE + DATA_LEN - 4,
-			cx*CHIP_SIZE + 3, (cy + 0.5f)*CHIP_SIZE + DATA_LEN, c);
-	}
-	else {
-		drawQuad(cx*CHIP_SIZE, (cy + 0.25f)*CHIP_SIZE + DATA_LEN, (1.5f*CHIP_SIZE), (0.5f*CHIP_SIZE), BLACK);
-		drawTriangle((cx + 1.5f)*CHIP_SIZE, cy*CHIP_SIZE + DATA_LEN, (cx + 2)*CHIP_SIZE, (cy + 0.5f)*CHIP_SIZE + DATA_LEN,
-			(cx + 1.5f)*CHIP_SIZE, (cy + 1)*CHIP_SIZE + DATA_LEN, BLACK);
-		drawQuad(cx*CHIP_SIZE + 2, (cy + 0.25f)*CHIP_SIZE + DATA_LEN + 2, (1.5f*CHIP_SIZE), (0.5f*CHIP_SIZE) - 4, c);
-		drawTriangle((cx + 1.5f)*CHIP_SIZE + 2, cy*CHIP_SIZE + DATA_LEN + 4, (cx + 2)*CHIP_SIZE - 3, (cy + 0.5f)*CHIP_SIZE + DATA_LEN,
-			(cx + 1.5f)*CHIP_SIZE + 2, (cy + 1)*CHIP_SIZE + DATA_LEN - 4, c);
-	}
+	drawArrowHorizontal(CHIP(cx),CHIP_D(cy),CHIP(2),CHIP(1),d,c);
 }
 
-//ÉqÉìÉgópÇÃñÓàÛÇï`âÊ èc
+//ñÓàÛÇï`âÊ èc
 void AstralDebu::drawArrowVertical(float cx, float cy, bool d, ARGB c){
-	if (d){
-		drawQuad((cx + 0.25f)*CHIP_SIZE, (cy + 0.5f)*CHIP_SIZE + DATA_LEN, (0.5f*CHIP_SIZE), (1.5f*CHIP_SIZE), BLACK);
-		drawTriangle((cx + 0.5f)*CHIP_SIZE, cy*CHIP_SIZE + DATA_LEN, (cx + 1)*CHIP_SIZE, (cy + 0.5f)*CHIP_SIZE + DATA_LEN,
-			cx*CHIP_SIZE, (cy + 0.5f)*CHIP_SIZE + DATA_LEN, BLACK);
-		drawQuad((cx + 0.25f)*CHIP_SIZE + 2, (cy + 0.5f)*CHIP_SIZE + DATA_LEN - 2, (0.5f*CHIP_SIZE) - 4, (1.5f*CHIP_SIZE), c);
-		drawTriangle((cx + 0.5f)*CHIP_SIZE, cy*CHIP_SIZE + DATA_LEN + 3, (cx + 1)*CHIP_SIZE - 4, (cy + 0.5f)*CHIP_SIZE + DATA_LEN - 2,
-			cx*CHIP_SIZE + 4, (cy + 0.5f)*CHIP_SIZE + DATA_LEN - 2, c);
-	}
-	else {
-		drawQuad((cx + 0.25f)*CHIP_SIZE, cy*CHIP_SIZE + DATA_LEN, (0.5f*CHIP_SIZE), (1.5f*CHIP_SIZE), BLACK);
-		drawTriangle((cx + 0.5f)*CHIP_SIZE, (cy + 2)*CHIP_SIZE + DATA_LEN, cx*CHIP_SIZE, (cy + 1.5f)*CHIP_SIZE + DATA_LEN,
-			(cx + 1)*CHIP_SIZE, (cy + 1.5f)*CHIP_SIZE + DATA_LEN, BLACK);
-		drawQuad((cx + 0.25f)*CHIP_SIZE + 2, cy*CHIP_SIZE + DATA_LEN + 2, (0.5f*CHIP_SIZE) - 4, (1.5f*CHIP_SIZE), c);
-		drawTriangle((cx + 0.5f)*CHIP_SIZE, (cy + 2)*CHIP_SIZE + DATA_LEN - 3, cx*CHIP_SIZE + 4, (cy + 1.5f)*CHIP_SIZE + DATA_LEN + 2,
-			(cx + 1)*CHIP_SIZE - 4, (cy + 1.5f)*CHIP_SIZE + DATA_LEN + 2, c);
-	}
+	drawArrowVertical(CHIP(cx), CHIP_D(cy), CHIP(1), CHIP(2), d, c);
 }
 
-//ÉqÉìÉgópÇÃÉpÉlÉãÇï`âÊ
+//ñÓàÛÇï`âÊ â°
+void AstralDebu::drawArrowHorizontal(float l, float t, float r, float b, bool d, ARGB c){
+	float qMarX = l + (d?CHIP(0.5f):0),qMarY = t + (b / 4.0f);
+	float qLenX = r - CHIP(0.5f),qLenY = b / 2.0f;
+	float qSliX = (d ? -2.0f : 2.0f), qSliY = 2.0f;
+	float tMarX = l + (d?0:r-CHIP(0.5f)), tMarY = t;
+	float tLenX = CHIP(0.5f), tLenY = b;
+	float tSliX = (d ? 3.0f : 2.0f), tSliY = 4.0f, tSliB = 5.0f;
+
+	drawQuad(qMarX, qMarY, qLenX, qLenY, BLACK);
+	drawTriangleHorizontal(tMarX, tMarY, tLenX, tLenY, d, BLACK);
+	drawQuad(qMarX + qSliX, qMarY + qSliY, qLenX, qLenY - qSliY * 2, c);
+	drawTriangleHorizontal(tMarX + tSliX, tMarY + tSliY, tLenX - tSliB, tLenY - (tSliY*2.0f), d, c);
+}
+
+//ñÓàÛÇï`âÊ èc
+void AstralDebu::drawArrowVertical(float l, float t, float r, float b, bool d, ARGB c){
+	float qMarX = l + (r / 4.0f), qMarY = t + (d ? CHIP(0.5f) : 0);
+	float qLenX = r / 2.0f, qLenY = b - CHIP(0.5f);
+	float qSliX = 2.0f, qSliY = (d ? -2.0f : 2.0f);
+	float tMarX = l, tMarY = t + (d ? 0 : b - CHIP(0.5f));
+	float tLenX = r, tLenY = CHIP(0.5f);
+	float tSliX = 4.0f, tSliY = (d ? 3.0f : 2.0f),tSliB = 5.0f;
+	drawQuad(qMarX, qMarY, qLenX, qLenY, BLACK);
+	drawTriangleVertical(tMarX,tMarY,tLenX,tLenY,d, BLACK);
+	drawQuad(qMarX + qSliX, qMarY + qSliY, qLenX - (qSliX * 2), qLenY, c);
+	drawTriangleVertical(tMarX+tSliX,tMarY+tSliY,tLenX-(tSliX*2.0f),tLenY-tSliB,d,c);
+}
+
+//ÉpÉlÉãÇï`âÊ
 void AstralDebu::drawPanel(std::string str, float cx, float cy, float len, ARGB c) {
-	drawQuad(cx*CHIP_SIZE, cy*CHIP_SIZE + DATA_LEN, CHIP_SIZE*len, (float)CHIP_SIZE, BLACK);
-	drawQuad(cx*CHIP_SIZE + 2, cy*CHIP_SIZE + DATA_LEN + 2, CHIP_SIZE*len - 4, (float)CHIP_SIZE - 4, c);
-	middleF.print(str, (int)(cx * CHIP_SIZE), (int)(cy * CHIP_SIZE + DATA_LEN), (int)(len * CHIP_SIZE), CHIP_SIZE, BLACK, DT_CC);
+	drawFrame(CHIP(cx),CHIP_D(cy),CHIP(len),CHIP(1.0f),2.0f,c,BLACK);
+	middleF.print(str, CHIP(cx), CHIP_D(cy), CHIP(len),CHIP(1.0f), BLACK, DT_CC);
 }
 
-//âÊëúÇ¬Ç´ÉqÉìÉgópÇÃÉpÉlÉãÇï`âÊ
+//âÊëúÇ¬Ç´ÉpÉlÉãÇï`âÊ
 void AstralDebu::drawPanel(int img, float cx, float cy, ARGB c) {
-	drawQuad(cx*CHIP_SIZE - 3, cy*CHIP_SIZE + DATA_LEN - 3, (float)CHIP_SIZE + 6, (float)CHIP_SIZE + 6, BLACK);
-	drawQuad(cx*CHIP_SIZE - 1, cy*CHIP_SIZE + DATA_LEN - 1, (float)CHIP_SIZE + 2, (float)CHIP_SIZE + 2, c);
-	chip.setX(cx*CHIP_SIZE);
-	chip.setY(cy*CHIP_SIZE + DATA_LEN);
+	drawFrame(CHIP(cx)-3, CHIP_D(cy)-3, CHIP(1.0f)+6, CHIP(1.0f)+6, 2.0f, c, BLACK);
+	chip.setX(CHIP(cx));
+	chip.setY(CHIP_D(cy));
 	chip.setCurrentFrame(img);
 	chip.draw();
+}
+
+//ògïtÇ´éläpÇï`âÊ
+void AstralDebu::drawFrame(float l, float t, float r, float b, float f, ARGB c, ARGB fc){
+	//ñ{ëÃï`âÊ
+	drawQuad(l, t, r, b, c);
+	//ògÇï`âÊ
+	drawQuad(l, t, r, f, fc);
+	drawQuad(l, t + b - f, r, f, fc);
+	drawQuad(l, t + f, f, b - (f * 2), fc);
+	drawQuad(l + r - f, t + f, f, b - (f * 2), fc);
+}
+
+//âAóLÇËògïtÇ´éläpÇï`âÊ
+void AstralDebu::drawFrame(float l, float t, float r, float b, float f, float s, ARGB c, ARGB fc, ARGB fs, ARGB fl){
+	drawFrame(l,t,r,b,f,c,fc);
+	//ògÇÃâAâeÇï`âÊ
+	drawQuad(l, t, r, s, fl);
+	drawQuad(l + f - s, t + b - f, r - (f * 2) + (s * 2), s, fl);
+	drawQuad(l + f - s, t + f - s, s, b - (f * 2) + s, fl);
+	drawQuad(l + r - s, t + s, s, b - s, fl);
+
+	drawQuad(l + f, t + f - s, r - (f * 2) + s, s, fs);
+	drawQuad(l, t + b - s, r - s, s, fs);
+	drawQuad(l, t + s, s, b - (s * 2), fs);
+	drawQuad(l + r - f, t + f, s, b - (f * 2), fs);
 }

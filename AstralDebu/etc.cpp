@@ -191,7 +191,7 @@ void Hammer::collideObj(Entity *e, UCHAR t){
 	case TY_GREEN_WARP:
 	case TY_YELLOW_WARP:
 		//ƒ[ƒv‚Í‰Â”\
-		if (warpInterval == 0.0f) setRes(RES_WARP, (e->getPartnerX() + 0.5f) * CHIP_SIZE, (e->getPartnerY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+		if (warpInterval == 0.0f) setRes(RES_WARP, CHIP(e->getPartnerX() + 0.5f), CHIP_D(e->getPartnerY() + 0.5f));
 		break;
 	}
 }

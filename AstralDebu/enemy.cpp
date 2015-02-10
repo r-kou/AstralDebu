@@ -86,6 +86,14 @@ void Enemy::collideObj(Entity *e, UCHAR t){
 			setRes(RES_DEAD, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, 0);
 		}
 		break;
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
+		if (((t & LEFT) && (diffVelX(e) < 0))||
+			((t & RIGHT) && (diffVelX(e) > 0))) setRes(RES_COLLIDE);
+		break;
 	case TY_BLAST:
 		//êÅÇ¡îÚÇŒÇ≥ÇÍÇƒéÄñS
 		animInterval = 1.0f;

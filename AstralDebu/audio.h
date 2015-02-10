@@ -63,9 +63,9 @@ public:
 
 	bool isPlaying(const char cue[]);
 
-	void setVolumeBgm(float volume);
+	void setVolumeBgm(double volume);
 
-	void setVolumeSound(float volume);
+	void setVolumeSound(double volume);
 };
 
 #endif

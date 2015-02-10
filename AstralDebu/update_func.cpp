@@ -148,8 +148,8 @@ void AstralDebu::resetObject(){
 	}
 }
 
-//float‚ğ®”‚É‚µ‚Ä•¶š—ñ‰»
-std::string AstralDebu::floatToString(float f){
+//double‚ğ®”‚É‚µ‚Ä•¶š—ñ‰»
+std::string AstralDebu::doubleToString(double f){
 	int i = (int)(f * 100);
 	return std::to_string(i);
 }

@@ -160,13 +160,13 @@ void AstralDebu::putObject(){
 	debu->setState(entityNS::ST_STAND);
 
 	if (e->getType() == entityNS::TY_HAMMER){
-		if (e->getDirect()) e->setPosX((debu->ChipCX() - 0.5f) * CHIP_SIZE);
-		else e->setPosX((debu->ChipCX() + 1.5f) * CHIP_SIZE);
+		if (e->getDirect()) e->setPosX(CHIP(debu->ChipCX() - 0.5f));
+		else e->setPosX(CHIP(debu->ChipCX() + 1.5f));
 	}
 	else {
-		e->setPosX((getCursorChipX() + 0.5f) * CHIP_SIZE);
+		e->setPosX(CHIP(getCursorChipX() + 0.5f));
 	}
-	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+	e->setPosY(CHIP_D(getCursorChipY() + 0.5f));
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
 	e->setState(entityNS::ST_STAND);
@@ -202,8 +202,8 @@ void AstralDebu::pushObject(int exist){
 		(object[i]->ChipCY() == getCursorChipY())) return;
 	}
 
-	e->setPosX((cursorNX + 0.5f) * CHIP_SIZE);
-	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+	e->setPosX(CHIP(cursorNX + 0.5f));
+	e->setPosY(CHIP_D(getCursorChipY() + 0.5f));
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
 	e->setState(entityNS::ST_STAND);
@@ -237,8 +237,8 @@ void AstralDebu::throwObject(){
 	debu->setHold(false);
 	debu->setState(entityNS::ST_STAND);
 
-	e->setPosX((getCursorChipX() + 0.5f) * CHIP_SIZE);
-	e->setPosY((getCursorChipY() + 0.5f) * CHIP_SIZE + DATA_LEN);
+	e->setPosX(CHIP(getCursorChipX() + 0.5f));
+	e->setPosY(CHIP_D(getCursorChipY() + 0.5f));
 	if (debu->getDirect()) e->setVelX(-VEL_THROW);
 	else e->setVelX(VEL_THROW);
 	e->setVelY(0.0f);
