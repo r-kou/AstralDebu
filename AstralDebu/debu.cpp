@@ -157,7 +157,7 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case TY_MISSILE:
 	case TY_BLAST:
 		//êÅÇ¡îÚÇŒÇ≥ÇÍÇÈ
-		setRes(RES_KNOCK, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y) - VEL_KNOCK_JUMP);
+		setRes(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
 		break;
 	case TY_GOAL:
 		//ÉNÉäÉAÇ∑ÇÈ

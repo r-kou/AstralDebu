@@ -227,6 +227,15 @@ private:
 	//オブジェクトデータとかを初期化
 	void resetObject();
 
+	//タイトル画面の更新 状態ごとに分割
+	void updateTitle0();
+	void updateTitle1();
+	void updateTitle2();
+	void updateTitle3();
+	void updateTitle4();
+	void updateTitle5();
+	void updateTitle6();
+
 	//タイトルと背景を描画
 	void renderTitleBack();
 	//スタートを描画
@@ -297,15 +306,43 @@ private:
 	//未使用のオブジェクトを取得
 	int getEmptyIndex();
 	//マップチップのでコード
-	short decodeChip(short c, int i, int j) {return (c - ((i*(j + 1)) << 4)) / ((i + 1) * 11);}
+	short decodeChip(short c, int i, int j);
 	//bgm再生
 	void playBgm();
 	//bgm停止
 	void stopBgm();
+	//bgmを変更
+	void changeBgm(int m);
 	//doubleを整数にして文字列化
 	std::string doubleToString(double f);
 	//色を選択
 	ARGB menuText(bool b) { return (b ? astralNS::MENU_TEXT : astralNS::MENU_HIDE); }
+	//Zが押されたか
+	bool inZ() { return input->isKeyPressed('Z'); }
+	//Xが押されたか
+	bool inX() { return input->isKeyPressed('X'); }
+	//Cが押されたか
+	bool inC() { return input->isKeyPressed('C'); }
+	//上が押されたか
+	bool inUp() { return input->isKeyPressed(VK_UP); }
+	//下が押されたか
+	bool inDown() { return input->isKeyPressed(VK_DOWN); }
+	//左が押されたか
+	bool inLeft() { return input->isKeyPressed(VK_LEFT); }
+	//右が押されたか
+	bool inRight() { return input->isKeyPressed(VK_RIGHT); }
+	//上下が押されたか
+	bool inVertical() { return (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)); }
+	//左右が押されたか
+	bool inHorizontal() { return (input->isKeyPressed(VK_LEFT) || input->isKeyPressed(VK_RIGHT)); }
+
+	//上が押され続けているか
+	bool downUp() { return input->isKeyDown(VK_UP); }
+	//下が押され続けているか
+	bool downDown() { return input->isKeyDown(VK_DOWN); }
+	//上下が押され続けているか
+	bool downVertical() { return (input->isKeyDown(VK_UP) || input->isKeyDown(VK_DOWN)); }
+
 
 public:
 	//コンストラクタ

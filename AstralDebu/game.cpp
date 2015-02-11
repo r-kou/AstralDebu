@@ -82,7 +82,7 @@ void Game::initialize(HWND hw){
 	input->initialize(hwnd);
 
 	//音声初期化
-	
+
 	audio = new Audio();
 	if (FAILED(hr = audio->initialize())){
 		if (hr == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
@@ -109,43 +109,39 @@ void Game::initialize(HWND hw){
 //実行ループ
 void Game::run(HWND hw){
 	if (graphics == NULL) return;
-	try{
-		//実行時間を調べる
-		QueryPerformanceCounter(&timeEnd);
-		frameTime = (float)(timeEnd.QuadPart - timeStart.QuadPart) /
-			(float)timeFreq.QuadPart;
+	//実行時間を調べる
+	QueryPerformanceCounter(&timeEnd);
+	frameTime = (float)(timeEnd.QuadPart - timeStart.QuadPart) /
+		(float)timeFreq.QuadPart;
 
-		//短すぎるなら待つ
-		if (frameTime < FRAME_TIME_MIN){
-			sleep = (DWORD)((FRAME_TIME_MIN - frameTime) * 1000);
-			timeBeginPeriod(1);
-			Sleep(sleep);
-			timeEndPeriod(1);
-			return;
-		}
-		//fpsを操作
-		if (frameTime > 0.0) fps = (fps*0.99f) + (0.01f / frameTime);
-
-		//長すぎるなら切り捨てる
-		if (frameTime > FRAME_TIME_MAX) frameTime = FRAME_TIME_MAX;
-		timeStart = timeEnd;
-
-		//情報を更新
-		if (!pause){
-			update();
-		}
-
-		//描画
-		renderGame();
-
-		//音声
-		audio->run();
-
-		//入力を初期化
-		input->clear(inputNS::KEYS_PRESSED + inputNS::MOUSE_PRESSED);
+	//短すぎるなら待つ
+	if (frameTime < FRAME_TIME_MIN){
+		sleep = (DWORD)((FRAME_TIME_MIN - frameTime) * 1000);
+		timeBeginPeriod(1);
+		Sleep(sleep);
+		timeEndPeriod(1);
+		return;
 	}
-	catch (...){
+	//fpsを操作
+	if (frameTime > 0.0) fps = (fps*0.99f) + (0.01f / frameTime);
+
+	//長すぎるなら切り捨てる
+	if (frameTime > FRAME_TIME_MAX) frameTime = FRAME_TIME_MAX;
+	timeStart = timeEnd;
+
+	//情報を更新
+	if (!pause){
+		update();
 	}
+
+	//描画
+	renderGame();
+
+	//音声
+	audio->run();
+
+	//入力を初期化
+	input->clear(inputNS::KEYS_PRESSED + inputNS::MOUSE_PRESSED);
 }
 
 //描画

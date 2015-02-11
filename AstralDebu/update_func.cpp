@@ -31,19 +31,20 @@ void AstralDebu::addWarp(int i, int j){
 
 //オブジェクトが持てるか判定
 bool AstralDebu::canHold(Entity *e){
+	if (e->getState() != ST_STAND) return false;
 	switch (e->getType()){
-	case entityNS::TY_WOOD_BOX:
-	case entityNS::TY_STEEL_BOX:
-	case entityNS::TY_LEAD_BOX:
-	case entityNS::TY_BOMB_BOX:
-	case entityNS::TY_HIBOMB_BOX:
-	case entityNS::TY_AIR_BOX:
-	case entityNS::TY_FRAME_BOX:
-	case entityNS::TY_BOMB:
-	case entityNS::TY_HIBOMB:
-	case entityNS::TY_MEAT:
-	case entityNS::TY_HIMEAT:
-	case entityNS::TY_HAMMER:
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_BOMB:
+	case TY_HIBOMB:
+	case TY_MEAT:
+	case TY_HIMEAT:
+	case TY_HAMMER:
 		return canTouch(e);
 		break;
 	default:
@@ -55,8 +56,8 @@ bool AstralDebu::canHold(Entity *e){
 //オブジェクトが肉か判定
 bool AstralDebu::canEat(Entity *e){
 	switch (e->getType()){
-	case entityNS::TY_MEAT:
-	case entityNS::TY_HIMEAT:
+	case TY_MEAT:
+	case TY_HIMEAT:
 		return true;
 		break;
 	default:
@@ -67,17 +68,17 @@ bool AstralDebu::canEat(Entity *e){
 
 //オブジェクトが接触可能か判定
 bool AstralDebu::canTouch(Entity *e){
-	if ((e->getState() == entityNS::ST_LOCK) ||
-		(e->getState() == entityNS::ST_CLEAR) ||
-		(e->getState() == entityNS::ST_DEAD)) return false;
+	if ((e->getState() == ST_LOCK) ||
+		(e->getState() == ST_CLEAR) ||
+		(e->getState() == ST_DEAD)) return false;
 	return canMove(e);
 }
 
 //オブジェクトを描画するか判定
 bool AstralDebu::canMove(Entity *e){
-	if ((e->getState() == entityNS::ST_EMPTY) ||
-		(e->getState() == entityNS::ST_LOCK) ||
-		(e->getType() == entityNS::TY_NONE)) return false;
+	if ((e->getState() == ST_EMPTY) ||
+		(e->getState() == ST_LOCK) ||
+		(e->getType() == TY_NONE)) return false;
 	return true;
 }
 
@@ -97,7 +98,7 @@ void AstralDebu::subLife(int i){
 //未使用のオブジェクトを取得
 int AstralDebu::getEmptyIndex(){
 	int tmp = objMax;
-	ALL_OBJ if ((object[i]->getType() == entityNS::TY_NONE) && (object[i]->getState() == entityNS::ST_EMPTY)) {
+	ALL_OBJ if ((object[i]->getType() == TY_NONE) && (object[i]->getState() == ST_EMPTY)) {
 		tmp = i;
 		break;
 	}
@@ -110,7 +111,8 @@ void AstralDebu::playBgm(){
 	std::string playBgm;
 	if (bgm) return;
 
-	if (stage <= 10) playBgm = audioNS::BGM1;
+	if (stage == 0) playBgm = audioNS::BGM_TITLE;
+	else if (stage <= 10) playBgm = audioNS::BGM1;
 	else if (stage <= 20) playBgm = audioNS::BGM2;
 	else if (stage <= 30) playBgm = audioNS::BGM3;
 	else playBgm = audioNS::BGM4;
@@ -134,6 +136,37 @@ void AstralDebu::stopBgm(){
 	bgm = false;
 }
 
+//bgm変更
+void AstralDebu::changeBgm(int m){
+	switch (m){
+	case 0:
+		if (audio->isPlaying(audioNS::BGM_TITLE)) break;
+		stopBgm();
+		playBgm();
+		break;
+	case 1:
+		if (audio->isPlaying(audioNS::BGM1)) break;
+		stopBgm();
+		playBgm();
+		break;
+	case 2:
+		if (audio->isPlaying(audioNS::BGM2)) break;
+		stopBgm();
+		playBgm();
+		break;
+	case 3:
+		if (audio->isPlaying(audioNS::BGM3)) break;
+		stopBgm();
+		playBgm();
+		break;
+	case 4:
+		if (audio->isPlaying(audioNS::BGM4)) break;
+		stopBgm();
+		playBgm();
+		break;
+	}
+}
+
 //オブジェクトデータとかを初期化
 void AstralDebu::resetObject(){
 	//古いオブジェクトをすべて消去
@@ -152,4 +185,14 @@ void AstralDebu::resetObject(){
 std::string AstralDebu::doubleToString(double f){
 	int i = (int)(f * 100);
 	return std::to_string(i);
+}
+
+//マップチップのデコード
+short AstralDebu::decodeChip(short c, int i, int j) {
+	short first, second, third;
+	first = ((i*(j + 1)) << 4);
+	second = ((i + 1) * 11);
+	third = c - first;
+	if ((third % second)!=0) throw(GameError(gameErrorNS::FATAL, "マップデータが壊れています"));
+	return third / second;
 }

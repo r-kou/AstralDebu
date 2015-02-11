@@ -37,34 +37,50 @@ namespace audioNS{
 	const char BGM_TITLE[] = "bgm_title";
 }
 
+//音声関連を扱うクラス XACT使用
 class Audio {
 private:
+	//XACTの本体
 	IXACT3Engine* xact;
+	//waveを管理するバンク
 	IXACT3WaveBank* wave;
+	//soundを管理するバンク
 	IXACT3SoundBank* sound;
+	//音声ファイル名に対応するインデックス
 	XACTINDEX cueIndex;
+	//音声ファイルが所属するカテゴリ
 	XACTCATEGORY category;
 	void* map;
 	void* data;
 	void* global;
+	//初期化済みかの判定
 	bool initialized;
 public:
+	//コンストラクタ
 	Audio();
 
+	//デストラクタ
 	virtual ~Audio();
 
+	//初期化
 	HRESULT initialize();
 
+	//定期実行
 	void run();
 
+	//指定オーディオの演奏を始める
 	void playCue(const char cue[]);
 
+	//指定オーディオの演奏を止める
 	void stopCue(const char cue[]);
 
+	//指定オーディオが演奏中か調べる
 	bool isPlaying(const char cue[]);
 
+	//Bgmの音量を調整する
 	void setVolumeBgm(double volume);
 
+	//Soundの音量を調整する
 	void setVolumeSound(double volume);
 };
 

@@ -8,7 +8,7 @@ void AstralDebu::readCommand(){
 
 	//地上で素手ならジャンプできる
 	//チート時はいつでも可能
-	if (input->isKeyPressed('Z')){
+	if (inZ()){
 		if ((cheat1) || ((debu->getState() == entityNS::ST_STAND) && (!debu->getHold()))){
 			debu->setVelY(debuNS::VEL_JUMP);
 			subLife(10);
@@ -65,7 +65,8 @@ void AstralDebu::handleObject(){
 	int exist = -1;
 
 	//立ってる時かハンマー所持時だけ有効
-	if ((debu->getState() != entityNS::ST_STAND) && (debu->getState() != entityNS::ST_HAMMER)) return;
+	if ((debu->getState() != entityNS::ST_STAND) && (debu->getState() != entityNS::ST_LADDER)
+		&& (debu->getState() != entityNS::ST_HAMMER)) return;
 	//地形には何もできない
 	if (map[getCursorChipX()][getCursorChipY()])  return;
 
@@ -81,7 +82,7 @@ void AstralDebu::handleObject(){
 		}
 	}
 
-		if (input->isKeyPressed('X')){
+		if (inX()){
 		if (debu->getHold()){
 			if (exist < 0) putObject();
 		}
@@ -89,7 +90,7 @@ void AstralDebu::handleObject(){
 			if (exist >= 0) holdObject(exist);
 		}
 		}
-	if (input->isKeyPressed('C')){
+	if (inC()){
 		if (debu->getHold()){
 			if (exist < 0) throwObject();
 		}

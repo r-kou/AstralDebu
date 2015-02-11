@@ -56,9 +56,9 @@ void AstralDebu::initialize(HWND hwnd){
 
 	//画像を設定
 	if (!title.initialize(graphics, &titleT, 0, 0, 0))
-		throw(GameError(gameErrorNS::FATAL, "画像の初期化に失敗しました"));
+		throw(GameError(gameErrorNS::FATAL, "画像データの初期化に失敗しました"));
 	if (!chip.initialize(graphics, &chipT, CHIP_SIZE, CHIP_SIZE, IMG_COL_CHIP))
-		throw(GameError(gameErrorNS::FATAL, "画像の初期化に失敗しました"));
+		throw(GameError(gameErrorNS::FATAL, "画像データの初期化に失敗しました"));
 
 	//フォントを設定
 	initFont(stageF, 80);
@@ -74,7 +74,7 @@ void AstralDebu::initialize(HWND hwnd){
 //テクスチャの初期化
 void AstralDebu::initTexture(Texture &t, std::string file){
 	if (!t.initialize(graphics, (IMG_FILE_DIR + "\\" + file).c_str()))
-		throw(GameError(gameErrorNS::FATAL, "画像の初期化に失敗しました"));
+		throw(GameError(gameErrorNS::FATAL, "画像データの初期化に失敗しました"));
 }
 
 //フォントの初期化

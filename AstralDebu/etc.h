@@ -64,12 +64,30 @@ class Meat : public Entity{
 public:
 	//コンストラクタ
 	Meat();
+
+	//移動
+	virtual void move(float frameTime) {};
+
+	//地形への接触判定
+	virtual void touchMap(int map[MAP_COL][MAP_ROW]) {};
+
+	//他オブジェクトへの接触判定
+	virtual void touchObj(Entity *e) {};
 };
 
 class Himeat : public Entity{
 public:
 	//コンストラクタ
 	Himeat();
+
+	//移動
+	virtual void move(float frameTime) {};
+
+	//地形への接触判定
+	virtual void touchMap(int map[MAP_COL][MAP_ROW]) {};
+
+	//他オブジェクトへの接触判定
+	virtual void touchObj(Entity *e) {};
 };
 
 class Hammer : public Entity{

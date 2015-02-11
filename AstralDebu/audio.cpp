@@ -1,6 +1,7 @@
 #include "audio.h"
 using namespace audioNS;
 
+//コンストラクタ
 Audio::Audio(){
 	xact = NULL;
 	wave = NULL;
@@ -15,7 +16,7 @@ Audio::Audio(){
 	else initialized = false;
 }
 
-
+//デストラクタ
 Audio::~Audio(){
 	if (xact){
 		xact->ShutDown();
@@ -31,6 +32,7 @@ Audio::~Audio(){
 	if (initialized) CoUninitialize();
 }
 
+//初期化
 HRESULT Audio::initialize(){
 	HRESULT result = E_FAIL;
 	HANDLE hFile;
@@ -117,23 +119,27 @@ HRESULT Audio::initialize(){
     return S_OK;
 }
 
+//定期実行
 void Audio::run(){
 	if (xact == NULL) return;
 	xact->DoWork();
 }
 
+//指定オーディオの演奏を始める
 void Audio::playCue(const char cue[]){
 	if (sound == NULL) return;
 	cueIndex = sound->GetCueIndex(cue);
 	sound->Play(cueIndex,0,0,NULL);
 }
 
+//指定オーディオの演奏を止める
 void Audio::stopCue(const char cue[]){
 	if (sound == NULL) return;
 	cueIndex = sound->GetCueIndex(cue);
 	sound->Stop(cueIndex, XACT_FLAG_SOUNDBANK_STOP_IMMEDIATE);
 }
 
+//指定オーディオが演奏中か調べる
 bool Audio::isPlaying(const char cue[]){
 	XACT_CUE_PROPERTIES prop;
 	if (sound == NULL) return false;
@@ -143,12 +149,14 @@ bool Audio::isPlaying(const char cue[]){
 	return (prop.currentInstances>0);
 }
 
+//Bgmの音量を調整する
 void Audio::setVolumeBgm(double volume){
 	if (sound == NULL) return;
 	category = xact->GetCategory(CT_BGM);
 	xact->SetVolume(category, (float)volume);
 }
 
+//効果音の音量を調整する
 void Audio::setVolumeSound(double volume){
 	if (sound == NULL) return;
 	category = xact->GetCategory(CT_DEFAULT);

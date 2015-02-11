@@ -48,14 +48,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		return msg.wParam;
 	}
 	catch (const GameError &e){
+		MessageBox(NULL, e.getMessage(), "Error", MB_OK);
 		DestroyWindow(hwnd);
 		game->deleteAll();
-		MessageBox(NULL, e.getMessage(), "Error", MB_OK);
 	}
 	catch (...){
+		MessageBox(NULL, "予期せぬエラーが発生しました", "Error", MB_OK);
 		DestroyWindow(hwnd);
 		game->deleteAll();
-		MessageBox(NULL, "予期せぬエラーが発生しました", "Error", MB_OK);
 	}
 	SAFE_DELETE(game);
 	return 0;
@@ -84,8 +84,9 @@ bool CreateMainWindow(HWND &hwnd, HINSTANCE hInstance, int nCmdShow){
 	wcx.hIconSm = NULL;
 	if (RegisterClassEx(&wcx) == 0) return false;
 	//ウィンドウ作成
+	DWORD style = WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_DLGFRAME | WS_MINIMIZEBOX;
 	hwnd = CreateWindow(CLS_NAME.c_str(), APP_TITLE.c_str(),
-		WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT,
+		style, CW_USEDEFAULT, CW_USEDEFAULT,
 		WINDOW_W, WINDOW_H,
 		(HWND)NULL, (HMENU)NULL,
 		hInstance, (LPVOID)NULL);

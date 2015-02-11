@@ -4,151 +4,13 @@ using namespace astralNS;
 
 //タイトル画面の更新
 void AstralDebu::updateTitle(){
-	if (stateNumber == 0) {
-		audio->playCue(audioNS::BGM_TITLE);
-		bgm = true;
-		loadData();
-	}
-	else if (stateNumber == 1){
-		count = count++ % 30;
-		if (input->isKeyPressed('Z')){
-			if(clearedStage == 0)count = 0;
-			else count = 1;
-			stateNumber = 2;
-			audio->playCue(audioNS::OK);
-		}
-	} else if (stateNumber == 2){
-		if (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)) audio->playCue(audioNS::SELECT);
-		if (clearedStage){
-			if (input->isKeyPressed(VK_UP)) count -= (count == 0) ? -4 : 1;
-			if (input->isKeyPressed(VK_DOWN)) count += (count == 4) ? -4 : 1;
-		}
-		else {
-			if (input->isKeyPressed(VK_UP)) count -= (count == 0) ? -4 : (count == 3) ? 3 : 1;
-			if (input->isKeyPressed(VK_DOWN)) count += (count == 4) ? -4 : (count == 0) ? 3 : 1;
-		}
-		if (input->isKeyPressed('Z')){
-			switch (count){
-			case 0:
-				state = S_STAGE;
-				stage = 1;
-				read = false;
-				stopBgm();
-				break;
-			case 1:
-				state = S_STAGE;
-				stage = clearedStage+1;
-				read = false;
-				stopBgm();
-				break;
-			case 2:
-				stateNumber = 3;
-				stage = clearedStage;
-				break;
-			case 3:
-				stateNumber = 4;
-				count = 0;
-				break;
-			case 4:
-				stopBgm();
-				PostQuitMessage(0);
-				break;
-			}
-			audio->playCue(audioNS::OK);
-		}
-		if (input->isKeyPressed('X')) {
-			stateNumber = 1;
-			audio->playCue(audioNS::CANCEL);
-		}
-	}
-	else if (stateNumber == 3) {
-		if (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)) audio->playCue(audioNS::SELECT);
-		if (input->isKeyPressed(VK_UP)) stage += (stage != clearedStage) ? 1 : -clearedStage + 1;
-		if (input->isKeyPressed(VK_DOWN)) stage -= (stage != 1) ? 1 : -clearedStage + 1;
-		if (input->isKeyPressed('Z')) {
-			state = S_STAGE;
-			read = false;
-			stopBgm();
-			audio->playCue(audioNS::OK);
-		}
-		if (input->isKeyPressed('X')) {
-			stateNumber = 2;
-			audio->playCue(audioNS::CANCEL);
-		}
-	}
-	else if (stateNumber == 4){
-		if (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)) audio->playCue(audioNS::SELECT);
-		if (input->isKeyPressed(VK_UP)) count -= (count != 0) ? 1 : -2;
-		if (input->isKeyPressed(VK_DOWN)) count += (count != 2) ? 1 : -2;
-		if (input->isKeyPressed('Z')) {
-			switch (count){
-			case 0:
-				stateNumber = 5;
-				fCount = 0.0f;
-				audio->playCue(audioNS::OK);
-				break;
-			case 1:
-				stateNumber = 6;
-				fCount = 0.0f;
-				audio->playCue(audioNS::OK);
-				break;
-			case 2:
-				count = 3;
-				stateNumber = 2;
-				audio->playCue(audioNS::CANCEL);
-				break;
-			}
-		}
-		if (input->isKeyPressed('X')) {
-			count = 3;
-			stateNumber = 2;
-			audio->playCue(audioNS::CANCEL);
-		}
-	}
-	else if (stateNumber == 5){
-		if (fCount == 0.0f){
-			if (input->isKeyDown(VK_UP)) bgmVolume += (bgmVolume < 1.0) ? 0.01 : 0.0;
-			if (input->isKeyDown(VK_DOWN)) bgmVolume -= (bgmVolume > 0) ? 0.01 : 0.0;
-			if (input->isKeyDown(VK_UP) || input->isKeyDown(VK_DOWN)) {
-				audio->playCue(audioNS::SELECT);
-				fCount = 0.05f;
-				if (bgmVolume < 0.01) bgmVolume = 0;
-			}
-		}
-		else {
-			fCount -= frameTime;
-			if (fCount < 0.0f) fCount = 0.0f;
-		}
-
-		audio->setVolumeBgm(bgmVolume);
-		if ((input->isKeyPressed('Z')) || (input->isKeyPressed('X'))) {
-			stateNumber = 4;
-			saveData();
-			audio->playCue(audioNS::CANCEL);
-		}
-	}
-	else if (stateNumber == 6){
-		if (fCount == 0.0f){
-			if (input->isKeyDown(VK_UP)) soundVolume += (soundVolume < 1.0) ? 0.01 : 0.0;
-			if (input->isKeyDown(VK_DOWN)) soundVolume -= (soundVolume > 0) ? 0.01 : 0.0;
-			if (input->isKeyDown(VK_UP) || input->isKeyDown(VK_DOWN)) {
-				audio->playCue(audioNS::SELECT);
-				fCount = 0.05f;
-				if (soundVolume < 0.01) soundVolume = 0;
-			}
-		}
-		else {
-			fCount -= frameTime;
-			if (fCount < 0.0f) fCount = 0.0f;
-		}
-
-		audio->setVolumeBgm(soundVolume);
-		if ((input->isKeyPressed('Z')) || (input->isKeyPressed('X'))) {
-			stateNumber = 4;
-			saveData();
-			audio->playCue(audioNS::CANCEL);
-		}
-	}
+	if (stateNumber == 0) updateTitle0();
+	else if (stateNumber == 1) updateTitle1();
+	else if (stateNumber == 2) updateTitle2();
+	else if (stateNumber == 3) updateTitle3();
+	else if (stateNumber == 4) updateTitle4();
+	else if (stateNumber == 5) updateTitle5();
+	else if (stateNumber == 6) updateTitle6();
 }
 
 //ステージ表示画面の更新
@@ -157,7 +19,7 @@ void AstralDebu::updateStage(){
 		loadStage();
 	}
 
-	if (input->isKeyPressed('Z') && read){
+	if (inZ() && read){
 		cheat = false;
 		clear = false;
 		life = 100;
@@ -166,8 +28,7 @@ void AstralDebu::updateStage(){
 		menu = false;
 		clearTimeStart = timeGetTime();
 		audio->playCue(audioNS::OK);
-		if (stage % 10 == 1) stopBgm();
-		playBgm();
+		changeBgm((stage/10)+1);
 	}
 }
 
@@ -259,23 +120,23 @@ void AstralDebu::updateClear(){
 
 //メニュー画面の更新
 void AstralDebu::updateMenu(){
-	if (input->isKeyPressed(VK_SPACE) || (input->isKeyPressed('X'))) {
+	if (input->isKeyPressed(VK_SPACE) || inX()) {
 		menu = false;
 		audio->playCue(audioNS::CANCEL);
 	}
-	if ((input->isKeyPressed(VK_LEFT)) || (input->isKeyPressed(VK_RIGHT))) {
+	if (inHorizontal()) {
 		count = (count?0:1);
 		audio->playCue(audioNS::SELECT);
 	}
-	if (input->isKeyPressed('Z')){
+	if (inZ()){
 		if (count) {
 			resetObject();
 			stateNumber = 1;
 			state = S_TITLE;
 			stopBgm();
 			audio->playCue(audioNS::OK);
-			audio->playCue(audioNS::BGM_TITLE);
-			bgm = true;
+			stage = 0;
+			changeBgm(0);
 		}
 		else {
 			menu = false;
@@ -374,7 +235,7 @@ void AstralDebu::loadStage(){
 		file.open(fileName, std::ios::in | std::ios::binary);
 		if (!file){
 			file.close();
-			throw(GameError(gameErrorNS::FATAL, ("マップデータ" + fileName + "の読み込みに失敗しました")));
+			throw(GameError(gameErrorNS::FATAL, ("マップデータの読み込みに失敗しました")));
 		}
 
 		resetObject();
@@ -390,7 +251,7 @@ void AstralDebu::loadStage(){
 	}
 	catch (...){
 		file.close();
-		throw(GameError(gameErrorNS::FATAL, ("マップデータ" + fileName + "の読み込みに失敗しました")));
+		throw;
 	}
 }
 
@@ -516,6 +377,7 @@ void AstralDebu::loadChip(int i,int j,short c){
 	}
 }
 
+//クリア時間を記録
 void AstralDebu::updateClearTime(){
 	//チート時は記録しない
 	if (cheat) return;
@@ -526,4 +388,164 @@ void AstralDebu::updateClearTime(){
 	if (clearTime[stage - 1] == 0) clearTime[stage - 1] = total_time;
 	//以前の記録より早いなら更新
 	else if (total_time < clearTime[stage - 1]) clearTime[stage - 1] = total_time;
+}
+
+//タイトル画面を更新
+void AstralDebu::updateTitle0() {
+	audio->playCue(audioNS::BGM_TITLE);
+	bgm = true;
+	loadData();
+}
+
+//タイトル画面を更新
+void AstralDebu::updateTitle1(){
+	count = count++ % 30;
+	if (inZ()){
+		if (clearedStage == 0)count = 0;
+		else count = 1;
+		stateNumber = 2;
+		audio->playCue(audioNS::OK);
+	}
+}
+
+//タイトル画面を更新
+void AstralDebu::updateTitle2(){
+	if (inVertical()) audio->playCue(audioNS::SELECT);
+	if (clearedStage){
+		if (inUp()) count -= (count == 0) ? -4 : 1;
+		if (inDown()) count += (count == 4) ? -4 : 1;
+	}
+	else {
+		if (inUp()) count -= (count == 0) ? -4 : (count == 3) ? 3 : 1;
+		if (inDown()) count += (count == 4) ? -4 : (count == 0) ? 3 : 1;
+	}
+	if (inZ()){
+		switch (count){
+		case 0:
+			state = S_STAGE;
+			stage = 1;
+			read = false;
+			stopBgm();
+			break;
+		case 1:
+			state = S_STAGE;
+			stage = clearedStage + 1;
+			read = false;
+			stopBgm();
+			break;
+		case 2:
+			stateNumber = 3;
+			stage = clearedStage;
+			break;
+		case 3:
+			stateNumber = 4;
+			count = 0;
+			break;
+		case 4:
+			stopBgm();
+			PostQuitMessage(0);
+			break;
+		}
+		audio->playCue(audioNS::OK);
+	}
+	if (inX()) {
+		stateNumber = 1;
+		audio->playCue(audioNS::CANCEL);
+	}
+}
+
+//タイトル画面を更新
+void AstralDebu::updateTitle3(){
+	if (inVertical()) audio->playCue(audioNS::SELECT);
+	if (inUp()) stage += (stage != clearedStage) ? 1 : -clearedStage + 1;
+	if (inDown()) stage -= (stage != 1) ? 1 : -clearedStage + 1;
+	if (inZ()) {
+		state = S_STAGE;
+		read = false;
+		stopBgm();
+		audio->playCue(audioNS::OK);
+	}
+	if (inX()) {
+		stateNumber = 2;
+		audio->playCue(audioNS::CANCEL);
+	}
+}
+
+//タイトル画面を更新
+void AstralDebu::updateTitle4() {
+	if (inVertical()) audio->playCue(audioNS::SELECT);
+	if (inUp()) count -= (count != 0) ? 1 : -2;
+	if (inDown()) count += (count != 2) ? 1 : -2;
+	if (inZ()) {
+		switch (count){
+		case 0:
+			stateNumber = 5;
+			fCount = 0.0f;
+			audio->playCue(audioNS::OK);
+			break;
+		case 1:
+			stateNumber = 6;
+			fCount = 0.0f;
+			audio->playCue(audioNS::OK);
+			break;
+		case 2:
+			count = 3;
+			stateNumber = 2;
+			audio->playCue(audioNS::CANCEL);
+			break;
+		}
+	}
+	if (inX()) {
+		count = 3;
+		stateNumber = 2;
+		audio->playCue(audioNS::CANCEL);
+	}
+}
+
+//タイトル画面を更新
+void AstralDebu::updateTitle5() {
+	if (fCount == 0.0f){
+		if (downUp()) bgmVolume += (bgmVolume < 1.0) ? 0.01 : 0.0;
+		if (downDown()) bgmVolume -= (bgmVolume > 0) ? 0.01 : 0.0;
+		if (downVertical()) {
+			audio->playCue(audioNS::SELECT);
+			fCount = 0.05f;
+			if (bgmVolume < 0.01) bgmVolume = 0;
+		}
+	}
+	else {
+		fCount -= frameTime;
+		if (fCount < 0.0f) fCount = 0.0f;
+	}
+
+	audio->setVolumeBgm(bgmVolume);
+	if (inZ()||inX()) {
+		stateNumber = 4;
+		saveData();
+		audio->playCue(audioNS::CANCEL);
+	}
+}
+
+//タイトル画面を更新
+void AstralDebu::updateTitle6(){
+	if (fCount == 0.0f){
+		if (downUp()) soundVolume += (soundVolume < 1.0) ? 0.01 : 0.0;
+		if (downDown()) soundVolume -= (soundVolume > 0) ? 0.01 : 0.0;
+		if (downVertical()) {
+			audio->playCue(audioNS::SELECT);
+			fCount = 0.05f;
+			if (soundVolume < 0.01) soundVolume = 0;
+		}
+	}
+	else {
+		fCount -= frameTime;
+		if (fCount < 0.0f) fCount = 0.0f;
+	}
+
+	audio->setVolumeBgm(soundVolume);
+	if (inZ() || inX()) {
+		stateNumber = 4;
+		saveData();
+		audio->playCue(audioNS::CANCEL);
+	}
 }
