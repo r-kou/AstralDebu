@@ -28,7 +28,7 @@ void AstralDebu::updateStage(){
 		menu = false;
 		clearTimeStart = timeGetTime();
 		audio->playCue(audioNS::OK);
-		changeBgm((stage/10)+1);
+		changeBgm(((stage-1)/10)+1);
 	}
 }
 
@@ -410,14 +410,14 @@ void AstralDebu::updateTitle1(){
 
 //タイトル画面を更新
 void AstralDebu::updateTitle2(){
-	if (inVertical()) audio->playCue(audioNS::SELECT);
+	if (inCursor()) audio->playCue(audioNS::SELECT);
 	if (clearedStage){
-		if (inUp()) count -= (count == 0) ? -4 : 1;
-		if (inDown()) count += (count == 4) ? -4 : 1;
+		if (inUp()||inLeft()) count -= (count == 0) ? -4 : 1;
+		if (inDown() || inRight()) count += (count == 4) ? -4 : 1;
 	}
 	else {
-		if (inUp()) count -= (count == 0) ? -4 : (count == 3) ? 3 : 1;
-		if (inDown()) count += (count == 4) ? -4 : (count == 0) ? 3 : 1;
+		if (inUp() || inLeft()) count -= (count == 0) ? -4 : (count == 3) ? 3 : 1;
+		if (inDown() || inRight()) count += (count == 4) ? -4 : (count == 0) ? 3 : 1;
 	}
 	if (inZ()){
 		switch (count){
@@ -456,9 +456,15 @@ void AstralDebu::updateTitle2(){
 
 //タイトル画面を更新
 void AstralDebu::updateTitle3(){
-	if (inVertical()) audio->playCue(audioNS::SELECT);
-	if (inUp()) stage += (stage != clearedStage) ? 1 : -clearedStage + 1;
-	if (inDown()) stage -= (stage != 1) ? 1 : -clearedStage + 1;
+	if (inCursor()) {
+		audio->playCue(audioNS::SELECT);
+		if (inUp()) stage += 1;
+		if (inDown()) stage -= 1;
+		if (inLeft()) stage -= 10;
+		if (inRight()) stage += 10;
+		if (stage < 1) stage = 1;
+		if (stage > clearedStage) stage = clearedStage;
+	}
 	if (inZ()) {
 		state = S_STAGE;
 		read = false;
@@ -473,9 +479,9 @@ void AstralDebu::updateTitle3(){
 
 //タイトル画面を更新
 void AstralDebu::updateTitle4() {
-	if (inVertical()) audio->playCue(audioNS::SELECT);
-	if (inUp()) count -= (count != 0) ? 1 : -2;
-	if (inDown()) count += (count != 2) ? 1 : -2;
+	if (inCursor()) audio->playCue(audioNS::SELECT);
+	if (inUp()||inLeft()) count -= (count != 0) ? 1 : -2;
+	if (inDown()||inRight()) count += (count != 2) ? 1 : -2;
 	if (inZ()) {
 		switch (count){
 		case 0:
@@ -505,12 +511,15 @@ void AstralDebu::updateTitle4() {
 //タイトル画面を更新
 void AstralDebu::updateTitle5() {
 	if (fCount == 0.0f){
-		if (downUp()) bgmVolume += (bgmVolume < 1.0) ? 0.01 : 0.0;
-		if (downDown()) bgmVolume -= (bgmVolume > 0) ? 0.01 : 0.0;
-		if (downVertical()) {
+		if (downUp()) bgmVolume += 0.01;
+		if (downDown()) bgmVolume -= 0.01;
+		if (downLeft()) bgmVolume -= 0.1;
+		if (downRight()) bgmVolume += 0.1;
+		if (downCursor()) {
 			audio->playCue(audioNS::SELECT);
 			fCount = 0.05f;
-			if (bgmVolume < 0.01) bgmVolume = 0;
+			if (bgmVolume < 0.005) bgmVolume = 0.0f;
+			if (bgmVolume > 0.995) bgmVolume = 1.0f;
 		}
 	}
 	else {
@@ -529,12 +538,15 @@ void AstralDebu::updateTitle5() {
 //タイトル画面を更新
 void AstralDebu::updateTitle6(){
 	if (fCount == 0.0f){
-		if (downUp()) soundVolume += (soundVolume < 1.0) ? 0.01 : 0.0;
-		if (downDown()) soundVolume -= (soundVolume > 0) ? 0.01 : 0.0;
-		if (downVertical()) {
+		if (downUp()) soundVolume += 0.01;
+		if (downDown()) soundVolume -= 0.01;
+		if (downLeft()) soundVolume -= 0.1;
+		if (downRight()) soundVolume += 0.1;
+		if (downCursor()) {
 			audio->playCue(audioNS::SELECT);
 			fCount = 0.05f;
-			if (soundVolume < 0.01) soundVolume = 0;
+			if (soundVolume < 0.005) soundVolume = 0.0f;
+			if (soundVolume > 0.995) soundVolume = 1.0f;
 		}
 	}
 	else {

@@ -14,6 +14,7 @@ Rock::Rock(int stage){
 	edgeY = EDGE_ROCK_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
+	deadSound = audioNS::BRAKE_ROCK;
 	chipTop = false;
 	chipBottom = false;
 	//ステージに応じて画像変更

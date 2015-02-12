@@ -184,11 +184,24 @@ void AstralDebu::drawPanel(std::string str, float cx, float cy, float len, ARGB 
 
 //‰æ‘œ‚Â‚«ƒpƒlƒ‹‚ð•`‰æ
 void AstralDebu::drawPanel(int img, float cx, float cy, ARGB c) {
-	drawFrame(CHIP(cx)-3, CHIP_D(cy)-3, CHIP(1.0f)+6, CHIP(1.0f)+6, 2.0f, c, BLACK);
+	drawFrame(CHIP(cx) - 3, CHIP_D(cy) - 3, CHIP(1.0f) + 6, CHIP(1.0f) + 6, 2.0f, c, BLACK);
 	chip.setX(CHIP(cx));
 	chip.setY(CHIP_D(cy));
 	chip.setCurrentFrame(img);
 	chip.draw();
+}
+
+//‰æ‘œ‚Â‚«ƒpƒlƒ‹‚ð•`‰æ
+void AstralDebu::drawPanelD(int img1,int img2, float cx, float cy, ARGB c) {
+	drawFrame(CHIP(cx) - 3, CHIP_D(cy) - 3, CHIP(2.5f) + 6, CHIP(1.0f) + 6, 2.0f, c, BLACK);
+	chip.setX(CHIP(cx));
+	chip.setY(CHIP_D(cy));
+	chip.setCurrentFrame(img1);
+	chip.draw();
+	chip.setX(CHIP(cx + 1.5f));
+	chip.setCurrentFrame(img2);
+	chip.draw();
+	middleF.print("+",CHIP(cx),CHIP_D(cy),CHIP(2.5f),CHIP(1.0f),BLACK,DT_CC);
 }
 
 //˜g•t‚«ŽlŠp‚ð•`‰æ

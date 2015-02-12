@@ -14,7 +14,7 @@ Enemy::Enemy(){
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
-	deadSound = audioNS::KNOCK;
+	deadSound = audioNS::BRAKE_ENEMY;
 	debu = NULL;
 }
 

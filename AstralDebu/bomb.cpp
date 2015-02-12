@@ -84,15 +84,15 @@ void BombE::collideObj(Entity *e, UCHAR t){
 	case TY_ENEMY_3:
 	case TY_ENEMY_4:
 	case TY_ENEMY_5:
-	case TY_BULLET:
-	case TY_MISSILE:
 		//左右にはこっちが動いていたら、上下は問答無用で爆発する
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
 			(t & TOP) || (t & BOTTOM)) setRes(RES_DEAD);
 		break;
+	case TY_BULLET:
+	case TY_MISSILE:
 	case TY_BLAST:
-		//爆風は速度とか関係ない
+		//爆風と弾丸は速度とか関係ない
 		setRes(RES_DEAD);
 		break;
 	}

@@ -351,11 +351,13 @@ void Entity::responseObj(){
 		state = ST_KNOCK;
 		vel.x = setLimit(getResX(RES_KNOCK),VEL_MAX);
 		vel.y = setLimit(getResY(RES_KNOCK),VEL_MAX);
+		audio->playCue(audioNS::KNOCK);
 	}
 	if (getRes(RES_JUMP)){
 		state = ST_JUMP;
 		vel.x = setLimit(getResX(RES_JUMP), VEL_MAX);
 		vel.y = setLimit(getResY(RES_JUMP), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
+		audio->playCue(audioNS::KNOCK);
 	}
 	if (getRes(RES_DEAD)){
 		state = ST_DEAD;

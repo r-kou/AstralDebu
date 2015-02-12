@@ -24,6 +24,8 @@ namespace audioNS{
 	const char KNOCK[] = "knock";
 	const char BRAKE_WOOD[] = "brake_wood";
 	const char BRAKE_STEEL[] = "brake_steel";
+	const char BRAKE_ROCK[] = "brake_rock";
+	const char BRAKE_ENEMY[] = "brake_enemy";
 	const char GOAL[] = "goal";
 	const char SELECT[] = "select";
 	const char OK[] = "ok";

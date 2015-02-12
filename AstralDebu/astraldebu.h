@@ -17,6 +17,13 @@
 #include "etc.h"
 #include "blast.h"
 
+//render用マクロ
+#define REC MAR_X, MAR_Y, LEN_X, LEN_Y
+#define REC_TEX(x,y) TEX_MAR_X + TEX_SEP_X * x, TEX_MAR_Y + TEX_SEP_Y * y, TEX_LEN_X, TEX_LEN_Y
+#define REC_ARR(x,y) ARR_MAR_X + ARR_SEP_X * x, ARR_MAR_Y + ARR_SEP_Y * y, ARR_LEN_X, ARR_LEN_Y
+#define REC_TRI(x,y) TRI_MAR_X + TRI_SEP_X * x, TRI_MAR_Y + TRI_SEP_Y * y, TRI_LEN_X, TRI_LEN_Y
+#define REC_FRAME REC, FRM_LEN, SHD_LEN, BACK, FRAME, FRAME_SHADE, FRAME_LIGHT
+
 namespace astralNS {
 	//配列の大きさ
 	const int OBJ_SIZE = 128;
@@ -65,24 +72,58 @@ namespace astralNS {
 	const float STG_MAR_Y = LIFE_MAR_Y;
 	const float STG_LEN_X = WINDOW_W - STG_MAR_X;
 	const float STG_LEN_Y = LIFE_LEN_Y;
-	namespace mainMenuNS{
-		const float FRAME = 10;
-		const float SHADOW = 2.5f;
-		const float MAR_X = 50;
-		const float MAR_Y = 50;
-		const float LEN_X = WINDOW_W - MAR_X * 2;
-		const float LEN_Y = WINDOW_H - MAR_Y * 2;
-		const float TEX_MAR_X = 100;
-		const float TEX_MAR_Y = 100;
-		const float TEX_LEN_X = WINDOW_W - TEX_MAR_X * 2;
-		const float TEX_LEN_Y = WINDOW_H - TEX_MAR_Y * 2;
-		const float TEX_SEP_X = TEX_LEN_X / 2;
-		const float TEX_SEP_Y = TEX_LEN_Y / 8;
-		const float ARR_MAR_X = TEX_MAR_X - CHIP(0.5f);
-		const float ARR_MAR_Y = TEX_MAR_Y + TEX_SEP_Y * 7 + 10.0f;
-		const ARGB BACK = D3DCOLOR_ARGB(255, 160, 64, 16);
-		const ARGB BACK_SHADE = D3DCOLOR_ARGB(255, 144, 48, 0);
-		const ARGB BACK_LIGHT = D3DCOLOR_ARGB(255, 176, 80, 32);
+	namespace menuNS{
+		const ARGB BACK = D3DCOLOR_ARGB(255, 192, 128, 64);
+		const ARGB FRAME = D3DCOLOR_ARGB(255, 224, 192, 160);
+		const ARGB FRAME_SHADE = D3DCOLOR_ARGB(255, 192, 160, 128);
+		const ARGB FRAME_LIGHT = D3DCOLOR_ARGB(255, 255, 224, 192);
+		const ARGB TEXT_SHOW = D3DCOLOR_ARGB(255, 224, 224, 32);
+		const ARGB TEXT_HIDE = D3DCOLOR_ARGB(255, 96, 64, 32);
+		namespace mainMenuNS{
+			const float FRM_LEN = 10.0f,SHD_LEN = 2.5f;
+			const float MAR_X = 50,MAR_Y = 50;
+			const float LEN_X = WINDOW_W - MAR_X * 2,LEN_Y = WINDOW_H - MAR_Y * 2;
+			const float TEX_MAR_X = 100,TEX_MAR_Y = 100;
+			const float TEX_LEN_X = (WINDOW_W - TEX_MAR_X * 2),TEX_LEN_Y = (WINDOW_H - TEX_MAR_Y * 2) / 8;
+			const float TEX_SEP_X = (WINDOW_W - TEX_MAR_X * 2) / 2,TEX_SEP_Y = (WINDOW_H - TEX_MAR_Y * 2) / 8;
+			const float ARR_MAR_X = TEX_MAR_X - CHIP(0.5f),ARR_MAR_Y = TEX_MAR_Y + TEX_SEP_Y * 7 + 10.0f;
+			const float ARR_LEN_X = CHIP(1.5f),ARR_LEN_Y = CHIP(1.0f);
+			const float ARR_SEP_X = TEX_SEP_X,ARR_SEP_Y = 0;
+		}
+		namespace titleMenuNS{
+			const float FRM_LEN = 5.0f,SHD_LEN = 1.5f;
+			const float MAR_X = CHIP(8.0f),MAR_Y = CHIP_D(7.5f);
+			const float LEN_X = CHIP(9.0f),LEN_Y = CHIP(6.0f);
+			const float TEX_MAR_X = CHIP(9),TEX_MAR_Y = CHIP_D(8);
+			const float TEX_LEN_X = CHIP(7),TEX_LEN_Y = CHIP(1);
+			const float TEX_SEP_X = 0,TEX_SEP_Y = CHIP(1);
+			const float ARR_MAR_X = CHIP(8.25f),ARR_MAR_Y = CHIP_D(8.0f);
+			const float ARR_LEN_X = CHIP(1.5f),ARR_LEN_Y = CHIP(1.0f);
+			const float ARR_SEP_X = 0,ARR_SEP_Y = CHIP(1.0f);
+		}
+		namespace selectMenuNS{
+			const float TEX_MAR_X = CHIP(15), TEX_MAR_Y = CHIP_D(10);
+			const float TEX_LEN_X = CHIP(2), TEX_LEN_Y = CHIP(1);
+			const float TEX_SEP_X = 0, TEX_SEP_Y = 0;
+			const float TRI_MAR_X = CHIP(15.75f), TRI_MAR_Y = CHIP_D(9.75f);
+			const float TRI_LEN_X = CHIP(0.5f), TRI_LEN_Y = CHIP(0.25f);
+			const float TRI_SEP_X = 0, TRI_SEP_Y = CHIP(1.25f);
+		}
+		namespace audioMenuNS{
+			const float FRM_LEN = 5.0f,SHD_LEN = 1.5f;
+			const float MAR_X = CHIP(7.0f),MAR_Y = CHIP_D(8.0f);
+			const float LEN_X = CHIP(11.0f),LEN_Y = CHIP(4.0f);
+			const float TEX_MAR_X = CHIP(9),TEX_MAR_Y = CHIP_D(8.5f);
+			const float TEX_LEN_X = CHIP(3),TEX_LEN_Y = CHIP(1);
+			const float TEX_SEP_X = CHIP(2),TEX_SEP_Y = CHIP(1);
+			const float ARR_MAR_X = CHIP(7.25f),ARR_MAR_Y = CHIP_D(8.5f);
+			const float ARR_LEN_X = CHIP(1.5f),ARR_LEN_Y = CHIP(1.0f);
+			const float ARR_SEP_X = 0,ARR_SEP_Y = CHIP(1);
+			const float TRI_MAR_X = CHIP(13.0f), TRI_MAR_Y = CHIP_D(8.75f);
+			const float TRI_LEN_X = CHIP(0.5f), TRI_LEN_Y = CHIP(0.5f);
+			const float TRI_SEP_X = CHIP(2.5f), TRI_SEP_Y = CHIP(1);
+		}
+
 	}
 	//色
 	const ARGB BLACK = D3DCOLOR_ARGB(255, 0, 0, 0);
@@ -97,9 +138,6 @@ namespace astralNS {
 	const ARGB LIFE_GAUGE = D3DCOLOR_ARGB(255, 224, 224, 0);
 	const ARGB LIFE_VITAL_PLUS = D3DCOLOR_ARGB(255, 0, 224, 0);
 	const ARGB LIFE_VITAL_MINUS = D3DCOLOR_ARGB(255, 224, 0, 0);
-	const ARGB MENU_BACK = D3DCOLOR_ARGB(255, 160, 64, 16);
-	const ARGB MENU_TEXT = D3DCOLOR_ARGB(255, 224, 224, 32);
-	const ARGB MENU_HIDE = D3DCOLOR_ARGB(255, 96, 64, 32);
 	const ARGB HINT_ARROW = D3DCOLOR_ARGB(255, 255, 255, 32);
 	const ARGB HINT_PANEL = D3DCOLOR_ARGB(255, 64, 192, 64);
 
@@ -282,7 +320,9 @@ private:
 	//パネルを描画
 	void drawPanel(std::string str, float cx, float cy, float len, ARGB c);
 	//画像つきパネルを描画
-	void drawPanel(int img,float cx,float cy,ARGB c);
+	void drawPanel(int img, float cx, float cy, ARGB c);
+	//画像２枚つきパネルを描画
+	void drawPanelD(int img1,int img2, float cx, float cy, ARGB c);
 	//枠付き四角を描画
 	void drawFrame(float l, float t, float r, float b, float f, ARGB c, ARGB fc);
 	//陰あり枠付き四角を描画
@@ -316,7 +356,7 @@ private:
 	//doubleを整数にして文字列化
 	std::string doubleToString(double f);
 	//色を選択
-	ARGB menuText(bool b) { return (b ? astralNS::MENU_TEXT : astralNS::MENU_HIDE); }
+	ARGB menuText(bool b) { return (b ? astralNS::menuNS::TEXT_SHOW : astralNS::menuNS::TEXT_HIDE); }
 	//Zが押されたか
 	bool inZ() { return input->isKeyPressed('Z'); }
 	//Xが押されたか
@@ -332,16 +372,27 @@ private:
 	//右が押されたか
 	bool inRight() { return input->isKeyPressed(VK_RIGHT); }
 	//上下が押されたか
-	bool inVertical() { return (input->isKeyPressed(VK_UP) || input->isKeyPressed(VK_DOWN)); }
+	bool inVertical() { return (inUp() || inDown()); }
 	//左右が押されたか
-	bool inHorizontal() { return (input->isKeyPressed(VK_LEFT) || input->isKeyPressed(VK_RIGHT)); }
+	bool inHorizontal() { return (inLeft() || inRight()); }
+	//上下左右が押されたか
+	bool inCursor() { return((inVertical()) || (inHorizontal())); }
 
 	//上が押され続けているか
 	bool downUp() { return input->isKeyDown(VK_UP); }
 	//下が押され続けているか
 	bool downDown() { return input->isKeyDown(VK_DOWN); }
+	//左が押され続けているか
+	bool downLeft() { return input->isKeyDown(VK_LEFT); }
+	//右が押され続けているか
+	bool downRight() { return input->isKeyDown(VK_RIGHT); }
 	//上下が押され続けているか
-	bool downVertical() { return (input->isKeyDown(VK_UP) || input->isKeyDown(VK_DOWN)); }
+	bool downVertical() { return (downUp() || downDown()); }
+	//左右が押され続けているか
+	bool downHorizontal() { return (downLeft() || downRight()); }
+	//上下左右が押され続けているか
+	bool downCursor() { return((downVertical()) || (downHorizontal())); }
+
 
 
 public:
