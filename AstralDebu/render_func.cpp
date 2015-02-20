@@ -103,25 +103,6 @@ void AstralDebu::drawTriangleVertical(float l, float t, float r, float b, bool d
 	else drawTriangle(l + (r / 2.0f), t + b, l, t, l + r, t, c);
 }
 
-//カーソルのX位置を返す
-int AstralDebu::getCursorChipX(){
-	if (debu->getDirect()) {
-		if (debu->ChipCX() > 0) return debu->ChipCX() - 1;
-		return 0;
-	}
-	else {
-		if (debu->ChipCX() < MAP_COL - 1) return debu->ChipCX() + 1;
-		return MAP_COL - 1;
-
-	}
-}
-
-
-//カーソルのY位置を返す
-int AstralDebu::getCursorChipY(){
-	return debu->ChipCY();
-}
-
 //デバッグ用 判定を描画
 void AstralDebu::drawEdge(){
 	drawQuad((float)debu->getLeft(true), (float)debu->getTop(false),
@@ -129,11 +110,14 @@ void AstralDebu::drawEdge(){
 	drawQuad((float)debu->getLeft(false), (float)debu->getTop(true),
 		(float)debu->getRight(false) - debu->getLeft(false), (float)debu->getBottom(true) - debu->getTop(true), BLUE & graphicsNS::ALPHA50);
 
-	ALL_OBJ if (canTouch(object[i])){
-		drawQuad((float)object[i]->getLeft(true), (float)object[i]->getTop(false),
-			(float)object[i]->getRight(true) - object[i]->getLeft(true), (float)object[i]->getBottom(false) - object[i]->getTop(false), RED & graphicsNS::ALPHA50);
-		drawQuad((float)object[i]->getLeft(false), (float)object[i]->getTop(true),
-			(float)object[i]->getRight(false) - object[i]->getLeft(false), (float)object[i]->getBottom(true) - object[i]->getTop(true), BLUE & graphicsNS::ALPHA50);
+	ALL_OBJ{
+		Entity *e = getObject(i);
+		if (isTouchable(e)){
+			drawQuad((float)e->getLeft(true), (float)e->getTop(false),
+				(float)e->getRight(true) - e->getLeft(true), (float)e->getBottom(false) - e->getTop(false), RED & graphicsNS::ALPHA50);
+			drawQuad((float)e->getLeft(false), (float)e->getTop(true),
+				(float)e->getRight(false) - e->getLeft(false), (float)e->getBottom(true) - e->getTop(true), BLUE & graphicsNS::ALPHA50);
+		}
 	}
 }
 

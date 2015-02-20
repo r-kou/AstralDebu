@@ -95,6 +95,23 @@ public:
 };
 
 
+class Enemy4 : public Enemy{
+private:
+public:
+	//コンストラクタ
+	Enemy4();
+
+	//移動
+	virtual void move(float frameTime);
+
+	//他オブジェクトへの接触
+	virtual void collideObj(Entity *e, UCHAR t);
+
+	//描画する画像を変更
+	virtual void changeImage();
+};
+
+
 class Enemy5 : public Enemy{
 private:
 public:

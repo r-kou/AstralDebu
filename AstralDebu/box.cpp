@@ -5,6 +5,7 @@ using namespace boxNS;
 
 //コンストラクタ
 Box::Box(){
+	trans = false;
 	state = ST_STAND;
 	renderOrder = RO_BOX;
 	size = CHIP_SIZE;
@@ -20,7 +21,6 @@ void Box::move(float frameTime){
 	//空中にいるなら落下
 	if (state == ST_JUMP) vel.y += GRAVITY_RATE * frameTime;
 	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
-
 	Entity::move(frameTime);
 }
 
@@ -60,7 +60,24 @@ void Box::collideObj(Entity *e, UCHAR t){
 			setRes(RES_BOTTOM_CHIP);
 		}
 		break;
+	case TY_LADDER:
+	case TY_GOAL:
+	case TY_RED_WARP:
+	case TY_GREEN_WARP:
+	case TY_YELLOW_WARP:
+		trans = true;
+		break;
 	}
+}
+
+//描画
+void Box::draw(){
+	//半透明ブロックか、後ろが梯子とかなら半透明
+	image.setX(pos.x - size / 2 * image.getScale());
+	image.setY(pos.y - size / 2 * image.getScale());
+	if (trans) image.draw(graphicsNS::ALPHA75);
+	else image.draw();
+	trans = false;
 }
 
 //コンストラクタ
@@ -233,6 +250,8 @@ void HibombBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 AirBox::AirBox(){
+	//空気なので半透明
+	trans = true;
 	type = TY_AIR_BOX;
 	img = IMG_AIR_BOX;
 }
@@ -285,7 +304,7 @@ void AirBox::draw(){
 	//空気なので半透明
 	image.setX(pos.x - size / 2 * image.getScale());
 	image.setY(pos.y - size / 2 * image.getScale());
-	image.draw(D3DCOLOR_ARGB(128, 255, 255, 255));
+	image.draw(graphicsNS::ALPHA50);
 }
 
 //コンストラクタ
@@ -372,6 +391,8 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 GoastBox::GoastBox(){
+	//霊なので半透明
+	trans = true;
 	type = TY_GOAST_BOX;
 	img = IMG_GOAST_BOX;
 }
@@ -401,5 +422,5 @@ void GoastBox::draw(){
 	//霊なので半透明
 	image.setX(pos.x - size / 2 * image.getScale());
 	image.setY(pos.y - size / 2 * image.getScale());
-	image.draw(D3DCOLOR_ARGB(128, 255, 255, 255));
+	image.draw(graphicsNS::ALPHA50);
 }

@@ -50,9 +50,17 @@ void Rock::collideObj(Entity *e, UCHAR t){
 		if (t & BOTTOM) chipBottom = true;
 		break;
 	case TY_BLAST:
-	case TY_HAMMER:
 		//”š”­‚·‚é
 		setRes(RES_DEAD);
+		break;
+	case TY_HAMMER:
+		//“S‹…‚©‚ç‚Ô‚Â‚©‚Á‚Ä‚«‚½‚ç‰ó‚ê‚é
+		if ((e->getState() == ST_HAMMER) ||
+			((t & LEFT) && (e->getVelX() > 0)) ||
+			((t & RIGHT) && (e->getVelX() < 0)) ||
+			((t & TOP) && (e->getVelY() > 0))) {
+			setRes(RES_DEAD);
+		}
 		break;
 	}
 }

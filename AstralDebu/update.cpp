@@ -28,7 +28,7 @@ void AstralDebu::updateStage(){
 		menu = false;
 		clearTimeStart = timeGetTime();
 		audio->playCue(audioNS::OK);
-		changeBgm(((stage-1)/10)+1);
+		changeBgm(((stage - 1) / 10) + 1);
 	}
 }
 
@@ -73,44 +73,68 @@ void AstralDebu::updateMain(){
 
 	//移動
 	debu->move(frameTime);
-	ALL_OBJ if (canMove(object[i]))
-		object[i]->move(frameTime);
-
-	//所持オブジェクトはデブの前に移動
+	ALL_OBJ{
+		Entity *e = getObject(i);
+		if (isMovable(e)) e->move(frameTime);
+	}
+		//所持オブジェクトはデブの前に移動
 	if (objHolded >= 0) moveHold(objHolded);
 
-	ALL_OBJ if (object[i]->getAction())
-		actionObject(i);
+	ALL_OBJ{
+		Entity *e = getObject(i);
+		if (e->getAction()) actionObject(i);
+	}
 
-	//地形への接触
-	if (canMove(debu))
-		debu->touchMap(map);
-	ALL_OBJ if (canMove(object[i]))
-		object[i]->touchMap(map);
+		//地形への接触
+	if (isMovable(debu))debu->touchMap(map);
+
+	ALL_OBJ{
+		Entity *e = getObject(i);
+		if (isMovable(e)) e->touchMap(map);
+	}
 
 	debu->resetResponse();
-	ALL_OBJ object[i]->resetResponse();
+	ALL_OBJ{
+		Entity *e = getObject(i);
+		e->resetResponse();
+	}
 
-	//他オブジェクトへの接触
-	if (canTouch(debu))
-		ALL_OBJ if (canTouch(object[i]))
-		debu->touchObj(object[i]);
-	ALL_OBJ_EACH if (canTouch(object[i]) && canTouch(object[j]))
-		object[i]->touchObj(object[j]);
+		//他オブジェクトへの接触
+	if (isTouchable(debu)){
+		ALL_OBJ{
+			Entity *e = getObject(i);
+			if (isTouchable(e)) debu->touchObj(e);
+		}
+	}
+	
+	ALL_OBJ_EACH{
+		Entity *ei = getObject(i);
+		Entity *ej = getObject(j);
+		if (isTouchable(ei) && isTouchable(ej))
+			ei->touchObj(ej);
+	}
 
-	//オブジェクトへの反応実行
-	if (canTouch(debu)) debu->responseObj();
-	ALL_OBJ if (canTouch(object[i]))
-		object[i]->responseObj();
+		//オブジェクトへの反応実行
+	if (isTouchable(debu)) debu->responseObj();
+	ALL_OBJ{
+		Entity *e = getObject(i);
+		if (isTouchable(e))
+			e->responseObj();
+	}
 
-	//オブジェクト消滅処理
-	ALL_OBJ if (object[i]->isDead())
-		deadObject(i);
+		//オブジェクト消滅処理
+		ALL_OBJ{
+		Entity *e = getObject(i);
+		if (e->isDead())
+			deadObject(i);
+	}
 
-	//描画する画像を変更
+		//描画する画像を変更
 	debu->changeImage();
-	ALL_OBJ object[i]->changeImage();
-
+	ALL_OBJ{
+		Entity *e = getObject(i);
+		e->changeImage();
+	}
 }
 
 //クリア画面の更新
@@ -125,7 +149,7 @@ void AstralDebu::updateMenu(){
 		audio->playCue(audioNS::CANCEL);
 	}
 	if (inHorizontal()) {
-		count = (count?0:1);
+		count = (count ? 0 : 1);
 		audio->playCue(audioNS::SELECT);
 	}
 	if (inZ()){
@@ -154,21 +178,29 @@ void AstralDebu::loadData(){
 	try{
 		load.open(SAV_FILE, std::ios::in | std::ios::binary);
 		if (load){
-				//クリアしたステージを読み込み
-				load.read((char *)&bufStage, sizeof(int));
-				clearedStage = bufStage;
-				//音量を読み込み
-				load.read((char *)&bufVolume, sizeof(double));
-				bgmVolume = bufVolume;
-				audio->setVolumeBgm(bgmVolume);
-				load.read((char *)&bufVolume, sizeof(double));
-				soundVolume = bufVolume;
-				audio->setVolumeSound(soundVolume);
-				//クリア時間を読み込み
-				FOR(STG_SIZE) {
-					load.read((char *)&bufTime, sizeof(double));
-					clearTime[i] = bufTime;
-				}
+			//クリアしたステージを読み込み
+			load.read((char *)&bufStage, sizeof(int));
+			if ((bufStage < 0) || (bufStage > 40))
+				throw(GameError(gameErrorNS::FATAL, "セーブデータの読み込みに失敗しました\nデータが壊れている可能性があります"));
+			clearedStage = bufStage;
+
+			//音量を読み込み
+			load.read((char *)&bufVolume, sizeof(double));
+			if ((bufVolume < 0.0f) || (bufVolume > 1.0f))
+				throw(GameError(gameErrorNS::FATAL, "セーブデータの読み込みに失敗しました\nデータが壊れている可能性があります"));
+			bgmVolume = bufVolume;
+			audio->setVolumeBgm(bgmVolume);
+
+			load.read((char *)&bufVolume, sizeof(double));
+			if ((bufVolume < 0.0f) || (bufVolume > 1.0f))
+				throw(GameError(gameErrorNS::FATAL, "セーブデータの読み込みに失敗しました\nデータが壊れている可能性があります"));
+			soundVolume = bufVolume;
+			audio->setVolumeSound(soundVolume);
+			//クリア時間を読み込み
+			FOR(STG_SIZE) {
+				load.read((char *)&bufTime, sizeof(double));
+				clearTime[i] = bufTime;
+			}
 		}
 		else {
 			//クリアしたステージを初期化
@@ -185,7 +217,7 @@ void AstralDebu::loadData(){
 	}
 	catch (...){
 		load.close();
-		throw(GameError(gameErrorNS::FATAL, "セーブデータの読み込みに失敗しました"));
+		throw(GameError(gameErrorNS::FATAL, "セーブデータの読み込みに失敗しました\nデータが壊れている可能性があります"));
 	}
 	stateNumber = 1;
 }
@@ -221,7 +253,7 @@ void AstralDebu::saveData(){
 		save.close();
 		throw(GameError(gameErrorNS::FATAL, "セーブデータの書き込みに失敗しました．"));
 	}
-	
+
 }
 
 
@@ -256,7 +288,7 @@ void AstralDebu::loadStage(){
 }
 
 //チップ割り当て
-void AstralDebu::loadChip(int i,int j,short c){
+void AstralDebu::loadChip(int i, int j, short c){
 	switch (c){
 	case 0:
 		map[i][j] = 0;
@@ -313,7 +345,7 @@ void AstralDebu::loadChip(int i,int j,short c){
 		addObject(new GoastBox(), chipT, i, j);
 		break;
 	case 18: //はしご
-		addObject(new Ladder(),chipT,i,j);
+		addObject(new Ladder(), chipT, i, j);
 		break;
 	case 19: //爆弾
 		addObject(new Bomb(), chipT, i, j);
@@ -343,7 +375,7 @@ void AstralDebu::loadChip(int i,int j,short c){
 		addEnemy(new Enemy3(), enemyT, debu, i, j);
 		break;
 	case 28: //敵(箱を見ると押す)
-		//addEnemy(new Enemy4(), enemyT, debu, i, j);
+		addEnemy(new Enemy4(), enemyT, debu, i, j);
 		break;
 	case 29: //敵(動かずにミサイル)
 		addEnemy(new Enemy5(), enemyT, debu, i, j);
@@ -412,7 +444,7 @@ void AstralDebu::updateTitle1(){
 void AstralDebu::updateTitle2(){
 	if (inCursor()) audio->playCue(audioNS::SELECT);
 	if (clearedStage){
-		if (inUp()||inLeft()) count -= (count == 0) ? -4 : 1;
+		if (inUp() || inLeft()) count -= (count == 0) ? -4 : 1;
 		if (inDown() || inRight()) count += (count == 4) ? -4 : 1;
 	}
 	else {
@@ -460,8 +492,8 @@ void AstralDebu::updateTitle3(){
 		audio->playCue(audioNS::SELECT);
 		if (inUp()) stage += 1;
 		if (inDown()) stage -= 1;
-		if (inLeft()) stage -= 10;
-		if (inRight()) stage += 10;
+		if (inLeft()) stage -= 5;
+		if (inRight()) stage += 5;
 		if (stage < 1) stage = 1;
 		if (stage > clearedStage) stage = clearedStage;
 	}
@@ -480,8 +512,8 @@ void AstralDebu::updateTitle3(){
 //タイトル画面を更新
 void AstralDebu::updateTitle4() {
 	if (inCursor()) audio->playCue(audioNS::SELECT);
-	if (inUp()||inLeft()) count -= (count != 0) ? 1 : -2;
-	if (inDown()||inRight()) count += (count != 2) ? 1 : -2;
+	if (inUp() || inLeft()) count -= (count != 0) ? 1 : -2;
+	if (inDown() || inRight()) count += (count != 2) ? 1 : -2;
 	if (inZ()) {
 		switch (count){
 		case 0:
@@ -528,7 +560,7 @@ void AstralDebu::updateTitle5() {
 	}
 
 	audio->setVolumeBgm(bgmVolume);
-	if (inZ()||inX()) {
+	if (inZ() || inX()) {
 		stateNumber = 4;
 		saveData();
 		audio->playCue(audioNS::CANCEL);

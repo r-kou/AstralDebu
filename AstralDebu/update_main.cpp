@@ -37,10 +37,10 @@ void AstralDebu::readCommand(){
 	}
 	//爆発する
 	if (input->isKeyPressed('E') && (cheat3)){
-		int tmp = getEmptyIndex();
-		SAFE_DELETE(object[tmp]);
-		object[tmp] = new Blast(true);
-		if (!object[tmp]->initialize(this, &bombT, debu->ChipCX(), debu->ChipCY()))
+		Entity *tmp = object[getEmptyIndex()];
+		SAFE_DELETE(tmp);
+		tmp = new Blast(true);
+		if (tmp->initialize(this, &bombT, debu->ChipCX(), debu->ChipCY()))
 			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 	}
 	//デブがすごくなる
@@ -63,36 +63,26 @@ void AstralDebu::readCommand(){
 //オブジェクトの取得判定
 void AstralDebu::handleObject(){
 	int exist = -1;
+	int cx = getCursorChipX(debu), cy = getCursorChipY(debu);
 
 	//立ってる時かハンマー所持時だけ有効
-	if ((debu->getState() != entityNS::ST_STAND) && (debu->getState() != entityNS::ST_LADDER)
-		&& (debu->getState() != entityNS::ST_HAMMER)) return;
-	//地形には何もできない
-	if (map[getCursorChipX()][getCursorChipY()])  return;
+	if ((debu->getState() != entityNS::ST_STAND) &&
+		(debu->getState() != entityNS::ST_LADDER)&&
+		(debu->getState() != entityNS::ST_HAMMER)) return;
 
-	//存在しているオブジェクトを見る
-	ALL_OBJ{
-		if ((i != objHolded) &&
-		(object[i]->getType() != entityNS::TY_LADDER) &&
-		(object[i]->ChipCX() == getCursorChipX()) &&
-		(object[i]->ChipCY() == getCursorChipY()) &&
-		canTouch(object[i])) {
-			if (canHold(object[i])) exist = i;
-			else return;
-		}
-	}
+	exist = getCursorObject(cx, cy, true);
 
-		if (inX()){
+	if (inX()){
 		if (debu->getHold()){
-			if (exist < 0) putObject();
+			if (exist == -1) putObject();
 		}
 		else{
 			if (exist >= 0) holdObject(exist);
 		}
-		}
+	}
 	if (inC()){
 		if (debu->getHold()){
-			if (exist < 0) throwObject();
+			if (exist == -1) throwObject();
 		}
 		else{
 			if (exist >= 0) pushObject(exist);
@@ -101,10 +91,10 @@ void AstralDebu::handleObject(){
 }
 
 //オブジェクトを掴む
-void AstralDebu::holdObject(int i){
-	Entity *e = object[i];
+void AstralDebu::holdObject(int exist){
+	Entity *e = getObject(exist);
 
-	if (canEat(e)){
+	if (isFood(e)){
 		//肉は20回復 超にくは全回復
 		if (e->getType() == entityNS::TY_MEAT) {
 			addLife(30);
@@ -118,12 +108,12 @@ void AstralDebu::holdObject(int i){
 		e->setType(entityNS::TY_NONE);
 	}
 	else {
-		objHolded = i;
+		objHolded = exist;
 		debu->setHold(true);
 
 		e->setVelX(0.0f);
 		e->setVelY(0.0f);
-		moveHold(i);
+		moveHold(exist);
 
 		if (e->getType() == entityNS::TY_HAMMER) ((Hammer*)e)->setHold(debu);
 		else e->setState(entityNS::ST_LOCK);
@@ -154,7 +144,7 @@ void AstralDebu::holdObject(int i){
 
 //オブジェクトを放す
 void AstralDebu::putObject(){
-	Entity *e = object[objHolded];
+	Entity *e = getObject(objHolded);
 
 	objHolded = -1;
 	debu->setHold(false);
@@ -165,9 +155,9 @@ void AstralDebu::putObject(){
 		else e->setPosX(CHIP(debu->ChipCX() + 1.5f));
 	}
 	else {
-		e->setPosX(CHIP(getCursorChipX() + 0.5f));
+		e->setPosX(CHIP(getCursorChipX(debu) + 0.5f));
 	}
-	e->setPosY(CHIP_D(getCursorChipY() + 0.5f));
+	e->setPosY(CHIP_D(getCursorChipY(debu) + 0.5f));
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
 	e->setState(entityNS::ST_STAND);
@@ -179,32 +169,25 @@ void AstralDebu::putObject(){
 
 //オブジェクトを押す
 void AstralDebu::pushObject(int exist){
-	int cursorNX = 0;
-	Entity *e = object[exist];
+	int cx = 0, cy = getCursorChipY(debu);
+	Entity *e = getObject(exist);
 
 	//ハンマーとにくは押せない
-	if ((e->getType() == entityNS::TY_HAMMER) || (canEat(e))) return;
+	if ((e->getType() == entityNS::TY_HAMMER) || (isFood(e))) return;
 
 	if (debu->getDirect()) {
-		if (debu->ChipCX() > 1) cursorNX = debu->ChipCX() - 2;
+		if (debu->ChipCX() > 1) cx = debu->ChipCX() - 2;
 		else return;
 	}
 	else {
-		if (debu->ChipCX() < MAP_COL - 2) cursorNX = debu->ChipCX() + 2;
+		if (debu->ChipCX() < MAP_COL - 2) cx = debu->ChipCX() + 2;
 		else return;
 	}
 
-	//押す先に何かあったら不可
-	if (map[cursorNX][getCursorChipY()]) return;
-	ALL_OBJ{
-		if (canTouch(object[i])&&
-		(object[i]->getType() != entityNS::TY_LADDER) &&
-		(object[i]->ChipCX() == cursorNX) &&
-		(object[i]->ChipCY() == getCursorChipY())) return;
-	}
+	if (getCursorObject(cx, cy, false) != -1) return;
 
-	e->setPosX(CHIP(cursorNX + 0.5f));
-	e->setPosY(CHIP_D(getCursorChipY() + 0.5f));
+	e->setPosX(CHIP(cx + 0.5f));
+	e->setPosY(CHIP_D(cy + 0.5f));
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
 	e->setState(entityNS::ST_STAND);
@@ -232,14 +215,14 @@ void AstralDebu::pushObject(int exist){
 
 //オブジェクトを投げる
 void AstralDebu::throwObject(){
-	Entity *e = object[objHolded];
+	Entity *e = getObject(objHolded);
 
 	objHolded = -1;
 	debu->setHold(false);
 	debu->setState(entityNS::ST_STAND);
 
-	e->setPosX(CHIP(getCursorChipX() + 0.5f));
-	e->setPosY(CHIP_D(getCursorChipY() + 0.5f));
+	e->setPosX(CHIP(getCursorChipX(debu) + 0.5f));
+	e->setPosY(CHIP_D(getCursorChipY(debu) + 0.5f));
 	if (debu->getDirect()) e->setVelX(-VEL_THROW);
 	else e->setVelX(VEL_THROW);
 	e->setVelY(0.0f);
@@ -275,7 +258,7 @@ void AstralDebu::throwObject(){
 
 //所持オブジェクトをデブの前に移動
 void AstralDebu::moveHold(int i){
-	Entity *e = object[i];
+	Entity *e = getObject(i);
 
 	if (e->getType() == entityNS::TY_HAMMER) {
 		debu->setHammer(debu->getPosX() >= e->getPosX());
@@ -290,8 +273,8 @@ void AstralDebu::moveHold(int i){
 
 //オブジェクトの消滅処理
 void AstralDebu::deadObject(int i){
-	Entity *e = object[i];
-	int x = e->ChipCX(), y = e->ChipCY();
+	Entity *e = getObject(i);
+	int cx = e->ChipCX(), cy = e->ChipCY();
 
 	switch (e->getType()){
 	case entityNS::TY_BOMB:
@@ -300,18 +283,20 @@ void AstralDebu::deadObject(int i){
 	case entityNS::TY_MINE:
 		//消去してから爆風を生成する
 		SAFE_DELETE(e);
-		object[i] = new Blast(false);
-		if (!object[i]->initialize(this, &bombT, x, y))
+		e = new Blast(false);
+		if (!e->initialize(this, &bombT, cx, cy))
 			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
+		setObject(i,e);
 		audio->playCue(audioNS::BLAST1);
 		break;
 	case entityNS::TY_HIBOMB:
 	case entityNS::TY_HIBOMB_BOX:
 		//消去してからすごい爆風を生成する
 		SAFE_DELETE(e);
-		object[i] = new Blast(true);
-		if (!object[i]->initialize(this, &bombT, x, y))
+		e = new Blast(true);
+		if (!e->initialize(this, &bombT, cx, cy))
 			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
+		setObject(i, e);
 		audio->playCue(audioNS::BLAST2);
 		break;
 	default:
@@ -324,32 +309,68 @@ void AstralDebu::deadObject(int i){
 
 //オブジェクトの特殊行動
 void AstralDebu::actionObject(int i){
-	Entity *e = object[i];
-	int tmp;
+	int n;
+	int cx,cy;
+	Entity *e = getObject(i), *ne;
+
 	switch (e->getType()){
 	case entityNS::TY_ENEMY_3:
 		//銃弾生成
 		e->setAction(false);
-		tmp = getEmptyIndex();
-		SAFE_DELETE(object[tmp]);
-		object[tmp] = new Bullet();
-		if (!object[tmp]->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
+		n = getEmptyIndex();
+		ne = object[n];
+		SAFE_DELETE(ne);
+		ne = new Bullet();
+		if (!ne->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
 			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
-		object[tmp]->setDirect(e->getDirect());
-		object[tmp]->setState(entityNS::ST_KNOCK);
+		ne->setDirect(e->getDirect());
+		ne->setState(entityNS::ST_KNOCK);
+		setObject(n, ne);
 		break;
 	case entityNS::TY_ENEMY_4:
+		cx = getCursorChipX(e), cy = getCursorChipY(e);
+		n = getCursorObject(cx, cy, true);
+		e->setAction(false);
+		if (n < 0) {
+			e->setDirect(!e->getDirect());
+			return;
+		}
+
+		if (e->getDirect()) cx--;
+		else cx++;
+		if ((cx < 0) || (cx >= MAP_COL)) {
+			e->setDirect(!e->getDirect());
+			return;
+		}
+
+		e->setAnim(0.3f);
+
+		if (getCursorObject(cx, cy, false) != -1) {
+			e->setDirect(!e->getDirect());
+			return;
+		}
+
+		ne = getObject(n);
+		ne->setPosX(CHIP(cx + 0.5f));
+		ne->setPosY(CHIP_D(cy + 0.5f));
+		ne->setVelX(0.0f);
+		ne->setVelY(0.0f);
+		ne->setState(entityNS::ST_STAND);
+		ne->setEdge();
+		ne->playPut();
 		break;
 	case entityNS::TY_ENEMY_5:
 		//ミサイル生成
 		e->setAction(false);
-		tmp = getEmptyIndex();
-		SAFE_DELETE(object[tmp]);
-		object[tmp] = new Missile();
-		if (!object[tmp]->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
+		n = getEmptyIndex();
+		ne = object[n];
+		SAFE_DELETE(ne);
+		ne = new Missile();
+		if (!ne->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
 			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
-		object[tmp]->setDirect(e->getDirect());
-		object[tmp]->setState(entityNS::ST_KNOCK);
+		ne->setDirect(e->getDirect());
+		ne->setState(entityNS::ST_KNOCK);
+		setObject(n, ne);
 		break;
 	}
 }

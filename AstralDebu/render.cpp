@@ -60,7 +60,7 @@ void AstralDebu::renderMenu(){
 	using namespace menuNS::mainMenuNS;
 	graphics->spriteBegin();
 
-	drawFrame(REC_FRAME);
+	drawFrame(REC_FRAME(true));
 
 	numberF.print("Ｚ：ジャンプ", REC_TEX(0,0), BLACK, DT_LC);
 	numberF.print("Ｘ：アイテムを持ち上げる", REC_TEX(0,1), BLACK, DT_LC);
@@ -114,7 +114,7 @@ void AstralDebu::renderTitleMenu(){
 	using namespace menuNS::titleMenuNS;
 	graphics->spriteBegin();
 	//メニューを描画
-	drawFrame(REC_FRAME);
+	drawFrame(REC_FRAME(false));
 
 	middleF.print("はじめから", REC_TEX(0, 0), TEXT_SHOW, DT_CC);
 	middleF.print("つづきから", REC_TEX(0, 1), menuText(clearedStage != 0), DT_CC);
@@ -149,7 +149,7 @@ void AstralDebu::renderTitleVolume(){
 	using namespace menuNS::audioMenuNS;
 	graphics->spriteBegin();
 
-	drawFrame(REC_FRAME);
+	drawFrame(REC_FRAME(false));
 
 	middleF.print("ＢＧＭ", REC_TEX(0,0), TEXT_SHOW, DT_CC);
 	middleF.print(doubleToString(bgmVolume), REC_TEX(2,0), WHITE, DT_CC);
@@ -160,12 +160,12 @@ void AstralDebu::renderTitleVolume(){
 	drawArrowHorizontal(REC_ARR(0,count), false, RED);
 
 	if (stateNumber == 5){
-		drawTriangleVertical(REC_TRI(0,0), false, menuText(bgmVolume<1.0));
-		drawTriangleVertical(REC_TRI(1,0), true, menuText(bgmVolume>0.0));
+		drawTriangleVertical(REC_TRI(0,0), false, menuText(bgmVolume>0.0));
+		drawTriangleVertical(REC_TRI(1,0), true, menuText(bgmVolume<1.0));
 	}
 	if (stateNumber == 6){
-		drawTriangleVertical(REC_TRI(0, 1), false, menuText(soundVolume<1.0));
-		drawTriangleVertical(REC_TRI(1, 1), true, menuText(soundVolume>0.0));
+		drawTriangleVertical(REC_TRI(0, 1), false, menuText(soundVolume>0.0));
+		drawTriangleVertical(REC_TRI(1, 1), true, menuText(soundVolume<1.0));
 	}
 
 	graphics->spriteEnd();
@@ -284,8 +284,8 @@ void AstralDebu::renderHint(){
 		drawPanelD(CHIP_BOMB,CHIP_HIBOMB, 17.25f, 10.5f, HINT_PANEL);
 		break;
 	case 7:
-		drawPanelD(CHIP_BOMB, CHIP_STEEL_BOX, 19.5f, 4.5f, HINT_PANEL);
-		drawArrowHorizontal(19.75f,5.75f,false,HINT_ARROW);
+		drawPanelD(CHIP_BOMB, CHIP_STEEL_BOX, 15.25f, 5.25f, HINT_PANEL);
+		drawArrowHorizontal(15.5f,6.5f,false,HINT_ARROW);
 		break;
 	case 10:
 		drawPanel(CHIP_WOOD_BOX, 6.0f, 10.5f, HINT_PANEL);
@@ -310,7 +310,7 @@ void AstralDebu::renderObject(){
 
 	//オブジェクトを描画
 	for (entityNS::RENDER_ORDER ro = entityNS::RO_BASE; ro < entityNS::RO_DEBU; ro = static_cast<entityNS::RENDER_ORDER>(ro + 1)){
-		ALL_OBJ if ((canMove(object[i])&&(object[i]->isRenderOrder(ro)))) object[i]->draw();
+		ALL_OBJ if ((isMovable(object[i])&&(object[i]->isRenderOrder(ro)))) object[i]->draw();
 	}
 
 	//持ち物を描画
@@ -329,8 +329,8 @@ void AstralDebu::renderObject(){
 
 //カーソルを描画
 void AstralDebu::drawCursor(){
-	chip.setX((float)CHIP(getCursorChipX()));
-	chip.setY((float)CHIP_D(getCursorChipY()));
+	chip.setX((float)CHIP(getCursorChipX(debu)));
+	chip.setY((float)CHIP_D(getCursorChipY(debu)));
 
 	chip.setCurrentFrame(CHIP_CURSOR);
 	chip.draw();

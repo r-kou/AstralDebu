@@ -199,7 +199,54 @@ void Enemy3::changeImage(){
 		if (animInterval > 0.8f) setImage(IMG_ACTION);
 	}
 }
+//コンストラクタ
+Enemy4::Enemy4(){
+	type = TY_ENEMY_4;
+}
 
+//移動
+void Enemy4::move(float frameTime){
+	if ((state == ST_STAND)&&(animInterval == 0.0f)){
+		if (direct) vel.x = -VEL_WALK;
+		else vel.x = VEL_WALK;
+	}
+	else if (state != ST_DEAD) vel.x = 0;
+
+	Enemy::move(frameTime);
+}
+
+//他オブジェクトへの接触
+void Enemy4::collideObj(Entity *e, UCHAR t){
+	//全オブジェクトの衝突判定をチェック
+	Enemy::collideObj(e, t);
+
+	//敵固有の衝突判定
+	switch (e->getType()){
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_BOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_BOMB:
+	case TY_HIBOMB:
+		//押せる箱にぶつかると押す
+		if ((state == ST_STAND) && (!action) && (animInterval == 0)&&
+			(((t & LEFT) && (diffVelX(e) < 0))||
+			((t & RIGHT) && (diffVelX(e) > 0)))) {
+			action = true;
+		}
+		break;
+	}
+}
+//描画する画像を変更
+void Enemy4::changeImage(){
+	Enemy::changeImage();
+
+	//現在の状態を確認
+	if (state == ST_STAND) {
+		if (animInterval > 0.3f) setImage(IMG_ACTION);
+	}
+}
 
 //コンストラクタ
 Enemy5::Enemy5(){

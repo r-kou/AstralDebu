@@ -25,6 +25,8 @@ namespace boxNS{
 }
 
 class Box : public Entity{
+protected:
+	bool trans;
 public:
 	//コンストラクタ
 	Box();
@@ -37,6 +39,9 @@ public:
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
+
+	//描画
+	virtual void draw();
 };
 
 class WoodBox : public Box{

@@ -284,9 +284,12 @@ public:
 	void setAction(bool b) { action = b; }
 	//反応を初期化
 	void resetResponse() { response = 0; FOR(entityNS::RES_CLEAR){ responseVC[i].x = 0; responseVC[i].y = 0; } }
+	//ワープ相手を設定
+	void setpartner(Entity *e) {partnerX = e->ChipCX(); partnerY = e->ChipCY();	}
 
 	//描画順を指定
-	boolean isRenderOrder(entityNS::RENDER_ORDER ro){ return renderOrder == ro; }
+	bool isRenderOrder(entityNS::RENDER_ORDER ro){ return renderOrder == ro; }
+	bool inChip(int x, int y) { return ((ChipCX() == x) && (ChipCY() == y)); }
 	//マップチップに合わせる
 	void setCX() { pos.x = (float)CHIP(ChipCX() + 0.5f); }
 	void setCY() { pos.y = (float)CHIP_D(ChipCY() + 0.5f); }

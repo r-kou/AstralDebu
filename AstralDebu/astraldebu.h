@@ -22,7 +22,7 @@
 #define REC_TEX(x,y) TEX_MAR_X + TEX_SEP_X * x, TEX_MAR_Y + TEX_SEP_Y * y, TEX_LEN_X, TEX_LEN_Y
 #define REC_ARR(x,y) ARR_MAR_X + ARR_SEP_X * x, ARR_MAR_Y + ARR_SEP_Y * y, ARR_LEN_X, ARR_LEN_Y
 #define REC_TRI(x,y) TRI_MAR_X + TRI_SEP_X * x, TRI_MAR_Y + TRI_SEP_Y * y, TRI_LEN_X, TRI_LEN_Y
-#define REC_FRAME REC, FRM_LEN, SHD_LEN, BACK, FRAME, FRAME_SHADE, FRAME_LIGHT
+#define REC_FRAME(b) REC, FRM_LEN, SHD_LEN, BACK&(b?graphicsNS::ALPHA90:WHITE), FRAME, FRAME_SHADE, FRAME_LIGHT
 
 namespace astralNS {
 	//配列の大きさ
@@ -328,22 +328,30 @@ private:
 	//陰あり枠付き四角を描画
 	void drawFrame(float l, float t, float r, float b, float f, float s, ARGB c, ARGB fc, ARGB fs, ARGB fl);
 
+	//オブジェクトを返す
+	Entity* getObject(int i);
+	//オブジェクトを保存する
+	void setObject(int i,Entity *e);
 	//カーソルの位置を返す
-	int getCursorChipX();
-	int getCursorChipY();
+	int getCursorChipX(Entity *e);
+	int getCursorChipY(Entity *e);
+	//存在しているオブジェクトを返す
+	int getCursorObject(int cx, int cy, bool b);
+	//オブジェクトが背景タイプか判定
+	bool isBase(Entity *e);
 	//オブジェクトが持てるか判定
-	bool canHold(Entity *e);
+	bool isHoldable(Entity *e);
 	//オブジェクトが肉か判定
-	bool canEat(Entity *e);
+	bool isFood(Entity *e);
 	//オブジェクトが接触可能か判定
-	bool canTouch(Entity *e);
+	bool isTouchable(Entity *e);
 	//オブジェクトが描画可能か判定
-	bool canMove(Entity *e);
+	bool isMovable(Entity *e);
 	//体力の増加
 	void addLife(int i);
 	//体力の減少
 	void subLife(int i);
-	//未使用のオブジェクトを取得
+	//未使用のオブジェクトのインデックスを取得
 	int getEmptyIndex();
 	//マップチップのでコード
 	short decodeChip(short c, int i, int j);
@@ -393,7 +401,8 @@ private:
 	//上下左右が押され続けているか
 	bool downCursor() { return((downVertical()) || (downHorizontal())); }
 
-
+	//デバッグ用例外
+	void dbg() { throw(GameError(gameErrorNS::FATAL, "dbg"));}
 
 public:
 	//コンストラクタ

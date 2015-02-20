@@ -5,8 +5,10 @@ using namespace entityNS;
 
 //オブジェクトの追加
 void AstralDebu::addObject(Entity *e, Texture &t, int i, int j){
+	if (objMax >= OBJ_SIZE)
+		throw(GameError(gameErrorNS::WARNING,"オブジェクトの数が上限に達しました"));
 	map[i][j] = 0;
-	object[objMax] = e;
+	setObject(objMax, e);
 	if (!e->initialize(this, &t, i, j))
 		throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 	objMax++;
@@ -14,8 +16,10 @@ void AstralDebu::addObject(Entity *e, Texture &t, int i, int j){
 
 //敵の追加　デブの位置を入れる
 void AstralDebu::addEnemy(Enemy *e, Texture &t, Debu *d, int i, int j){
+	if (objMax >= OBJ_SIZE)
+		throw(GameError(gameErrorNS::WARNING, "オブジェクトの数が上限に達しました"));
 	map[i][j] = 0;
-	object[objMax] = e;
+	setObject(objMax, e);
 	if (!e->initialize(this, &t, d, i, j))
 		throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
 	objMax++;
@@ -23,14 +27,28 @@ void AstralDebu::addEnemy(Enemy *e, Texture &t, Debu *d, int i, int j){
 
 //ワープの追加
 void AstralDebu::addWarp(int i, int j){
-	object[i]->setPartnerX(object[j]->ChipCX());
-	object[i]->setPartnerY(object[j]->ChipCY());
-	object[j]->setPartnerX(object[i]->ChipCX());
-	object[j]->setPartnerY(object[i]->ChipCY());
+	Entity *ei = getObject(i),*ej = getObject(j);
+	ei->setpartner(ej);
+	ej->setpartner(ei);
+}
+
+//オブジェクトが背景タイプか判定
+bool AstralDebu::isBase(Entity *e){
+	switch (e->getType()){
+	case TY_GOAL:
+	case TY_RED_WARP:
+	case TY_GREEN_WARP:
+	case TY_YELLOW_WARP:
+	case TY_LADDER:
+	case TY_BULLET:
+	case TY_MISSILE:
+		return true;
+	}
+	return false;
 }
 
 //オブジェクトが持てるか判定
-bool AstralDebu::canHold(Entity *e){
+bool AstralDebu::isHoldable(Entity *e){
 	if (e->getState() != ST_STAND) return false;
 	switch (e->getType()){
 	case TY_WOOD_BOX:
@@ -45,7 +63,7 @@ bool AstralDebu::canHold(Entity *e){
 	case TY_MEAT:
 	case TY_HIMEAT:
 	case TY_HAMMER:
-		return canTouch(e);
+		return isTouchable(e);
 		break;
 	default:
 		return false;
@@ -54,7 +72,7 @@ bool AstralDebu::canHold(Entity *e){
 }
 
 //オブジェクトが肉か判定
-bool AstralDebu::canEat(Entity *e){
+bool AstralDebu::isFood(Entity *e){
 	switch (e->getType()){
 	case TY_MEAT:
 	case TY_HIMEAT:
@@ -67,15 +85,15 @@ bool AstralDebu::canEat(Entity *e){
 }
 
 //オブジェクトが接触可能か判定
-bool AstralDebu::canTouch(Entity *e){
+bool AstralDebu::isTouchable(Entity *e){
 	if ((e->getState() == ST_LOCK) ||
 		(e->getState() == ST_CLEAR) ||
 		(e->getState() == ST_DEAD)) return false;
-	return canMove(e);
+	return isMovable(e);
 }
 
 //オブジェクトを描画するか判定
-bool AstralDebu::canMove(Entity *e){
+bool AstralDebu::isMovable(Entity *e){
 	if ((e->getState() == ST_EMPTY) ||
 		(e->getState() == ST_LOCK) ||
 		(e->getType() == TY_NONE)) return false;
@@ -97,13 +115,18 @@ void AstralDebu::subLife(int i){
 
 //未使用のオブジェクトを取得
 int AstralDebu::getEmptyIndex(){
-	int tmp = objMax;
-	ALL_OBJ if ((object[i]->getType() == TY_NONE) && (object[i]->getState() == ST_EMPTY)) {
-		tmp = i;
-		break;
+	int empty = objMax;
+	if (objMax > OBJ_SIZE)
+		throw(GameError(gameErrorNS::WARNING, "オブジェクトの数が上限に達しました"));
+	ALL_OBJ {
+		Entity *tmp = getObject(i);
+		if ((tmp->getType() == TY_NONE) && (tmp->getState() == ST_EMPTY)) {
+			empty = i;
+			break;
+		}
 	}
-	if (tmp == objMax) objMax++;
-	return tmp;
+	if (empty == objMax) objMax++;
+	return empty;
 }
 
 //bgm再生
@@ -193,6 +216,64 @@ short AstralDebu::decodeChip(short c, int i, int j) {
 	first = ((i*(j + 1)) << 4);
 	second = ((i + 1) * 11);
 	third = c - first;
-	if ((third % second)!=0) throw(GameError(gameErrorNS::FATAL, "マップデータが壊れています"));
+	if ((third % second)!=0) throw(GameError(gameErrorNS::FATAL, "マップデータの読み込みに失敗しました\nマップデータが壊れている可能性があります"));
 	return third / second;
+}
+
+
+//カーソルのX位置を返す
+int AstralDebu::getCursorChipX(Entity *e){
+	if (e->getDirect()) {
+		if (e->ChipCX() > 0) return e->ChipCX() - 1;
+		return 0;
+	}
+	else {
+		if (e->ChipCX() < MAP_COL - 1) return e->ChipCX() + 1;
+		return MAP_COL - 1;
+
+	}
+}
+
+
+//カーソルのY位置を返す
+int AstralDebu::getCursorChipY(Entity *e){
+	return e->ChipCY();
+}
+
+
+//存在しているオブジェクトを返す
+int AstralDebu::getCursorObject(int cx,int cy,bool b){
+	//地形には何もできない
+	if (map[cx][cy])  return -2;
+
+	//存在しているオブジェクトを見る
+	ALL_OBJ{
+		if (i == objHolded) continue;
+		Entity *tmp = getObject(i);
+		if (!isBase(tmp) &&
+			isTouchable(tmp) &&
+			(tmp->inChip(cx, cy))) {
+				if ((!b)||(isHoldable(tmp))) return i;
+				else return -1;
+		}
+	}
+
+	return -1;
+}
+
+//オブジェクトを返す
+Entity* AstralDebu::getObject(int i){
+	if (i >= OBJ_SIZE)
+		throw(GameError(gameErrorNS::WARNING, "オブジェクトの数が上限に達しました"));
+	Entity *obj = object[i];
+	if (obj == NULL)
+		throw(GameError(gameErrorNS::WARNING, "存在しないオブジェクトが参照されました"));
+	return obj;
+}
+
+//オブジェクトを保存する
+void AstralDebu::setObject(int i,Entity *e){
+	if (i >= OBJ_SIZE)
+		throw(GameError(gameErrorNS::WARNING, "オブジェクトの数が上限に達しました"));
+	object[i] = e;
 }
