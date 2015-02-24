@@ -149,6 +149,7 @@ void AstralDebu::putObject(){
 	objHolded = -1;
 	debu->setHold(false);
 	debu->setState(entityNS::ST_STAND);
+	debu->setAnim(0.3f);
 
 	if (e->getType() == entityNS::TY_HAMMER){
 		if (e->getDirect()) e->setPosX(CHIP(debu->ChipCX() - 0.5f));
@@ -183,8 +184,8 @@ void AstralDebu::pushObject(int exist){
 		if (debu->ChipCX() < MAP_COL - 2) cx = debu->ChipCX() + 2;
 		else return;
 	}
-
 	if (getCursorObject(cx, cy, false) != -1) return;
+	debu->setAnim(0.3f);
 
 	e->setPosX(CHIP(cx + 0.5f));
 	e->setPosY(CHIP_D(cy + 0.5f));
@@ -220,6 +221,7 @@ void AstralDebu::throwObject(){
 	objHolded = -1;
 	debu->setHold(false);
 	debu->setState(entityNS::ST_STAND);
+	debu->setAnim(0.3f);
 
 	e->setPosX(CHIP(getCursorChipX(debu) + 0.5f));
 	e->setPosY(CHIP_D(getCursorChipY(debu) + 0.5f));

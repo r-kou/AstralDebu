@@ -21,6 +21,7 @@ namespace debuNS{
 	const int IMG_WALK_END = 4;
 	const int IMG_HOLD_WALK_START = 5;
 	const int IMG_HOLD_WALK_END = 7;
+	const int IMG_THROW = 8;
 	const int IMG_FALL_FRONT = 9;
 	const int IMG_FALL_BACK = 10;
 	const int IMG_JUMP_FRONT = 11;

@@ -106,15 +106,18 @@ void Enemy::changeImage(){
 	case ST_STAND:
 		image.setFlipH(direct);
 		//動いているか停止しているかで判断
-		if (vel.x == 0.0f) setImage(IMG_STAND);
-		else setImage(IMG_WALK_START, IMG_WALK_END, true);
+		if (vel.x == 0.0f) {
+			if (animInterval > 0.0f) setImage(IMG_ACTION + margin);
+			else setImage(IMG_STAND + margin);
+		}
+		else setImage(IMG_WALK_START+margin, IMG_WALK_END+margin, true);
 		break;
 	case ST_JUMP:
-		setImage(IMG_STAND);
+		setImage(IMG_STAND+margin);
 		break;
 	case ST_DEAD:
-		if (vel.x*(direct ? -1 : 1) > 0.0) setImage(IMG_DEAD_FRONT);
-		else setImage(IMG_DEAD_BACK);
+		if (vel.x*(direct ? -1 : 1) > 0.0) setImage(IMG_DEAD_FRONT+margin-(walk?0:IMG_MAR_WALK));
+		else setImage(IMG_DEAD_BACK + margin - (walk ? 0 : IMG_MAR_WALK));
 		break;
 	}
 }
@@ -131,6 +134,8 @@ void Enemy::draw(){
 //コンストラクタ
 Enemy1::Enemy1(){
 	type = TY_ENEMY_1;
+	margin = IMG_MAR_1;
+	walk = true;
 }
 
 //移動
@@ -147,6 +152,8 @@ void Enemy1::move(float frameTime){
 //コンストラクタ
 Enemy2::Enemy2(){
 	type = TY_ENEMY_2;
+	margin = IMG_MAR_2;
+	walk = true;
 }
 
 //移動
@@ -178,6 +185,8 @@ void Enemy2::move(float frameTime){
 //コンストラクタ
 Enemy3::Enemy3(){
 	type = TY_ENEMY_3;
+	margin = IMG_MAR_3;
+	walk = false;
 }
 
 //移動
@@ -208,6 +217,8 @@ void Enemy3::changeImage(){
 //コンストラクタ
 Enemy4::Enemy4(){
 	type = TY_ENEMY_4;
+	margin = IMG_MAR_4;
+	walk = true;
 }
 
 //移動
@@ -257,6 +268,8 @@ void Enemy4::changeImage(){
 //コンストラクタ
 Enemy5::Enemy5(){
 	type = TY_ENEMY_5;
+	margin = IMG_MAR_5;
+	walk = false;
 }
 
 //移動

@@ -153,9 +153,9 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case TY_ENEMY_5:
 	case TY_BULLET:
 		//吹っ飛ばされる
-		if (animInterval == 0.0f){
+		if (knockInterval == 0.0f){
 			setRes(RES_KNOCK, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, -VEL_KNOCK_JUMP);
-			animInterval = 0.5f;
+			knockInterval = 0.5f;
 		}
 		break;
 	case TY_MISSILE:
@@ -177,7 +177,8 @@ void Debu::changeImage(){
 	case ST_STAND:
 		image.setFlipH(direct);
 		//動いているか停止しているかで判断
-		if (vel.x == 0.0f){
+		if (animInterval > 0.0f) setImage(IMG_THROW);
+		else if (vel.x == 0.0f){
 			//オブジェクトを保持しているかで判断
 			if (hold) setImage(IMG_HOLD);
 			else setImage(IMG_STAND);

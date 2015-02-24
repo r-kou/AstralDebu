@@ -112,7 +112,6 @@ void Ladder::draw(){
 //コンストラクタ
 MeatE::MeatE(){
 	state = ST_STAND;
-	type = TY_MEAT;
 	renderOrder = RO_OBJECT;
 	size = CHIP_SIZE;
 	col = COL_CHIP;
@@ -161,11 +160,13 @@ void MeatE::collideObj(Entity *e, UCHAR t){
 
 //コンストラクタ
 Meat::Meat(){
+	type = TY_MEAT;
 	img = IMG_MEAT;
 }
 
 //コンストラクタ
 Himeat::Himeat(){
+	type = TY_HIMEAT;
 	img = IMG_HIMEAT;
 }
 

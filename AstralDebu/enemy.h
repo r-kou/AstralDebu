@@ -20,8 +20,15 @@ namespace enemyNS{
 	const int IMG_WALK_END = 4;
 	const int IMG_DEAD_BACK = 5;
 	const int IMG_DEAD_FRONT = 6;
-	const int IMG_BULLET = 7;
-	const int IMG_MISSILE = 8;
+	const int IMG_BULLET = 29;
+	const int IMG_MISSILE = 30;
+
+	const int IMG_MAR_WALK = 3;
+	const int IMG_MAR_1 = 0;
+	const int IMG_MAR_2 = 7;
+	const int IMG_MAR_3 = 21;
+	const int IMG_MAR_4 = 14;
+	const int IMG_MAR_5 = 25;
 
 	const int EDGE_X = 10;
 	const int EDGE_Y = entityNS::EDGE_MAX;
@@ -41,6 +48,9 @@ class Enemy :public Entity{
 protected:
 	//デブ
 	Debu *debu;
+	//表示する画像
+	int margin;
+	bool walk;
 public:
 	//コンストラクタ
 	Enemy();

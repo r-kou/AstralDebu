@@ -24,6 +24,7 @@ Entity::Entity(){
 	col = 1;
 	animInterval = 0;
 	warpInterval = 0;
+	knockInterval = 0;
 	bottomObj[0] = false;
 	bottomObj[1] = false;
 	action = false;
@@ -82,6 +83,10 @@ void Entity::move(float frameTime){
 	bottomObj[1] = false;
 
 	//インターバルがあるなら減算
+	if (knockInterval > 0.0f) {
+		knockInterval -= frameTime;
+		if (knockInterval <= 0.0f) knockInterval = 0.0f;
+	}
 	if (warpInterval > 0.0f) {
 		warpInterval -= frameTime;
 		if (warpInterval <= 0.0f) warpInterval = 0.0f;

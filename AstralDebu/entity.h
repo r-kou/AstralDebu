@@ -124,6 +124,8 @@ protected:
 	float animInterval;
 	//転移インターバル
 	float warpInterval;
+	//吹っ飛び用インターバル
+	float knockInterval;
 	//状態が変更されたか
 	bool stateChanged;
 	//左右の床への衝突判定
