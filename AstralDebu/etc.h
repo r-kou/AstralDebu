@@ -21,6 +21,8 @@ namespace etcNS{
 	const int EDGE_ROCK_Y = entityNS::EDGE_MAX;
 	const int EDGE_LADDER_X = 12;
 	const int EDGE_LADDER_Y = entityNS::EDGE_MAX;
+	const int EDGE_MEAT_X = entityNS::EDGE_MAX;
+	const int EDGE_MEAT_Y = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_X = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_Y = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_HOLDED_X = entityNS::EDGE_MAX * 2;
@@ -66,34 +68,28 @@ public:
 	virtual void draw();
 };
 
-class Meat : public Entity{
+class MeatE : public Entity{
+public:
+	//コンストラクタ
+	MeatE();
+
+	//地形への接触
+	virtual void collideMap(UCHAR t);
+
+	//他オブジェクトへの接触
+	virtual void collideObj(Entity *e, UCHAR t);
+
+};
+class Meat : public MeatE{
 public:
 	//コンストラクタ
 	Meat();
-
-	//移動
-	virtual void move(float frameTime) {};
-
-	//地形への接触判定
-	virtual void touchMap(int map[MAP_COL][MAP_ROW]) {};
-
-	//他オブジェクトへの接触判定
-	virtual void touchObj(Entity *e) {};
 };
 
-class Himeat : public Entity{
+class Himeat : public MeatE{
 public:
 	//コンストラクタ
 	Himeat();
-
-	//移動
-	virtual void move(float frameTime) {};
-
-	//地形への接触判定
-	virtual void touchMap(int map[MAP_COL][MAP_ROW]) {};
-
-	//他オブジェクトへの接触判定
-	virtual void touchObj(Entity *e) {};
 };
 
 class Hammer : public Entity{

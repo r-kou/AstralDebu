@@ -49,6 +49,8 @@ bool AstralDebu::isBase(Entity *e){
 
 //オブジェクトが持てるか判定
 bool AstralDebu::isHoldable(Entity *e){
+	//空気箱は空中でもつかめる
+	if (e->getType() == TY_AIR_BOX) return isTouchable(e);
 	if (e->getState() != ST_STAND) return false;
 	switch (e->getType()){
 	case TY_WOOD_BOX:
@@ -56,7 +58,6 @@ bool AstralDebu::isHoldable(Entity *e){
 	case TY_LEAD_BOX:
 	case TY_BOMB_BOX:
 	case TY_HIBOMB_BOX:
-	case TY_AIR_BOX:
 	case TY_FRAME_BOX:
 	case TY_BOMB:
 	case TY_HIBOMB:

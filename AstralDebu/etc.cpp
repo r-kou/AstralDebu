@@ -109,29 +109,65 @@ void Ladder::draw(){
 	trans = false;
 }
 
-
 //コンストラクタ
-Meat::Meat(){
+MeatE::MeatE(){
 	state = ST_STAND;
 	type = TY_MEAT;
 	renderOrder = RO_OBJECT;
 	size = CHIP_SIZE;
 	col = COL_CHIP;
-	img = IMG_MEAT;
+	edgeX = EDGE_MEAT_X;
+	edgeY = EDGE_MEAT_Y;
+	marginX = EDGE_MAR_X;
+	marginY = EDGE_MAR_Y;
 	fall = true;
+}
+
+//地形への接触
+void MeatE::collideMap(UCHAR t){
+	Entity::collideMap(t);
+	if ((t & BOTTOM) && (state == ST_STAND)) {
+		//地面でぴったり止まる
+		setCX();
+		vel.x = 0.0f;
+	}
+}
+
+//他オブジェクトへの接触
+void MeatE::collideObj(Entity *e, UCHAR t){
+	//全オブジェクトの衝突判定をチェック
+	Entity::collideObj(e, t);
+
+	//箱類固有の衝突判定
+	switch (e->getType()){
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_GOAST_BOX:
+	case TY_HAMMER:
+		//箱の上に乗る
+		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP)) ||
+			((diffVelY(e) > 0) && (state == ST_KNOCK)))) {
+			//空中にいたら着地判定
+			setRes(RES_BOTTOM_CHIP);
+		}
+		break;
+	}
+}
+
+//コンストラクタ
+Meat::Meat(){
+	img = IMG_MEAT;
 }
 
 //コンストラクタ
 Himeat::Himeat(){
-	state = ST_STAND;
-	type = TY_HIMEAT;
-	renderOrder = RO_OBJECT;
-	size = CHIP_SIZE;
-	col = COL_CHIP;
 	img = IMG_HIMEAT;
-	fall = true;
 }
-
 
 //コンストラクタ
 Hammer::Hammer(){
