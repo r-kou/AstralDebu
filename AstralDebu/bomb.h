@@ -21,7 +21,7 @@ public:
 	BombE();
 
 	//ˆÚ“®
-	virtual void move(float frameTime);
+	//virtual void move(float frameTime);
 
 	//’nŒ`‚Ö‚ÌÚG
 	virtual void collideMap(UCHAR t);

@@ -138,6 +138,10 @@ protected:
 	std::string putSound;
 	//”j‰óŽž‚Ì‰¹
 	std::string deadSound;
+	//”¼“§–¾‚É‚·‚é‚©
+	bool trans;
+	//—Ž‰º‚·‚é‰È
+	bool fall;
 
 	//‘¬“x‚Ì·‚ð‹‚ß‚é
 	float diffVelX(Entity *e) { return vel.x - e->getVelX(); }

@@ -32,7 +32,6 @@ LRESULT Game::messageHandler(HWND hw, UINT msg, WPARAM wp, LPARAM lp){
 			return 0;
 		case WM_CHAR:
 			input->keyIn(wp);
-			if (wp == VK_ESCAPE) PostQuitMessage(0);
 			return 0;
 		case WM_MOUSEMOVE:
 			input->mouseIn(lp);

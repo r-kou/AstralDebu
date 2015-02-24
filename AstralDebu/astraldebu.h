@@ -371,6 +371,18 @@ private:
 	bool inX() { return input->isKeyPressed('X'); }
 	//C‚ª‰Ÿ‚³‚ê‚½‚©
 	bool inC() { return input->isKeyPressed('C'); }
+	//Return‚ª‰Ÿ‚³‚ê‚½‚©
+	bool inReturn() { return input->isKeyPressed(VK_RETURN); }
+	//Esc‚ª‰Ÿ‚³‚ê‚½‚©
+	bool inEsc() { return input->isKeyPressed(VK_ESCAPE); }
+	//Shift‚ª‰Ÿ‚³‚ê‚½‚©
+	bool inShift() { return input->isKeyPressed(VK_SHIFT); }
+	//ƒ{ƒ^ƒ“‚P‚ª‰Ÿ‚³‚ê‚½‚©
+	bool in1(){ return (inZ() || inReturn()); }
+	//ƒ{ƒ^ƒ“‚Q‚ª‰Ÿ‚³‚ê‚½‚©
+	bool in2(){ return (inX() || inEsc()); }
+	//ƒ{ƒ^ƒ“‚R‚ª‰Ÿ‚³‚ê‚½‚©
+	bool in3(){ return (inC() || inShift()); }
 	//ã‚ª‰Ÿ‚³‚ê‚½‚©
 	bool inUp() { return input->isKeyPressed(VK_UP); }
 	//‰º‚ª‰Ÿ‚³‚ê‚½‚©

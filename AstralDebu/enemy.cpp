@@ -14,6 +14,7 @@ Enemy::Enemy(){
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
+	fall = true;
 	deadSound = audioNS::BRAKE_ENEMY;
 	debu = NULL;
 }
@@ -27,10 +28,6 @@ bool Enemy::initialize(Game *game, Texture *t, Debu *d, int i, int j){
 
 //移動
 void Enemy::move(float frameTime){
-	//空中にいるか死亡時なら落下
-	if (state == ST_JUMP || state == ST_DEAD) vel.y += GRAVITY_RATE * frameTime;
-	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
-
 	//歩行では床から落ちない
 	if (bottomObj[0] && !bottomObj[1]) {
 		setRight(true);
@@ -120,6 +117,15 @@ void Enemy::changeImage(){
 		else setImage(IMG_DEAD_BACK);
 		break;
 	}
+}
+
+//描画
+void Enemy::draw(){
+	//書く
+	image.setX(pos.x - size / 2 * image.getScale());
+	image.setY(pos.y - size / 2 * image.getScale());
+	image.draw();
+	trans = false;
 }
 
 //コンストラクタ

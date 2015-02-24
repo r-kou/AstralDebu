@@ -70,6 +70,9 @@ public:
 	//•`‰æ‚·‚é‰æ‘œ‚ğ•ÏX
 	virtual void changeImage();
 
+	//•`‰æ
+	virtual void draw();
+
 	//setter
 	void setHold(bool h) { hold = h; }
 	void setHammer(bool d) { directHammer = d; }

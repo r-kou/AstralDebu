@@ -59,6 +59,10 @@ public:
 
 	//•`‰æ‚·‚é‰æ‘œ‚ğ•ÏX
 	virtual void changeImage();
+
+	//•`‰æ
+	virtual void draw();
+
 };
 
 class Enemy1 : public Enemy{

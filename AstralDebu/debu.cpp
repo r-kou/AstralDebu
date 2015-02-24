@@ -245,3 +245,14 @@ void Debu::responseObj(){
 		state = ST_LADDER;
 	}
 }
+
+//描画
+void Debu::draw(){
+	//半透明ブロックか、後ろが梯子とかなら半透明
+	image.setX(pos.x - size / 2 * image.getScale());
+	image.setY(pos.y - size / 2 * image.getScale());
+	image.draw();
+	trans = false;
+}
+
+

@@ -8,7 +8,7 @@ void AstralDebu::readCommand(){
 
 	//地上で素手ならジャンプできる
 	//チート時はいつでも可能
-	if (inZ()){
+	if (in1()){
 		if ((cheat1) || ((debu->getState() == entityNS::ST_STAND) && (!debu->getHold()))){
 			debu->setVelY(debuNS::VEL_JUMP);
 			subLife(10);
@@ -72,7 +72,7 @@ void AstralDebu::handleObject(){
 
 	exist = getCursorObject(cx, cy, true);
 
-	if (inX()){
+	if (in2()){
 		if (debu->getHold()){
 			if (exist == -1) putObject();
 		}
@@ -80,7 +80,7 @@ void AstralDebu::handleObject(){
 			if (exist >= 0) holdObject(exist);
 		}
 	}
-	if (inC()){
+	if (in3()){
 		if (debu->getHold()){
 			if (exist == -1) throwObject();
 		}

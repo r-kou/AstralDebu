@@ -27,6 +27,8 @@ Entity::Entity(){
 	bottomObj[0] = false;
 	bottomObj[1] = false;
 	action = false;
+	trans = false;
+	fall = false;
 	response = 0;
 	putSound = "";
 	deadSound = "";
@@ -66,6 +68,11 @@ bool Entity::initialize(Game *game, Texture *t, int i, int j){
 
 //移動
 void Entity::move(float frameTime){
+	if (fall){
+		if (state == ST_JUMP || state == ST_DEAD) vel.y += GRAVITY_RATE * frameTime;
+		if (vel.y > VEL_MAX) vel.y = VEL_MAX;
+	}
+
 	//速度分だけ移動
 	pos.x += (vel.x * frameTime);
 	pos.y += (vel.y * frameTime);
@@ -271,7 +278,12 @@ void Entity::collideObj(Entity *e, UCHAR t){
 	case TY_YELLOW_WARP:
 		//ワープは発動後一定期間内無効
 		if (warpInterval == 0.0f) setRes(RES_WARP,CHIP(e->getPartnerX() + 0.5f),CHIP_D(e->getPartnerY() + 0.5f));
+	case TY_LADDER:
+	case TY_GOAL:
+		//半透明になる
+		trans = true;
 		break;
+
 	}
 }
 
@@ -403,10 +415,12 @@ void Entity::setImage(int c){
 
 //描画
 void Entity::draw(){
-	//書く
+	//半透明ブロックか、後ろが梯子とかなら半透明
 	image.setX(pos.x - size / 2 * image.getScale());
 	image.setY(pos.y - size / 2 * image.getScale());
-	image.draw();
+	if (trans) image.draw(graphicsNS::ALPHA75);
+	else image.draw();
+	trans = false;
 }
 
 //判定の位置を設定

@@ -78,6 +78,16 @@ void Rock::changeImage(){
 	}
 }
 
+//描画
+void Rock::draw(){
+	//書く
+	image.setX(pos.x - size / 2 * image.getScale());
+	image.setY(pos.y - size / 2 * image.getScale());
+	image.draw();
+	trans = false;
+}
+
+
 //コンストラクタ
 Ladder::Ladder(){
 	state = ST_STAND;
@@ -90,6 +100,16 @@ Ladder::Ladder(){
 	img = IMG_LADDER;
 }
 
+//描画
+void Ladder::draw(){
+	//書く
+	image.setX(pos.x - size / 2 * image.getScale());
+	image.setY(pos.y - size / 2 * image.getScale());
+	image.draw();
+	trans = false;
+}
+
+
 //コンストラクタ
 Meat::Meat(){
 	state = ST_STAND;
@@ -98,6 +118,7 @@ Meat::Meat(){
 	size = CHIP_SIZE;
 	col = COL_CHIP;
 	img = IMG_MEAT;
+	fall = true;
 }
 
 //コンストラクタ
@@ -108,6 +129,7 @@ Himeat::Himeat(){
 	size = CHIP_SIZE;
 	col = COL_CHIP;
 	img = IMG_HIMEAT;
+	fall = true;
 }
 
 
@@ -123,6 +145,7 @@ Hammer::Hammer(){
 	edgeY = EDGE_HAMMER_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
+	fall = true;
 }
 
 
@@ -144,10 +167,6 @@ void Hammer::move(float frameTime){
 		//判定の位置とかは同じ
 	}
 	else {
-		//空中にいるなら落下
-		if (state == ST_JUMP) vel.y += GRAVITY_RATE * frameTime;
-		if (vel.y > VEL_MAX) vel.y = VEL_MAX;
-
 		Entity::move(frameTime);
 	}
 }
@@ -201,6 +220,10 @@ void Hammer::collideObj(Entity *e, UCHAR t){
 	case TY_YELLOW_WARP:
 		//ワープは可能
 		if (warpInterval == 0.0f) setRes(RES_WARP, CHIP(e->getPartnerX() + 0.5f), CHIP_D(e->getPartnerY() + 0.5f));
+	case TY_LADDER:
+	case TY_GOAL:
+		//半透明になる
+		trans = true;
 		break;
 	}
 }

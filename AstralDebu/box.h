@@ -25,23 +25,18 @@ namespace boxNS{
 }
 
 class Box : public Entity{
-protected:
-	bool trans;
 public:
 	//コンストラクタ
 	Box();
 
 	//移動
-	virtual void move(float frameTime);
+	//virtual void move(float frameTime);
 
 	//地形への接触
 	virtual void collideMap(UCHAR t);
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
-
-	//描画
-	virtual void draw();
 };
 
 class WoodBox : public Box{
@@ -96,7 +91,7 @@ public:
 	AirBox();
 
 	//移動
-	virtual void move(float frameTime);
+	//virtual void move(float frameTime);
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
@@ -125,7 +120,7 @@ public :
 	GoastBox();
 
 	//移動
-	virtual void move(float frameTime);
+	//virtual void move(float frameTime);
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);

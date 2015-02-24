@@ -5,7 +5,6 @@ using namespace boxNS;
 
 //コンストラクタ
 Box::Box(){
-	trans = false;
 	state = ST_STAND;
 	renderOrder = RO_BOX;
 	size = CHIP_SIZE;
@@ -14,14 +13,7 @@ Box::Box(){
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
-}
-
-//移動
-void Box::move(float frameTime){
-	//空中にいるなら落下
-	if (state == ST_JUMP) vel.y += GRAVITY_RATE * frameTime;
-	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
-	Entity::move(frameTime);
+	fall = true;
 }
 
 //地形への接触
@@ -60,24 +52,7 @@ void Box::collideObj(Entity *e, UCHAR t){
 			setRes(RES_BOTTOM_CHIP);
 		}
 		break;
-	case TY_LADDER:
-	case TY_GOAL:
-	case TY_RED_WARP:
-	case TY_GREEN_WARP:
-	case TY_YELLOW_WARP:
-		trans = true;
-		break;
 	}
-}
-
-//描画
-void Box::draw(){
-	//半透明ブロックか、後ろが梯子とかなら半透明
-	image.setX(pos.x - size / 2 * image.getScale());
-	image.setY(pos.y - size / 2 * image.getScale());
-	if (trans) image.draw(graphicsNS::ALPHA75);
-	else image.draw();
-	trans = false;
 }
 
 //コンストラクタ
@@ -252,15 +227,9 @@ void HibombBox::collideObj(Entity *e, UCHAR t){
 AirBox::AirBox(){
 	//空気なので半透明
 	trans = true;
+	fall = false;
 	type = TY_AIR_BOX;
 	img = IMG_AIR_BOX;
-}
-
-
-//移動
-void AirBox::move(float frameTime){
-	//落ちない
-	Entity::move(frameTime);
 }
 
 //他オブジェクトへの接触
@@ -324,11 +293,13 @@ void FrameBox::collideMap(UCHAR t){
 		vel.x = 0.0f;
 		vel.y = 0.0f;
 		state = ST_DEAD;
+		playDead();
 	}
 	if (t & BOTTOM) {
 		//空中にいたら着地判定　壊れる
 		if ((vel.y > 0.0f) && ((state == ST_KNOCK) || (state == ST_JUMP))){
 			state = ST_DEAD;
+			playDead();
 		}
 	}
 	else if ((state != ST_KNOCK) && (state != ST_DEAD)) {
@@ -348,6 +319,7 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 	case TY_HIBOMB_BOX:
 	case TY_AIR_BOX:
 	case TY_FRAME_BOX:
+	case TY_GOAST_BOX:
 	case TY_ROCK:
 		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == ST_JUMP)) setRes(RES_BOTTOM_CHIP);
 	case TY_BOMB:
@@ -393,14 +365,9 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 GoastBox::GoastBox(){
 	//霊なので半透明
 	trans = true;
+	fall = false;
 	type = TY_GOAST_BOX;
 	img = IMG_GOAST_BOX;
-}
-
-//移動
-void GoastBox::move(float frameTime){
-	//落ちない
-	Entity::move(frameTime);
 }
 
 //他オブジェクトへの接触

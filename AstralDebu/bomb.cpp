@@ -13,16 +13,8 @@ BombE::BombE(){
 	edgeY = EDGE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
+	fall = true;
 	putSound = audioNS::PUT_STEEL;
-}
-
-//移動
-void BombE::move(float frameTime){
-	//空中にいるなら落下
-	if (state == ST_JUMP) vel.y += GRAVITY_RATE * frameTime;
-	if (vel.y > VEL_MAX) vel.y = VEL_MAX;
-
-	Entity::move(frameTime);
 }
 
 //地形への接触
@@ -84,10 +76,11 @@ void BombE::collideObj(Entity *e, UCHAR t){
 	case TY_ENEMY_3:
 	case TY_ENEMY_4:
 	case TY_ENEMY_5:
-		//左右にはこっちが動いていたら、上下は問答無用で爆発する
+		//こっちが動いていたら爆発する
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
-			(t & TOP) || (t & BOTTOM)) setRes(RES_DEAD);
+			((t & TOP) && (vel.y < 0)) ||
+			((t & BOTTOM) && (vel.y > 0))) setRes(RES_DEAD);
 		break;
 	case TY_BULLET:
 	case TY_MISSILE:

@@ -46,6 +46,9 @@ public:
 
 	//描画する画像を変更
 	virtual void changeImage();
+
+	//描画
+	virtual void draw();
 };
 
 class Ladder :public Entity {
@@ -58,6 +61,9 @@ public:
 
 	//他オブジェクトへの接触（何もしない）
 	virtual void collideObj(Entity *e, UCHAR t){}
+
+	//描画
+	virtual void draw();
 };
 
 class Meat : public Entity{

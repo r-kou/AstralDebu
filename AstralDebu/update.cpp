@@ -19,7 +19,7 @@ void AstralDebu::updateStage(){
 		loadStage();
 	}
 
-	if (inZ() && read){
+	if (in1() && read){
 		cheat = false;
 		clear = false;
 		life = 100;
@@ -144,7 +144,7 @@ void AstralDebu::updateClear(){
 
 //メニュー画面の更新
 void AstralDebu::updateMenu(){
-	if (input->isKeyPressed(VK_SPACE) || inX()) {
+	if (input->isKeyPressed(VK_SPACE) || in2()) {
 		menu = false;
 		audio->playCue(audioNS::CANCEL);
 	}
@@ -152,7 +152,7 @@ void AstralDebu::updateMenu(){
 		count = (count ? 0 : 1);
 		audio->playCue(audioNS::SELECT);
 	}
-	if (inZ()){
+	if (in1()){
 		if (count) {
 			resetObject();
 			stateNumber = 1;
@@ -432,7 +432,7 @@ void AstralDebu::updateTitle0() {
 //タイトル画面を更新
 void AstralDebu::updateTitle1(){
 	count = count++ % 30;
-	if (inZ()){
+	if (in1()){
 		if (clearedStage == 0)count = 0;
 		else count = 1;
 		stateNumber = 2;
@@ -451,7 +451,7 @@ void AstralDebu::updateTitle2(){
 		if (inUp() || inLeft()) count -= (count == 0) ? -4 : (count == 3) ? 3 : 1;
 		if (inDown() || inRight()) count += (count == 4) ? -4 : (count == 0) ? 3 : 1;
 	}
-	if (inZ()){
+	if (in1()){
 		switch (count){
 		case 0:
 			state = S_STAGE;
@@ -480,7 +480,7 @@ void AstralDebu::updateTitle2(){
 		}
 		audio->playCue(audioNS::OK);
 	}
-	if (inX()) {
+	if (in2()) {
 		stateNumber = 1;
 		audio->playCue(audioNS::CANCEL);
 	}
@@ -497,13 +497,13 @@ void AstralDebu::updateTitle3(){
 		if (stage < 1) stage = 1;
 		if (stage > clearedStage) stage = clearedStage;
 	}
-	if (inZ()) {
+	if (in1()) {
 		state = S_STAGE;
 		read = false;
 		stopBgm();
 		audio->playCue(audioNS::OK);
 	}
-	if (inX()) {
+	if (in2()) {
 		stateNumber = 2;
 		audio->playCue(audioNS::CANCEL);
 	}
@@ -514,7 +514,7 @@ void AstralDebu::updateTitle4() {
 	if (inCursor()) audio->playCue(audioNS::SELECT);
 	if (inUp() || inLeft()) count -= (count != 0) ? 1 : -2;
 	if (inDown() || inRight()) count += (count != 2) ? 1 : -2;
-	if (inZ()) {
+	if (in1()) {
 		switch (count){
 		case 0:
 			stateNumber = 5;
@@ -533,7 +533,7 @@ void AstralDebu::updateTitle4() {
 			break;
 		}
 	}
-	if (inX()) {
+	if (in2()) {
 		count = 3;
 		stateNumber = 2;
 		audio->playCue(audioNS::CANCEL);
@@ -560,7 +560,7 @@ void AstralDebu::updateTitle5() {
 	}
 
 	audio->setVolumeBgm(bgmVolume);
-	if (inZ() || inX()) {
+	if (in1() || in2()) {
 		stateNumber = 4;
 		saveData();
 		audio->playCue(audioNS::CANCEL);
@@ -587,7 +587,7 @@ void AstralDebu::updateTitle6(){
 	}
 
 	audio->setVolumeBgm(soundVolume);
-	if (inZ() || inX()) {
+	if (in1() || in2()) {
 		stateNumber = 4;
 		saveData();
 		audio->playCue(audioNS::CANCEL);
