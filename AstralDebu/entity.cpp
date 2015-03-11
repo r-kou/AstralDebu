@@ -13,6 +13,8 @@ Entity::Entity(){
 	pos.y = 0.0f;
 	vel.x = 0.0f;
 	vel.y = 0.0f;
+	mov.x = 0.0f;
+	mov.y = 0.0f;
 	direct = false;
 	size = 2;
 	img = 0;
@@ -57,6 +59,8 @@ bool Entity::initialize(Game *game, Texture *t, int i, int j){
 		pos.y = CHIP_D(j + 0.5f);
 		vel.x = 0.0f;
 		vel.y = 0.0f;
+		mov.x = 0.0f;
+		mov.y = 0.0f;
 		direct = false;
 		SETRECT(edge, (long)pos.x - edgeX, (long)pos.y - edgeY, edgeX * 2, edgeY * 2);
 		state = ST_STAND;
@@ -75,8 +79,10 @@ void Entity::move(float frameTime){
 	}
 
 	//速度分だけ移動
-	pos.x += (vel.x * frameTime);
-	pos.y += (vel.y * frameTime);
+	mov.x = (vel.x * frameTime);
+	mov.y = (vel.y * frameTime);
+	pos.x += mov.x;
+	pos.y += mov.y;
 
 	//左右の落下判定を消去
 	bottomObj[0] = false;
@@ -119,8 +125,8 @@ void Entity::touchMap(int map[MAP_COL][MAP_ROW]){
 		t_o |= RIGHT;
 		bottomObj[1] = true;
 	}
-	if (pos.y <= DATA_LEN + edgeY) t_o |= TOP;
-	if (pos.y >= WINDOW_H - edgeY) t_o |= BOTTOM;
+	if (pos.y < DATA_LEN + edgeY) t_o |= TOP;
+	if (pos.y > WINDOW_H - edgeY) t_o |= BOTTOM;
 
 	//四隅のマップを検査
 	if ((t_o & EDGE1) == 0) {

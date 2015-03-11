@@ -26,8 +26,8 @@ namespace etcNS{
 	const int EDGE_HAMMER_X = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_Y = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_HOLDED_X = entityNS::EDGE_MAX * 2;
-	const int EDGE_MAR_X = 2;
-	const int EDGE_MAR_Y = 2;
+	const int EDGE_MAR_X = 3;
+	const int EDGE_MAR_Y = 3;
 
 	const float HAMMER_MAR_X = 32;
 	const float HAMMER_MAR_Y = 8;

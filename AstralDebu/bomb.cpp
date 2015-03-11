@@ -124,5 +124,5 @@ Mine::Mine(){
 //他オブジェクトへの接触
 void Mine::collideObj(Entity *e, UCHAR t){
 	//機雷は本当になんでも爆発する
-	setRes(RES_BOTTOM);
+	setRes(RES_DEAD);
 }

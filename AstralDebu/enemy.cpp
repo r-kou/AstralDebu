@@ -198,7 +198,7 @@ void Enemy3::move(float frameTime){
 	if ((state == ST_STAND) && (!action) && (ChipCY() == debu->ChipCY()) && (animInterval == 0)){
 		if (getPosX() > debu->getPosX()) direct = true;
 		else direct = false;
-		animInterval = 0.75f;
+		animInterval = 0.5f;
 		action = true;
 	}
 
@@ -247,7 +247,7 @@ void Enemy4::collideObj(Entity *e, UCHAR t){
 	case TY_BOMB:
 	case TY_HIBOMB:
 		//‰Ÿ‚¹‚é” ‚É‚Ô‚Â‚©‚é‚Æ‰Ÿ‚·
-		if ((state == ST_STAND) && (!action) && (animInterval == 0)&&
+		if ((state != ST_DEAD) && (!action) && (animInterval == 0)&&
 			(((t & LEFT) && (diffVelX(e) < 0))||
 			((t & RIGHT) && (diffVelX(e) > 0)))) {
 			action = true;
@@ -281,7 +281,7 @@ void Enemy5::move(float frameTime){
 	if ((state == ST_STAND) && (!action) && (ChipCY() == debu->ChipCY()) && (animInterval == 0)){
 		if (getPosX() > debu->getPosX()) direct = true;
 		else direct = false;
-		animInterval = 1.0f;
+		animInterval = 0.75f;
 		action = true;
 	}
 

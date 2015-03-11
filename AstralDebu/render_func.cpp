@@ -103,24 +103,6 @@ void AstralDebu::drawTriangleVertical(float l, float t, float r, float b, bool d
 	else drawTriangle(l + (r / 2.0f), t + b, l, t, l + r, t, c);
 }
 
-//デバッグ用 判定を描画
-void AstralDebu::drawEdge(){
-	drawQuad((float)debu->getLeft(true), (float)debu->getTop(false),
-		(float)debu->getRight(true) - debu->getLeft(true), (float)debu->getBottom(false) - debu->getTop(false), RED & graphicsNS::ALPHA50);
-	drawQuad((float)debu->getLeft(false), (float)debu->getTop(true),
-		(float)debu->getRight(false) - debu->getLeft(false), (float)debu->getBottom(true) - debu->getTop(true), BLUE & graphicsNS::ALPHA50);
-
-	ALL_OBJ{
-		Entity *e = getObject(i);
-		if (isTouchable(e)){
-			drawQuad((float)e->getLeft(true), (float)e->getTop(false),
-				(float)e->getRight(true) - e->getLeft(true), (float)e->getBottom(false) - e->getTop(false), RED & graphicsNS::ALPHA50);
-			drawQuad((float)e->getLeft(false), (float)e->getTop(true),
-				(float)e->getRight(false) - e->getLeft(false), (float)e->getBottom(true) - e->getTop(true), BLUE & graphicsNS::ALPHA50);
-		}
-	}
-}
-
 //矢印を描画 横
 void AstralDebu::drawArrowHorizontal(float cx, float cy, bool d, ARGB c){
 	drawArrowHorizontal(CHIP(cx),CHIP_D(cy),CHIP(2),CHIP(1),d,c);
@@ -168,7 +150,7 @@ void AstralDebu::drawPanel(std::string str, float cx, float cy, float len, ARGB 
 
 //画像つきパネルを描画
 void AstralDebu::drawPanel(int img, float cx, float cy, ARGB c) {
-	drawFrame(CHIP(cx) - 3, CHIP_D(cy) - 3, CHIP(1.0f) + 6, CHIP(1.0f) + 6, 2.0f, c, BLACK);
+	drawFrame(CHIP(cx) - 4, CHIP_D(cy) - 4, CHIP(1.0f) + 8, CHIP(1.0f) + 8, 2.0f, c, BLACK);
 	chip.setX(CHIP(cx));
 	chip.setY(CHIP_D(cy));
 	chip.setCurrentFrame(img);
@@ -177,7 +159,7 @@ void AstralDebu::drawPanel(int img, float cx, float cy, ARGB c) {
 
 //画像つきパネルを描画
 void AstralDebu::drawPanelD(int img1,int img2, float cx, float cy, ARGB c) {
-	drawFrame(CHIP(cx) - 3, CHIP_D(cy) - 3, CHIP(2.5f) + 6, CHIP(1.0f) + 6, 2.0f, c, BLACK);
+	drawFrame(CHIP(cx) - 4, CHIP_D(cy) - 4, CHIP(2.5f) + 8, CHIP(1.0f) + 8, 2.0f, c, BLACK);
 	chip.setX(CHIP(cx));
 	chip.setY(CHIP_D(cy));
 	chip.setCurrentFrame(img1);

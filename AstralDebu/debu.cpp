@@ -139,7 +139,7 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case TY_AIR_BOX:
 		//” ‚Íã‚Éæ‚ê‚é ‰¡‚É‚Í‚·‚è”²‚¯‚é —ì” ‚Í“–‚½‚ç‚È‚¢
 		if ((!input->isKeyDown(VK_DOWN))&&
-			(t & BOTTOM) && ((diffBottom(e, true) <= 3) &&
+			(t & BOTTOM) && ((diffBottom(e, true) <= 0) &&
 			(((diffVelY(e) >= 0) && (state == ST_JUMP || (state == ST_LADDER))) ||
 			((diffVelY(e) > 0) && (state == ST_KNOCK))))) setRes(RES_BOTTOM);
 		break;
@@ -155,7 +155,7 @@ void Debu::collideObj(Entity *e, UCHAR t){
 		//‚Á”ò‚Î‚³‚ê‚é
 		if (knockInterval == 0.0f){
 			setRes(RES_KNOCK, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, -VEL_KNOCK_JUMP);
-			knockInterval = 0.5f;
+			knockInterval = 0.3f;
 		}
 		break;
 	case TY_MISSILE:

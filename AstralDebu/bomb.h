@@ -9,7 +9,7 @@ namespace bombNS{
 	const int IMG_HIBOMB = 41;
 	const int IMG_MINE = 43;
 
-	const int EDGE_X = entityNS::EDGE_MAX - 3;
+	const int EDGE_X = 15;
 	const int EDGE_Y = entityNS::EDGE_MAX;
 	const int EDGE_MAR_X = 3;
 	const int EDGE_MAR_Y = 3;

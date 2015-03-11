@@ -104,6 +104,8 @@ protected:
 	VC2 pos;
 	//‘¬“x
 	VC2 vel;
+	//ˆÚ“®‹——£
+	VC2 mov;
 	//Œü‚«
 	bool direct;
 	//‘å‚«‚³@xy“¯‚¶
@@ -242,10 +244,13 @@ public:
 	const entityNS::RENDER_ORDER getRenderOrder() { return renderOrder; }
 	const VC2* getPos(){ return &pos; }
 	const VC2* getVel(){ return &vel; }
+	const VC2* getMov(){ return &mov; }
 	const float getPosX() { return pos.x; }
 	const float getPosY() { return pos.y; }
 	const float getVelX() { return vel.x; }
 	const float getVelY() { return vel.y; }
+	const float getMovX() { return mov.x; }
+	const float getMovY() { return mov.y; }
 	const bool getDirect() { return direct; }
 	const int getSize() { return size; }
 	const RECT& getEdge() { return edge; }
@@ -268,10 +273,10 @@ public:
 	const int ChipCX() { return ChipX(pos.x); }
 	const int ChipCY() { return ChipY(pos.y); }
 	//“–‚½‚è”»’è‚Ì®’·‚¢‚Ì‚Å’Zk—p
-	const long getLeft(bool b) { return edge.left + (b ? marginX : 0); }
-	const long getRight(bool b) { return edge.right - (b ? marginX : 0); }
-	const long getTop(bool b) { return edge.top + (b ? marginY : 0); }
-	const long getBottom(bool b) { return edge.bottom - (b ? marginY : 0); }
+	const long getLeft(bool b) { return edge.left + (b ? marginX - (int)mov.x : 0); }
+	const long getRight(bool b) { return edge.right - (b ? marginX + (int)mov.x : 0); }
+	const long getTop(bool b) { return edge.top + (b ? marginY - (int)mov.y : 0); }
+	const long getBottom(bool b) { return edge.bottom - (b ? marginY + (int)mov.y : 0); }
 
 	//setter
 	void setState(entityNS::ENTITY_STATE s) { state = s; }
@@ -281,6 +286,8 @@ public:
 	void setPosY(float n) { pos.y = n; }
 	void setVelX(float n) { vel.x = n; }
 	void setVelY(float n) { vel.y = n; }
+	void setMovX(float n) { mov.x = n; }
+	void setMovY(float n) { mov.y = n; }
 	void setDirect(bool d){ direct = d; }
 	void setChange(bool s) { stateChanged = s; }
 	void setPartnerX(int x) { partnerX = x; }

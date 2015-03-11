@@ -41,7 +41,10 @@ void AstralDebu::renderMain(){
 	renderObject();
 
 	//判定表示（チート時）
-	if (cheat2) drawEdge();
+	if (cheat2) renderEdge();
+
+	//速度表示（チート時）
+	if (cheat4) renderVelocity();
 
 	//メニュー表示（メニュー時）
 	if (menu) renderMenu();
@@ -259,23 +262,28 @@ void AstralDebu::renderHint(){
 
 	switch (stage){
 	case 1:
-		drawPanel("Z", 3.5f, 10.5f, 1.0f, HINT_PANEL);
+		drawPanel("Z", 3.5f, 10.25f, 1.0f, HINT_PANEL);
 		drawArrowHorizontal(3.0f, 11.5f, false, HINT_ARROW);
-		drawPanel("GOAL", 2.0f, 1.5f, 3.0f, HINT_PANEL);
+		drawPanel("GOAL", 2.0f, 1.25f, 3.0f, HINT_PANEL);
 		drawArrowHorizontal(2.5f, 2.5f, true, HINT_ARROW);
+		drawPanel("↑", 19.5f, 5.75f, 1.0f, HINT_PANEL);
 		drawArrowVertical(20.5f, 5.0f, true, HINT_ARROW);
 		break;
 	case 2:
-		drawPanel("C", 4, 11.0f, 1.0f, HINT_PANEL);
-		drawArrowHorizontal(3.5f, 12.0f, false, HINT_ARROW);
-		drawPanel("X", 13.0f, 8.0f, 1.0f, HINT_PANEL);
-		drawArrowHorizontal(12.5f, 9.0f, false, HINT_ARROW);
-		drawPanel("X", 20.0f, 11.25f, 1.0f, HINT_PANEL);
-		drawArrowVertical(21.0f, 11.0f, false, HINT_ARROW);
+		drawPanel("C", 4.0f, 11.25f, 1.0f, HINT_PANEL);
+		drawArrowHorizontal(3.5f, 12.5f, false, HINT_ARROW);
+		drawPanel("X", 12.0f, 9.25f, 1.0f, HINT_PANEL);
+		drawArrowHorizontal(11.5f, 10.5f, false, HINT_ARROW);
+		drawPanel("X", 16.0f, 11.25f, 1.0f, HINT_PANEL);
+		drawArrowVertical(17.0f, 11.0f, false, HINT_ARROW);
+		drawPanel("Z", 22.0f, 10.25f, 1.0f, HINT_PANEL);
+		drawArrowVertical(21.0f, 9.5f, true, HINT_ARROW);
 		break;
 	case 3:
-		drawPanel("X+C", 4.5f, 10.0f, 2.0f, HINT_PANEL);
-		drawArrowHorizontal(4.5f, 11.0f, false, HINT_ARROW);
+		drawPanel("X→C", 4.5f, 10.25f, 2.0f, HINT_PANEL);
+		drawArrowHorizontal(4.5f, 11.5f, false, HINT_ARROW);
+		drawPanel("X→C", 18.5f, 8.25f, 2.0f, HINT_PANEL);
+		drawArrowHorizontal(18.5f, 9.5f, true, HINT_ARROW);
 		drawPanel("X", 14.0f, 0.5f, 1.0f, HINT_PANEL);
 		drawArrowVertical(13.0f, 0.25f, false, HINT_ARROW);
 		drawPanel(CHIP_BOMB, 10.0f, 10.5f, HINT_PANEL);
@@ -283,21 +291,24 @@ void AstralDebu::renderHint(){
 	case 4:
 		drawPanelD(CHIP_BOMB,CHIP_HIBOMB, 17.25f, 10.5f, HINT_PANEL);
 		break;
+	case 5:
+		drawPanel("↓", 10.75f, 4.5f, 1.0f, HINT_PANEL);
+		break;
 	case 7:
 		drawPanelD(CHIP_BOMB, CHIP_STEEL_BOX, 15.25f, 5.25f, HINT_PANEL);
 		drawArrowHorizontal(15.5f,6.5f,false,HINT_ARROW);
 		break;
 	case 10:
-		drawPanel(CHIP_WOOD_BOX, 6.0f, 10.5f, HINT_PANEL);
+		drawPanel(CHIP_WOOD_BOX, 6.0f, 10.25f, HINT_PANEL);
 		drawArrowHorizontal(5.5f, 11.5f, false, HINT_ARROW);
-		drawPanel(CHIP_LEAD_BOX, 15.0f, 8.5f, HINT_PANEL);
+		drawPanel(CHIP_LEAD_BOX, 15.0f, 8.25f, HINT_PANEL);
 		drawArrowHorizontal(14.5f, 9.5f, false, HINT_ARROW);
 		break;
 	case 11:
-		drawPanel("X+C", 21.5f, 4.0f, 2.0f, HINT_PANEL);
-		drawArrowHorizontal(21.5f, 5.0f, true, HINT_ARROW);
-		drawPanel(CHIP_HAMMER, 17.0f, 10.0f, HINT_PANEL);
-		drawArrowHorizontal(16.5f, 11.0f, false, HINT_ARROW);
+		drawPanel("X+C", 20.5f, 4.25f, 2.0f, HINT_PANEL);
+		drawArrowHorizontal(20.5f, 5.5f, true, HINT_ARROW);
+		drawPanel(CHIP_HAMMER, 17.0f, 9.25f, HINT_PANEL);
+		drawArrowHorizontal(16.5f, 10.5f, false, HINT_ARROW);
 		break;
 	}
 
@@ -324,6 +335,45 @@ void AstralDebu::renderObject(){
 	//カーソルを描画
 	drawCursor();
 
+	graphics->spriteEnd();
+}
+
+//デバッグ用 判定を描画
+void AstralDebu::renderEdge(){
+	drawQuad((float)debu->getLeft(true), (float)debu->getTop(false),
+		(float)debu->getRight(true) - debu->getLeft(true), (float)debu->getBottom(false) - debu->getTop(false), RED & graphicsNS::ALPHA50);
+	drawQuad((float)debu->getLeft(false), (float)debu->getTop(true),
+		(float)debu->getRight(false) - debu->getLeft(false), (float)debu->getBottom(true) - debu->getTop(true), BLUE & graphicsNS::ALPHA50);
+
+	ALL_OBJ{
+		Entity *e = getObject(i);
+		if (isTouchable(e)){
+			drawQuad((float)e->getLeft(true), (float)e->getTop(false),
+				(float)e->getRight(true) - e->getLeft(true), (float)e->getBottom(false) - e->getTop(false), RED & graphicsNS::ALPHA50);
+			drawQuad((float)e->getLeft(false), (float)e->getTop(true),
+				(float)e->getRight(false) - e->getLeft(false), (float)e->getBottom(true) - e->getTop(true), BLUE & graphicsNS::ALPHA50);
+		}
+	}
+}
+
+//デバッグ用 判定を描画
+void AstralDebu::renderVelocity(){
+	const int BUF_SIZE = 10;
+	static char buffer[BUF_SIZE];
+
+	graphics->spriteBegin();
+	_snprintf_s(buffer, BUF_SIZE, "%4.3f", debu->getVelX());
+	middleF.print(buffer, VEL_MAR_X, VEL_MAR_Y,
+		VEL_LEN_X, VEL_LEN_Y, WHITE, DT_RC);
+	_snprintf_s(buffer, BUF_SIZE, "%4.3f", debu->getVelY());
+	middleF.print(buffer, VEL_MAR_X + VEL_LEN_X, VEL_MAR_Y,
+		VEL_LEN_X, VEL_LEN_Y, WHITE, DT_RC);
+	_snprintf_s(buffer, BUF_SIZE, "%4.3f", debu->getMovX());
+	middleF.print(buffer, VEL_MAR_X, VEL_MAR_Y + VEL_LEN_Y,
+		VEL_LEN_X, VEL_LEN_Y, WHITE, DT_RC);
+	_snprintf_s(buffer, BUF_SIZE, "%4.3f", debu->getMovY());
+	middleF.print(buffer, VEL_MAR_X + VEL_LEN_X, VEL_MAR_Y + VEL_LEN_Y,
+		VEL_LEN_X, VEL_LEN_Y, WHITE, DT_RC);
 	graphics->spriteEnd();
 }
 

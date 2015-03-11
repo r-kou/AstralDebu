@@ -43,7 +43,7 @@ protected:
 	bool initialized;
 	//デバッグコマンド
 	std::string command;
-	bool cheat1, cheat2, cheat3;
+	bool cheat1, cheat2, cheat3,cheat4;
 
 public:
 	//コンストラクタ

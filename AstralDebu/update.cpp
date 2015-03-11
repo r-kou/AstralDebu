@@ -26,7 +26,9 @@ void AstralDebu::updateStage(){
 		vitalLife = 100;
 		state = S_MAIN;
 		menu = false;
+		timeout = TIME_OUT;
 		clearTimeStart = timeGetTime();
+		audio->setVolumeBgm(bgmVolume);
 		audio->playCue(audioNS::OK);
 		changeBgm(((stage - 1) / 10) + 1);
 	}
@@ -34,6 +36,12 @@ void AstralDebu::updateStage(){
 
 //メインの更新
 void AstralDebu::updateMain(){
+	//自動停止のフラグを付ける
+	if (timeout > 0.0f){
+		timeout -= frameTime;
+		if (timeout < 0.0f) timeout = 0.0f;
+	}
+
 	if (menu) {
 		//メニュー時は更新しない
 		updateMenu();
@@ -80,10 +88,12 @@ void AstralDebu::updateMain(){
 		//所持オブジェクトはデブの前に移動
 	if (objHolded >= 0) moveHold(objHolded);
 
+	/*
 	ALL_OBJ{
 		Entity *e = getObject(i);
 		if (e->getAction()) actionObject(i);
 	}
+	*/
 
 		//地形への接触
 	if (isMovable(debu))debu->touchMap(map);
@@ -122,6 +132,11 @@ void AstralDebu::updateMain(){
 			e->responseObj();
 	}
 
+		ALL_OBJ{
+		Entity *e = getObject(i);
+		if (e->getAction()) actionObject(i);
+	}
+
 		//オブジェクト消滅処理
 		ALL_OBJ{
 		Entity *e = getObject(i);
@@ -146,6 +161,7 @@ void AstralDebu::updateClear(){
 void AstralDebu::updateMenu(){
 	if (input->isKeyPressed(VK_SPACE) || in2()) {
 		menu = false;
+		audio->setVolumeBgm(bgmVolume);
 		audio->playCue(audioNS::CANCEL);
 	}
 	if (inHorizontal()) {
@@ -158,13 +174,16 @@ void AstralDebu::updateMenu(){
 			stateNumber = 1;
 			state = S_TITLE;
 			stopBgm();
+			audio->setVolumeBgm(bgmVolume);
 			audio->playCue(audioNS::OK);
 			stage = 0;
 			changeBgm(0);
 		}
 		else {
 			menu = false;
+			audio->setVolumeBgm(bgmVolume);
 			audio->playCue(audioNS::CANCEL);
+			timeout = TIME_OUT;
 		}
 	}
 }

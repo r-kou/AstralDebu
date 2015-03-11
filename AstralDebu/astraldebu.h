@@ -72,6 +72,11 @@ namespace astralNS {
 	const float STG_MAR_Y = LIFE_MAR_Y;
 	const float STG_LEN_X = WINDOW_W - STG_MAR_X;
 	const float STG_LEN_Y = LIFE_LEN_Y;
+	const float VEL_MAR_X = STG_MAR_X;
+	const float VEL_MAR_Y = 96;
+	const float VEL_LEN_X = 130;
+	const float VEL_LEN_Y = 32;
+
 	namespace menuNS{
 		const ARGB BACK = D3DCOLOR_ARGB(255, 192, 128, 64);
 		const ARGB FRAME = D3DCOLOR_ARGB(255, 224, 192, 160);
@@ -143,6 +148,9 @@ namespace astralNS {
 
 	const std::string FONT = "メイリオ";
 
+	//タイムアウト時間
+	const float TIME_OUT = 100.0f;
+
 	const enum GameState{
 		S_TITLE, S_STAGE, S_MAIN, S_OVER, S_CLEAR, S_END
 	};
@@ -176,6 +184,8 @@ private:
 	bool menu;
 	//音量
 	double bgmVolume, soundVolume;
+	//一定時間無操作なら停止する
+	float timeout;
 
 	//ステージクリア
 	bool clear;
@@ -292,6 +302,10 @@ private:
 	void renderHint();
 	//オブジェクトを描画
 	void renderObject();
+	//デバッグ用 判定を描画
+	void renderEdge();
+	//デバッグ用 速度を描画
+	void renderVelocity();
 
 	//vertexを設定
 	void setVertex(float l, float t, float r, float b, ARGB c);
@@ -307,8 +321,6 @@ private:
 	void drawTriangleVertical(float l, float t, float r, float b, bool d, ARGB c);
 	//カーソルを描画
 	void drawCursor();
-	//デバッグ用 判定を描画
-	void drawEdge();
 	//矢印を描画 横
 	void drawArrowHorizontal(float cx, float cy, bool d, ARGB c);
 	//矢印を描画 縦

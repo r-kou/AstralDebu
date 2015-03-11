@@ -38,10 +38,10 @@ namespace debuNS{
 	const int IMG_CLEAR_START = 25;
 	const int IMG_CLEAR_END = 27;
 
-	const int EDGE_X = 10;
+	const int EDGE_X = 11;
 	const int EDGE_Y = entityNS::EDGE_MAX;
 	const int EDGE_MAR_X = 4;
-	const int EDGE_MAR_Y = 6;
+	const int EDGE_MAR_Y = 4;
 }
 
 class Debu :public Entity{

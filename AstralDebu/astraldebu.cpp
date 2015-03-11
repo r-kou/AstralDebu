@@ -11,6 +11,7 @@ AstralDebu::AstralDebu(){
 	vitalLife = 0;
 	bgmVolume = 0.0;
 	soundVolume = 0.0;
+	timeout = 0.0f;
 	read = false;
 	clear = false;
 	bgm = false;
@@ -36,6 +37,7 @@ AstralDebu::AstralDebu(){
 	cheat1 = false;
 	cheat2 = false;
 	cheat3 = false;
+	cheat4 = false;
 }
 
 //デストラクタ
@@ -127,6 +129,7 @@ void AstralDebu::render(){
 	if (cheat1) text->print("スゴイデブ", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
 	if (cheat2) text->print("ハンテイ", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y * 2, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
 	if (cheat3) text->print("ジバク", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y * 3, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
+	if (cheat4) text->print("ソクド", WINDOW_W - gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y * 4, gameNS::DBG_MAR_X, gameNS::DBG_MAR_Y, graphicsNS::WHITE, DT_CC);
 	graphics->spriteEnd();
 }
 

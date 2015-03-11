@@ -33,7 +33,7 @@ namespace enemyNS{
 	const int EDGE_X = 10;
 	const int EDGE_Y = entityNS::EDGE_MAX;
 	const int EDGE_MAR_X = 4;
-	const int EDGE_MAR_Y = 6;
+	const int EDGE_MAR_Y = 4;
 	const int BULLET_X = 3;
 	const int BULLET_Y = 2;
 	const int BULLET_MAR_X = 0;

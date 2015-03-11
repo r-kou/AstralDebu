@@ -25,6 +25,7 @@ void AstralDebu::readCommand(){
 	if (input->isKeyPressed(VK_SPACE)) {
 		menu = true;
 		count = 0;
+		audio->setVolumeBgm(bgmVolume/2);
 		audio->playCue(audioNS::OK);
 	}
 
@@ -37,11 +38,13 @@ void AstralDebu::readCommand(){
 	}
 	//爆発する
 	if (input->isKeyPressed('E') && (cheat3)){
-		Entity *tmp = object[getEmptyIndex()];
+		int n = getEmptyIndex();
+		Entity *tmp = object[n];
 		SAFE_DELETE(tmp);
 		tmp = new Blast(true);
-		if (tmp->initialize(this, &bombT, debu->ChipCX(), debu->ChipCY()))
+		if (!tmp->initialize(this, &bombT, debu->ChipCX(), debu->ChipCY()))
 			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
+		setObject(n, tmp);
 	}
 	//デブがすごくなる
 	if (str == "tabata") {
@@ -58,11 +61,27 @@ void AstralDebu::readCommand(){
 		cheat3 = !cheat3;
 		input->clearTextIn();
 	}
+	//速度表示
+	else if (str == "hayasa"){
+		cheat4 = !cheat4;
+		input->clearTextIn();
+	}
+
+	//一定時間操作しなかったら停止する
+	if (timeout == 0.0f){
+		menu = true;
+		count = 0;
+		audio->setVolumeBgm(bgmVolume/2);
+	}
+	else {
+		if (input->anyKeyPressed()) timeout = TIME_OUT;
+	}
+
 }
 
 //オブジェクトの取得判定
 void AstralDebu::handleObject(){
-	int exist = -1;
+	int exist;
 	int cx = getCursorChipX(debu), cy = getCursorChipY(debu);
 
 	//立ってる時かハンマー所持時だけ有効
@@ -333,24 +352,30 @@ void AstralDebu::actionObject(int i){
 		cx = getCursorChipX(e), cy = getCursorChipY(e);
 		n = getCursorObject(cx, cy, true);
 		e->setAction(false);
+
 		if (n < 0) {
+			//持てないなら向きを戻して終了
 			e->setDirect(!e->getDirect());
 			return;
 		}
 
+		//押し先の座標を見る
 		if (e->getDirect()) cx--;
 		else cx++;
+
+		//押し先が場面端なら何もしない
 		if ((cx < 0) || (cx >= MAP_COL)) {
 			e->setDirect(!e->getDirect());
 			return;
 		}
 
-		e->setAnim(0.3f);
-
+		//押し先になにかあったら何もしない
 		if (getCursorObject(cx, cy, false) != -1) {
 			e->setDirect(!e->getDirect());
 			return;
 		}
+
+		e->setAnim(0.3f);
 
 		ne = getObject(n);
 		ne->setPosX(CHIP(cx + 0.5f));

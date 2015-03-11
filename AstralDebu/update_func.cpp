@@ -254,8 +254,9 @@ int AstralDebu::getCursorObject(int cx,int cy,bool b){
 		if (!isBase(tmp) &&
 			isTouchable(tmp) &&
 			(tmp->inChip(cx, cy))) {
+				//true‚È‚ç‚Ä‚é‚à‚Ì‚Ì‚İAfalse‚È‚çí‚Éi‚ğ•Ô‚·
 				if ((!b)||(isHoldable(tmp))) return i;
-				else return -1;
+				else return -2;
 		}
 	}
 
