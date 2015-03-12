@@ -6,7 +6,7 @@ int AstralDebu::setChipImage(int c){
 	if (stage <= 10) return c - 1;
 	else if (stage <= 20) return c + 7;
 	else if (stage <= 30) return c + 15;
-	else return 23;
+	else return c + 23;
 }
 
 //ŽlŠp‚Ì•`‰æ

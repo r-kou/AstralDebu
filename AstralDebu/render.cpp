@@ -289,7 +289,7 @@ void AstralDebu::renderHint(){
 		drawPanel(CHIP_BOMB, 10.0f, 10.5f, HINT_PANEL);
 		break;
 	case 4:
-		drawPanelD(CHIP_BOMB,CHIP_HIBOMB, 17.25f, 10.5f, HINT_PANEL);
+		drawPanelD(CHIP_BOMB,CHIP_HIBOMB, 16.25f, 10.5f, HINT_PANEL);
 		break;
 	case 5:
 		drawPanel("«", 10.75f, 4.5f, 1.0f, HINT_PANEL);
@@ -310,6 +310,8 @@ void AstralDebu::renderHint(){
 		drawPanel(CHIP_HAMMER, 17.0f, 9.25f, HINT_PANEL);
 		drawArrowHorizontal(16.5f, 10.5f, false, HINT_ARROW);
 		break;
+	case 15:
+		drawArrowVertical(17.0f, 8.0f, false, HINT_ARROW);
 	}
 
 	graphics->spriteEnd();

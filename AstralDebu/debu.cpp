@@ -82,7 +82,7 @@ void Debu::move(float frameTime){
 			switch (state){
 			case ST_STAND:
 				//ÉuÉåÅ[ÉLÇÇ©ÇØÇÈ
-				vel.x *= 0.9f;
+				vel.x *= 0.8f;
 				if (fabs(vel.x) < 10) vel.x = 0.0f;
 				break;
 			case ST_LADDER:
@@ -155,7 +155,7 @@ void Debu::collideObj(Entity *e, UCHAR t){
 		//êÅÇ¡îÚÇŒÇ≥ÇÍÇÈ
 		if (knockInterval == 0.0f){
 			setRes(RES_KNOCK, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, -VEL_KNOCK_JUMP);
-			knockInterval = 0.3f;
+			knockInterval = 0.33f;
 		}
 		break;
 	case TY_MISSILE:
