@@ -225,13 +225,12 @@ short AstralDebu::decodeChip(short c, int i, int j) {
 //カーソルのX位置を返す
 int AstralDebu::getCursorChipX(Entity *e){
 	if (e->getDirect()) {
-		if (e->ChipCX() > 0) return e->ChipCX() - 1;
+		if (e->getRight(false) >= 0) return e->ChipX((float)e->getRight(false)) - 1;
 		return 0;
 	}
 	else {
-		if (e->ChipCX() < MAP_COL - 1) return e->ChipCX() + 1;
+		if (e->getLeft(false) < WINDOW_W) return e->ChipX((float)e->getLeft(false)) + 1;
 		return MAP_COL - 1;
-
 	}
 }
 

@@ -4,6 +4,7 @@
 Graphics::Graphics(){
 	direct = NULL;
 	device = NULL;
+	sprite = NULL;
 	width = WINDOW_W;
 	height = WINDOW_H;
 	back = graphicsNS::BACK_COLOR;
@@ -74,6 +75,8 @@ void Graphics::initD3Dpp(){
 		d3dpp.hDeviceWindow = hwnd;
 		d3dpp.Windowed = true;
 		d3dpp.PresentationInterval = D3DPRESENT_INTERVAL_IMMEDIATE;
+		d3dpp.EnableAutoDepthStencil = true;
+		d3dpp.AutoDepthStencilFormat = D3DFMT_D24S8;
 	}
 	catch (...){
 		throw(GameError(gameErrorNS::FATAL, "Error Initializing Direct3D Presentation Parameters."));
@@ -82,7 +85,6 @@ void Graphics::initD3Dpp(){
 
 //バックバッファの表示
 HRESULT Graphics::showBackBuffer(){
-	result = E_FAIL;
 	result = device->Present(NULL, NULL, NULL, NULL);
 	return result;
 }
@@ -97,8 +99,8 @@ HRESULT Graphics::getDeviceState(){
 
 //リセット
 HRESULT Graphics::reset(){
-	result = E_FAIL;
 	initD3Dpp();
+	sprite->OnLostDevice();
 	result = device->Reset(&d3dpp);
 
 	device->SetRenderState(D3DRS_BLENDOP, D3DBLENDOP_ADD);
@@ -113,7 +115,7 @@ HRESULT Graphics::reset(){
 HRESULT Graphics::beginScene(){
 	result = E_FAIL;
 	if (device == NULL) return result;
-	device->Clear(0, NULL, D3DCLEAR_TARGET, back, 1.0F, 0);
+	device->Clear(0, 0, D3DCLEAR_TARGET | D3DCLEAR_STENCIL | D3DCLEAR_ZBUFFER, back, 1.0F, 0);
 	result = device->BeginScene();
 	return result;
 }

@@ -47,6 +47,7 @@ void AstralDebu::drawQuad(float l, float t, float r, float b, ARGB c){
 	graphics->createVertexBuffer(vtx, sizeof vtx, vertex);
 	//graphics‚É”C‚¹‚é
 	graphics->drawQuad(vertex);
+	SAFE_RELEASE(vertex);
 }
 
 //ŽOŠp‚Ìvertex‚ð•`‰æ
@@ -87,6 +88,7 @@ void AstralDebu::drawTriangle(float x1, float y1, float x2, float y2, float x3, 
 	graphics->createVertexBuffer(vtx, sizeof vtx, vertex);
 	//graphcs‚É”C‚¹‚é
 	graphics->drawQuad(vertex);
+	SAFE_RELEASE(vertex);
 }
 
 //ŽOŠp‚ð•`‰æ

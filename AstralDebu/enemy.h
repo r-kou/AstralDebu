@@ -103,9 +103,6 @@ public:
 
 	//ˆÚ“®
 	virtual void move(float frameTime);
-
-	//•`‰æ‚·‚é‰æ‘œ‚ğ•ÏX
-	virtual void changeImage();
 };
 
 
@@ -134,9 +131,6 @@ public:
 
 	//ˆÚ“®
 	virtual void move(float frameTime);
-
-	//•`‰æ‚·‚é‰æ‘œ‚ğ•ÏX
-	virtual void changeImage();
 };
 
 class BulletE :public Entity{

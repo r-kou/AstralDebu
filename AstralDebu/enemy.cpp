@@ -205,15 +205,6 @@ void Enemy3::move(float frameTime){
 	Enemy::move(frameTime);
 }
 
-//描画する画像を変更
-void Enemy3::changeImage(){
-	Enemy::changeImage();
-
-	//現在の状態を確認
-	if (state == ST_STAND) {
-		if (animInterval > 0.8f) setImage(IMG_ACTION);
-	}
-}
 //コンストラクタ
 Enemy4::Enemy4(){
 	type = TY_ENEMY_4;
@@ -281,21 +272,11 @@ void Enemy5::move(float frameTime){
 	if ((state == ST_STAND) && (!action) && (ChipCY() == debu->ChipCY()) && (animInterval == 0)){
 		if (getPosX() > debu->getPosX()) direct = true;
 		else direct = false;
-		animInterval = 0.75f;
+		animInterval = 1.5f;
 		action = true;
 	}
 
 	Enemy::move(frameTime);
-}
-
-//描画する画像を変更
-void Enemy5::changeImage(){
-	Enemy::changeImage();
-
-	//現在の状態を確認
-	if (state == ST_STAND) {
-		if (animInterval > 0.8f) setImage(IMG_ACTION);
-	}
 }
 
 //コンストラクタ

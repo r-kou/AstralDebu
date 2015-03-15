@@ -293,6 +293,7 @@ void AstralDebu::renderHint(){
 		break;
 	case 5:
 		drawPanel("Å´", 10.75f, 4.5f, 1.0f, HINT_PANEL);
+		drawPanelD(CHIP_BOMB,CHIP_HIBOMB_BOX,18.0f,12.5f,HINT_PANEL);
 		break;
 	case 7:
 		drawPanelD(CHIP_BOMB, CHIP_STEEL_BOX, 15.25f, 5.25f, HINT_PANEL);

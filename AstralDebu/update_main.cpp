@@ -189,18 +189,19 @@ void AstralDebu::putObject(){
 
 //オブジェクトを押す
 void AstralDebu::pushObject(int exist){
-	int cx = 0, cy = getCursorChipY(debu);
+	int cx = getCursorChipX(debu), cy = getCursorChipY(debu);
 	Entity *e = getObject(exist);
 
 	//ハンマーとにくは押せない
 	if ((e->getType() == entityNS::TY_HAMMER) || (isFood(e))) return;
 
+
 	if (debu->getDirect()) {
-		if (debu->ChipCX() > 1) cx = debu->ChipCX() - 2;
+		if (cx > 1) cx--;
 		else return;
 	}
 	else {
-		if (debu->ChipCX() < MAP_COL - 2) cx = debu->ChipCX() + 2;
+		if (cx < MAP_COL - 2) cx++;
 		else return;
 	}
 	if (getCursorObject(cx, cy, false) != -1) return;

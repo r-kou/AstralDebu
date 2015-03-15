@@ -36,16 +36,16 @@ void AstralDebu::updateStage(){
 
 //メインの更新
 void AstralDebu::updateMain(){
-	//自動停止のフラグを付ける
-	if (timeout > 0.0f){
-		timeout -= frameTime;
-		if (timeout < 0.0f) timeout = 0.0f;
-	}
-
 	if (menu) {
 		//メニュー時は更新しない
 		updateMenu();
 		return;
+	}
+
+	//自動停止のフラグを付ける
+	if (timeout > 0.0f){
+		timeout -= frameTime;
+		if (timeout < 0.0f) timeout = 0.0f;
 	}
 
 	if (vitalLife > life) vitalLife--;
@@ -163,6 +163,7 @@ void AstralDebu::updateMenu(){
 		menu = false;
 		audio->setVolumeBgm(bgmVolume);
 		audio->playCue(audioNS::CANCEL);
+		timeout = TIME_OUT;
 	}
 	if (inHorizontal()) {
 		count = (count ? 0 : 1);
