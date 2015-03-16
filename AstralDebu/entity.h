@@ -61,6 +61,8 @@ namespace entityNS{
 	const int EDGE_MAX = 16;
 	//落下速度
 	const float GRAVITY_RATE = 1000.0f;
+	//ぶつかった時の落下補正
+	const float TOP_GRAVITY_RATE = 1000.0f;
 	//吹っ飛び時の微妙な浮き
 	const float VEL_KNOCK_JUMP = 150;
 	//吹っ飛び時の上方向への最大速度(KNOCK_JUMP差引き)
@@ -122,6 +124,8 @@ protected:
 	int partnerX, partnerY;
 	//行数
 	int col;
+	//フレーム時間
+	float frameTime;
 	//汎用インターバル
 	float animInterval;
 	//転移インターバル

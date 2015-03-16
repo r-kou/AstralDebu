@@ -139,7 +139,7 @@ namespace astralNS {
 	const ARGB STG1_BACK = D3DCOLOR_ARGB(255, 128, 224, 255);
 	const ARGB STG2_BACK = D3DCOLOR_ARGB(255, 255, 255, 255);
 	const ARGB STG3_BACK = D3DCOLOR_ARGB(255, 32, 48, 48);
-	const ARGB STG4_BACK = D3DCOLOR_ARGB(255, 192, 255, 255);
+	const ARGB STG4_BACK = D3DCOLOR_ARGB(255, 224, 255, 255);
 	const ARGB LIFE_GAUGE = D3DCOLOR_ARGB(255, 224, 224, 0);
 	const ARGB LIFE_VITAL_PLUS = D3DCOLOR_ARGB(255, 0, 224, 0);
 	const ARGB LIFE_VITAL_MINUS = D3DCOLOR_ARGB(255, 224, 0, 0);
@@ -150,6 +150,9 @@ namespace astralNS {
 
 	//タイムアウト時間
 	const float TIME_OUT = 100.0f;
+
+	//最大ステージ数
+	const int MAX_STAGE = 40;
 
 	const enum GameState{
 		S_TITLE, S_STAGE, S_MAIN, S_OVER, S_CLEAR, S_END

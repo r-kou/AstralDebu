@@ -15,6 +15,7 @@ Entity::Entity(){
 	vel.y = 0.0f;
 	mov.x = 0.0f;
 	mov.y = 0.0f;
+	frameTime = 0.0f;
 	direct = false;
 	size = 2;
 	img = 0;
@@ -61,6 +62,7 @@ bool Entity::initialize(Game *game, Texture *t, int i, int j){
 		vel.y = 0.0f;
 		mov.x = 0.0f;
 		mov.y = 0.0f;
+		frameTime = 0.0f;
 		direct = false;
 		SETRECT(edge, (long)pos.x - edgeX, (long)pos.y - edgeY, edgeX * 2, edgeY * 2);
 		state = ST_STAND;
@@ -73,6 +75,7 @@ bool Entity::initialize(Game *game, Texture *t, int i, int j){
 
 //ˆÚ“®
 void Entity::move(float frameTime){
+	this->frameTime = frameTime;
 	if (fall){
 		if (state == ST_JUMP || state == ST_DEAD) vel.y += GRAVITY_RATE * frameTime;
 		if (vel.y > VEL_MAX) vel.y = VEL_MAX;
@@ -175,7 +178,8 @@ void Entity::collideMap(UCHAR t){
 	}
 	if ((t & TOP) && (vel.y <= 0.0f)) {
 		setTop(false);
-		vel.y = 0.0f;
+		//’âŽ~‚¹‚¸‚É—Ž‰º‘¬“x‚É‰ÁŽZ
+		vel.y += TOP_GRAVITY_RATE*frameTime;
 		if (state == ST_KNOCK) {
 			state = ST_STAND;
 			playPut();
@@ -323,7 +327,8 @@ void Entity::responseObj(){
 	if (getRes(RES_TOP)) {
 		//ã‚ÉÕ“Ë
 		setTop(false);
-		vel.y = 0.0f;
+		//’âŽ~‚¹‚¸‚É—Ž‰º‘¬“x‚É‰ÁŽZ
+		vel.y += TOP_GRAVITY_RATE*frameTime;
 		if (state == ST_KNOCK) {
 			state = ST_STAND;
 			playPut();

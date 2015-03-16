@@ -65,15 +65,25 @@ void AstralDebu::renderMenu(){
 
 	drawFrame(REC_FRAME(true));
 
-	numberF.print("Ｚ：ジャンプ", REC_TEX(0,0), BLACK, DT_LC);
-	numberF.print("Ｘ：アイテムを持ち上げる", REC_TEX(0,1), BLACK, DT_LC);
+	/*
+	numberF.print("Ｚ：ジャンプ", REC_TEX(0, 0), BLACK, DT_LC);
+	numberF.print("Ｘ：アイテムを持ち上げる", REC_TEX(0, 1), BLACK, DT_LC);
 	numberF.print("　　持ち上げ時は置く", REC_TEX(0,2), BLACK, DT_LC);
 	numberF.print("Ｃ：アイテムを押す", REC_TEX(0,3), BLACK, DT_LC);
 	numberF.print("　　持ち上げ時は投げる", REC_TEX(0,4), BLACK, DT_LC);
 	numberF.print("Ｑ：やり直す", REC_TEX(0,5), BLACK, DT_LC);
 	numberF.print("ゲームを続ける", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, BLACK, DT_CC);
 	numberF.print("タイトルに戻る", TEX_MAR_X + TEX_SEP_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, BLACK, DT_CC);
-	
+	*/
+	numberF.print("Ｚ：ジャンプ", REC_TEX(0, 0), BLACK, DT_LC);
+	numberF.printShadow("Ｘ：アイテムを持ち上げる", REC_TEX(0, 1),1.0f, BLACK,WHITE, DT_LC);
+	numberF.printShadow("　　持ち上げ時は置く", REC_TEX(0, 2), 2.0f, BLACK,WHITE, DT_LC);
+	numberF.printShadow("Ｃ：アイテムを押す", REC_TEX(0, 3), 1.0f, BLACK,BACK, DT_LC);
+	numberF.printShadow("　　持ち上げ時は投げる", REC_TEX(0, 4), 2.0f, BLACK,BACK, DT_LC);
+	numberF.printShadow("Ｑ：やり直す", REC_TEX(0, 5), 1.0f, BLACK,graphicsNS::BROWN, DT_LC);
+	numberF.printShadow("ゲームを続ける", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, 2.0f, BLACK, graphicsNS::BROWN, DT_CC);
+	numberF.printShadow("タイトルに戻る", TEX_MAR_X + TEX_SEP_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, 2.0f, BLACK, graphicsNS::BROWN, DT_CC);
+
 	//矢印描画
 	drawArrowHorizontal(REC_ARR(count,0),false,RED);
 	graphics->spriteEnd();
@@ -120,7 +130,7 @@ void AstralDebu::renderTitleMenu(){
 	drawFrame(REC_FRAME(false));
 
 	middleF.print("はじめから", REC_TEX(0, 0), TEXT_SHOW, DT_CC);
-	middleF.print("つづきから", REC_TEX(0, 1), menuText(clearedStage != 0), DT_CC);
+	middleF.print("つづきから", REC_TEX(0, 1), menuText((clearedStage != 0) && (clearedStage != MAX_STAGE)), DT_CC);
 	middleF.print("ステージセレクト", REC_TEX(0, 2), menuText(clearedStage != 0), DT_CC);
 	middleF.print("音量設定", REC_TEX(0, 3), TEXT_SHOW, DT_CC);
 	middleF.print("終了する", REC_TEX(0, 4), TEXT_SHOW, DT_CC);
@@ -296,8 +306,8 @@ void AstralDebu::renderHint(){
 		drawPanelD(CHIP_BOMB,CHIP_HIBOMB_BOX,18.0f,12.5f,HINT_PANEL);
 		break;
 	case 7:
-		drawPanelD(CHIP_BOMB, CHIP_STEEL_BOX, 15.25f, 5.25f, HINT_PANEL);
-		drawArrowHorizontal(15.5f,6.5f,false,HINT_ARROW);
+		drawPanelD(CHIP_BOMB, CHIP_STEEL_BOX, 14.25f, 5.25f, HINT_PANEL);
+		drawArrowHorizontal(14.5f,6.5f,false,HINT_ARROW);
 		break;
 	case 10:
 		drawPanel(CHIP_WOOD_BOX, 6.0f, 10.25f, HINT_PANEL);
@@ -313,6 +323,9 @@ void AstralDebu::renderHint(){
 		break;
 	case 15:
 		drawArrowVertical(17.0f, 8.0f, false, HINT_ARROW);
+		break;
+	default:
+		break;
 	}
 
 	graphics->spriteEnd();

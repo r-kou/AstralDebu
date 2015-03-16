@@ -69,6 +69,12 @@ int Text::print(const std::string &str, float l, float t, float r, float b, ARGB
 	return print(str, (int)l,(int)t,(int)r,(int)b,c,format);
 }
 
+//影付きで文字を描画
+int Text::printShadow(const std::string &str, float l, float t, float r, float b, float e, ARGB c, ARGB s, UINT format){
+	print(str, (int)(l + e), (int)(t + e), (int)r, (int)b, s, format);
+	return print(str, (int)l, (int)t, (int)r, (int)b, c, format);
+}
+
 //デバイス削除
 void Text::onLostDevice(){
 	if (font == NULL) return;

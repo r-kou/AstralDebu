@@ -82,8 +82,9 @@ void Debu::move(float frameTime){
 			switch (state){
 			case ST_STAND:
 				//ブレーキをかける
-				vel.x *= 0.8f;
-				if (fabs(vel.x) < 10) vel.x = 0.0f;
+				if (vel.x >= 20) vel.x -= VEL_BREAK * frameTime;
+				else if (vel.x <= -20) vel.x += VEL_BREAK * frameTime;
+				else vel.x = 0.0f;
 				break;
 			case ST_LADDER:
 				//梯子はすぐに止まる

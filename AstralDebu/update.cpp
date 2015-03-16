@@ -68,7 +68,7 @@ void AstralDebu::updateMain(){
 		if (stage>clearedStage) clearedStage = stage;
 		saveData();
 		stage++;
-		if (stage > 21){
+		if (stage > MAX_STAGE){
 			state = S_CLEAR;
 		}
 		else {
@@ -87,13 +87,6 @@ void AstralDebu::updateMain(){
 	}
 		//所持オブジェクトはデブの前に移動
 	if (objHolded >= 0) moveHold(objHolded);
-
-	/*
-	ALL_OBJ{
-		Entity *e = getObject(i);
-		if (e->getAction()) actionObject(i);
-	}
-	*/
 
 		//地形への接触
 	if (isMovable(debu))debu->touchMap(map);
@@ -454,6 +447,7 @@ void AstralDebu::updateTitle1(){
 	count = count++ % 30;
 	if (in1()){
 		if (clearedStage == 0)count = 0;
+		else if(clearedStage == MAX_STAGE) count = 2;
 		else count = 1;
 		stateNumber = 2;
 		audio->playCue(audioNS::OK);
@@ -463,13 +457,17 @@ void AstralDebu::updateTitle1(){
 //タイトル画面を更新
 void AstralDebu::updateTitle2(){
 	if (inCursor()) audio->playCue(audioNS::SELECT);
-	if (clearedStage){
-		if (inUp() || inLeft()) count -= (count == 0) ? -4 : 1;
-		if (inDown() || inRight()) count += (count == 4) ? -4 : 1;
-	}
-	else {
+	if (clearedStage == 0){
 		if (inUp() || inLeft()) count -= (count == 0) ? -4 : (count == 3) ? 3 : 1;
 		if (inDown() || inRight()) count += (count == 4) ? -4 : (count == 0) ? 3 : 1;
+	}
+	else if (clearedStage == MAX_STAGE){
+		if (inUp() || inLeft()) count -= (count == 0) ? -4 : (count == 2) ? 2 : 1;
+		if (inDown() || inRight()) count += (count == 4) ? -4 : (count == 0) ? 2 : 1;
+	}
+	else {
+		if (inUp() || inLeft()) count -= (count == 0) ? -4 : 1;
+		if (inDown() || inRight()) count += (count == 4) ? -4 : 1;
 	}
 	if (in1()){
 		switch (count){
