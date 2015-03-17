@@ -146,7 +146,8 @@ namespace astralNS {
 	const ARGB HINT_ARROW = D3DCOLOR_ARGB(255, 255, 255, 32);
 	const ARGB HINT_PANEL = D3DCOLOR_ARGB(255, 64, 192, 64);
 
-	const std::string FONT = "メイリオ";
+	const std::string GEN = "源柔ゴシックLP Bold";
+	const std::string MEI = "メイリオ";
 
 	//タイムアウト時間
 	const float TIME_OUT = 100.0f;
@@ -181,8 +182,10 @@ private:
 	double clearTime[astralNS::STG_SIZE];
 	//クリアした最後のステージ
 	int clearedStage;
-	//音楽の初期化とか
+	//音楽の初期化
 	bool bgm;
+	//フォントの初期化
+	bool initializeFont;
 	//メニュー画面
 	bool menu;
 	//音量

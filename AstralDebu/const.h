@@ -38,7 +38,11 @@
 #define DT_CB DT_SINGLELINE | DT_CENTER | DT_BOTTOM
 #define DT_LC DT_SINGLELINE | DT_LEFT | DT_VCENTER
 #define DT_RC DT_SINGLELINE | DT_RIGHT | DT_VCENTER
-#define MAP_NAME(x) "map" + std::to_string(x)
+#define DATA(x) (DAT_FILE_DIR + "\\" + x).c_str()
+#define IMG(x) DATA(IMG_FILE_DIR + "\\" + x)
+#define MAP(x) DATA(MAP_FILE_DIR + "\\" + MAP_NAME(x))
+#define WAV(x) DATA(WAV_FILE_DIR + "\\" + x)
+#define MAP_NAME(x) "map" + std::to_string(x) + MAP_FILE_EXT
 #define FOR(x) for(int i = 0; i < x; i++)
 #define FOR_2(x,y) for(int i=0;i<x;i++) for(int j=0;j<y;j++)
 #define FOR_EACH(x) for(int i = 0; i < x; i++) for(int j = i + 1; j < x; j++)
@@ -68,6 +72,7 @@ const int CHIP_SIZE = 32;
 //ファイル名
 const std::string CLS_NAME = "AstralDebu";
 const std::string APP_TITLE = "アストラルデブ";
+const std::string DAT_FILE_DIR = "data";
 const std::string IMG_FILE_DIR = "image";
 const std::string IMG_FILE_DEBU = "debu.png";
 const std::string IMG_FILE_CHIP = "chip.png";
@@ -81,8 +86,6 @@ const std::string WAV_FILE_DIR = "audio";
 const std::string WAV_FILE_WAVE = "wave.xwb";
 const std::string WAV_FILE_SOUND = "sound.xsb";
 const std::string WAV_FILE_GLOBAL = "global.xgs";
+const std::string FON_FILE = "genjyuu.ttf";
 
-
-
-//汎用関数
 #endif

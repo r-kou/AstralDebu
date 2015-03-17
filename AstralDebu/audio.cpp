@@ -46,7 +46,7 @@ HRESULT Audio::initialize(){
 	result = XACT3CreateEngine(0, &xact);
 	if (FAILED(result) || xact == NULL) return E_FAIL;
 
-	hFile = CreateFile((WAV_FILE_DIR + "\\" + WAV_FILE_GLOBAL).c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+	hFile = CreateFile(WAV(WAV_FILE_GLOBAL), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
 	if (hFile)
 	{
 		//ファイルサイズを取得
@@ -76,7 +76,7 @@ HRESULT Audio::initialize(){
 	if (FAILED(result)) return result;
 
 	result = E_FAIL;
-	hFile = CreateFile((WAV_FILE_DIR + "\\" + WAV_FILE_WAVE).c_str(), GENERIC_READ,
+	hFile = CreateFile(WAV(WAV_FILE_WAVE), GENERIC_READ,
 		FILE_SHARE_READ, NULL, OPEN_EXISTING
 		, 0, NULL);
 	if (hFile != INVALID_HANDLE_VALUE) {
@@ -98,7 +98,7 @@ HRESULT Audio::initialize(){
 	if (FAILED(result)) return HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND);
 
 	result = E_FAIL;
-	hFile = CreateFile((WAV_FILE_DIR + "\\" + WAV_FILE_SOUND).c_str(), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
+	hFile = CreateFile(WAV(WAV_FILE_SOUND), GENERIC_READ, FILE_SHARE_READ, NULL, OPEN_EXISTING, 0, NULL);
     if( hFile != INVALID_HANDLE_VALUE )
     {
         fileSize = GetFileSize( hFile, NULL );

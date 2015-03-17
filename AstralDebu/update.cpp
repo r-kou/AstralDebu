@@ -189,7 +189,7 @@ void AstralDebu::loadData(){
 	double bufVolume;
 	double bufTime;
 	try{
-		load.open(SAV_FILE, std::ios::in | std::ios::binary);
+		load.open(DATA(SAV_FILE), std::ios::in | std::ios::binary);
 		if (load){
 			//クリアしたステージを読み込み
 			load.read((char *)&bufStage, sizeof(int));
@@ -241,7 +241,7 @@ void AstralDebu::saveData(){
 	int bufStage;
 	double bufVolume;
 	try{
-		save.open(SAV_FILE, std::ios::out | std::ios::binary | std::ios::trunc);
+		save.open(DATA(SAV_FILE), std::ios::out | std::ios::binary | std::ios::trunc);
 		if (save){
 			//クリアしたステージを書き込み
 			bufStage = clearedStage;
@@ -273,7 +273,7 @@ void AstralDebu::saveData(){
 //ステージの読み込み
 void AstralDebu::loadStage(){
 	short buf[MAP_COL];
-	std::string fileName = MAP_FILE_DIR + "\\" + MAP_NAME(stage) + MAP_FILE_EXT;
+	std::string fileName = MAP(stage);
 	std::ifstream file;
 
 	try{

@@ -65,24 +65,14 @@ void AstralDebu::renderMenu(){
 
 	drawFrame(REC_FRAME(true));
 
-	/*
-	numberF.print("Ｚ：ジャンプ", REC_TEX(0, 0), BLACK, DT_LC);
-	numberF.print("Ｘ：アイテムを持ち上げる", REC_TEX(0, 1), BLACK, DT_LC);
-	numberF.print("　　持ち上げ時は置く", REC_TEX(0,2), BLACK, DT_LC);
-	numberF.print("Ｃ：アイテムを押す", REC_TEX(0,3), BLACK, DT_LC);
-	numberF.print("　　持ち上げ時は投げる", REC_TEX(0,4), BLACK, DT_LC);
-	numberF.print("Ｑ：やり直す", REC_TEX(0,5), BLACK, DT_LC);
-	numberF.print("ゲームを続ける", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, BLACK, DT_CC);
-	numberF.print("タイトルに戻る", TEX_MAR_X + TEX_SEP_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, BLACK, DT_CC);
-	*/
-	numberF.print("Ｚ：ジャンプ", REC_TEX(0, 0), BLACK, DT_LC);
+	numberF.printShadow("Ｚ：ジャンプ", REC_TEX(0, 0), 1.0f,BLACK,WHITE, DT_LC);
 	numberF.printShadow("Ｘ：アイテムを持ち上げる", REC_TEX(0, 1),1.0f, BLACK,WHITE, DT_LC);
-	numberF.printShadow("　　持ち上げ時は置く", REC_TEX(0, 2), 2.0f, BLACK,WHITE, DT_LC);
-	numberF.printShadow("Ｃ：アイテムを押す", REC_TEX(0, 3), 1.0f, BLACK,BACK, DT_LC);
-	numberF.printShadow("　　持ち上げ時は投げる", REC_TEX(0, 4), 2.0f, BLACK,BACK, DT_LC);
-	numberF.printShadow("Ｑ：やり直す", REC_TEX(0, 5), 1.0f, BLACK,graphicsNS::BROWN, DT_LC);
-	numberF.printShadow("ゲームを続ける", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, 2.0f, BLACK, graphicsNS::BROWN, DT_CC);
-	numberF.printShadow("タイトルに戻る", TEX_MAR_X + TEX_SEP_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, 2.0f, BLACK, graphicsNS::BROWN, DT_CC);
+	numberF.printShadow("　　持ち上げ時は置く", REC_TEX(0, 2), 1.0f, BLACK,WHITE, DT_LC);
+	numberF.printShadow("Ｃ：アイテムを押す", REC_TEX(0, 3), 1.0f, BLACK,WHITE, DT_LC);
+	numberF.printShadow("　　持ち上げ時は投げる", REC_TEX(0, 4), 1.0f, BLACK,WHITE, DT_LC);
+	numberF.printShadow("Ｑ：やり直す", REC_TEX(0, 5), 1.0f, BLACK,WHITE, DT_LC);
+	numberF.printShadow("ゲームを続ける", TEX_MAR_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, 1.0f, BLACK, WHITE, DT_CC);
+	numberF.printShadow("タイトルに戻る", TEX_MAR_X + TEX_SEP_X, TEX_MAR_Y + TEX_SEP_Y * 7, TEX_SEP_X, TEX_SEP_Y, 1.0f, BLACK, WHITE, DT_CC);
 
 	//矢印描画
 	drawArrowHorizontal(REC_ARR(count,0),false,RED);
@@ -129,11 +119,11 @@ void AstralDebu::renderTitleMenu(){
 	//メニューを描画
 	drawFrame(REC_FRAME(false));
 
-	middleF.print("はじめから", REC_TEX(0, 0), TEXT_SHOW, DT_CC);
-	middleF.print("つづきから", REC_TEX(0, 1), menuText((clearedStage != 0) && (clearedStage != MAX_STAGE)), DT_CC);
-	middleF.print("ステージセレクト", REC_TEX(0, 2), menuText(clearedStage != 0), DT_CC);
-	middleF.print("音量設定", REC_TEX(0, 3), TEXT_SHOW, DT_CC);
-	middleF.print("終了する", REC_TEX(0, 4), TEXT_SHOW, DT_CC);
+	middleF.printShadow("はじめから", REC_TEX(0, 0),1.0f, TEXT_SHOW,TEXT_HIDE, DT_CC);
+	middleF.printShadow("つづきから", REC_TEX(0, 1), 1.0f, menuText((clearedStage != 0) && (clearedStage != MAX_STAGE)), menuText((clearedStage == 0) || (clearedStage == MAX_STAGE)), DT_CC);
+	middleF.printShadow("ステージセレクト", REC_TEX(0, 2), 1.0f, menuText(clearedStage != 0), menuText(clearedStage == 0), DT_CC);
+	middleF.printShadow("オーディオ", REC_TEX(0, 3), 1.0f,TEXT_SHOW, TEXT_HIDE, DT_CC);
+	middleF.printShadow("終了する", REC_TEX(0, 4), 1.0f,TEXT_SHOW, TEXT_HIDE, DT_CC);
 	//矢印描画
 	if ((stateNumber >= 2) && (stateNumber <= 3)){
 		drawArrowHorizontal(REC_ARR(0,count),false,RED);
@@ -148,7 +138,7 @@ void AstralDebu::renderTitleSelect(){
 	using namespace menuNS::selectMenuNS;
 	graphics->spriteBegin();
 	//選択しているステージを描画
-	middleF.print(std::to_string(stage), REC_TEX(0,0), WHITE, DT_CC);
+	middleF.printShadow(std::to_string(stage), REC_TEX(0,0),1.0f, WHITE,BLACK, DT_CC);
 	//上下の矢印を描画
 	drawTriangleVertical(REC_TRI(0, 0), true, menuText(stage < clearedStage));
 	drawTriangleVertical(REC_TRI(0,1),false, menuText(stage > 1));
@@ -164,11 +154,11 @@ void AstralDebu::renderTitleVolume(){
 
 	drawFrame(REC_FRAME(false));
 
-	middleF.print("ＢＧＭ", REC_TEX(0,0), TEXT_SHOW, DT_CC);
-	middleF.print(doubleToString(bgmVolume), REC_TEX(2,0), WHITE, DT_CC);
-	middleF.print("効果音", REC_TEX(0,1), TEXT_SHOW, DT_CC);
-	middleF.print(doubleToString(soundVolume), REC_TEX(2,1), WHITE, DT_CC);
-	middleF.print("戻る", REC_TEX(1,2), TEXT_SHOW, DT_CC);
+	middleF.printShadow("ＢＧＭ", REC_TEX(0, 0),1.0f, TEXT_SHOW, TEXT_HIDE, DT_CC);
+	middleF.printShadow(doubleToString(bgmVolume), REC_TEX(2,0),1.0f, WHITE,BLACK, DT_CC);
+	middleF.printShadow("効果音", REC_TEX(0, 1),1.0f, TEXT_SHOW, TEXT_HIDE, DT_CC);
+	middleF.printShadow(doubleToString(soundVolume), REC_TEX(2,1),1.0f, WHITE,BLACK, DT_CC);
+	middleF.printShadow("戻る", REC_TEX(1, 2),1.0f, TEXT_SHOW, TEXT_HIDE, DT_CC);
 
 	drawArrowHorizontal(REC_ARR(0,count), false, RED);
 
@@ -225,18 +215,12 @@ void AstralDebu::renderBack(){
 		WORD_LEN_X, WORD_LEN_Y,
 		WHITE, DT_CC);
 
-	bigF.print(std::to_string(life),
+	bigF.printShadow(std::to_string(life),
 		LIFE_MAR_X, LIFE_MAR_Y,
 		LIFE_LEN_X, LIFE_LEN_Y,
-		BLACK, DT_CC);
-
-	bigF.print(std::to_string(life),
-		LIFE_MAR_X - DATA_MAR / 2, LIFE_MAR_Y - DATA_MAR / 2,
-		LIFE_LEN_X, LIFE_LEN_Y,
-		WHITE, DT_CC);
+		2.0f,WHITE,BLACK, DT_CC);
 
 	//ステージ表示
-
 	numberF.print("STAGE" + std::to_string(stage),
 		STG_MAR_X, STG_MAR_Y,
 		STG_LEN_X, STG_LEN_Y,

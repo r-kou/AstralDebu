@@ -15,6 +15,7 @@ AstralDebu::AstralDebu(){
 	read = false;
 	clear = false;
 	bgm = false;
+	initializeFont = false;
 	menu = false;
 	state = S_TITLE;
 	stateNumber = 0;
@@ -43,11 +44,22 @@ AstralDebu::AstralDebu(){
 //デストラクタ
 AstralDebu::~AstralDebu(){
 	deleteAll();
+
+	//フォント削除
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	if (!RemoveFontResourceEx(DATA(FON_FILE), FR_PRIVATE, NULL))
+		throw(GameError(gameErrorNS::FATAL, "フォントデータの初期化に失敗しました"));
+#endif
 }
 
 //初期化
 void AstralDebu::initialize(HWND hwnd){
 	Game::initialize(hwnd);
+
+	//フォント追加
+#if (CC_TARGET_PLATFORM == CC_PLATFORM_WIN32)
+	if (AddFontResourceEx(DATA(FON_FILE), FR_PRIVATE, NULL)) initializeFont = true;
+#endif
 
 	//画像テクスチャを設定
 	initTexture(debuT, IMG_FILE_DEBU);
@@ -75,13 +87,13 @@ void AstralDebu::initialize(HWND hwnd){
 
 //テクスチャの初期化
 void AstralDebu::initTexture(Texture &t, std::string file){
-	if (!t.initialize(graphics, (IMG_FILE_DIR + "\\" + file).c_str()))
+	if (!t.initialize(graphics, IMG(file)))
 		throw(GameError(gameErrorNS::FATAL, "画像データの初期化に失敗しました"));
 }
 
 //フォントの初期化
 void AstralDebu::initFont(Text &t, int point){
-	if (t.initialize(graphics, point, true, false, FONT) == false)
+	if (t.initialize(graphics, point, false, false, (initializeFont?GEN:MEI)) == false)
 		throw(GameError(gameErrorNS::FATAL, "フォントの初期化に失敗しました"));
 	t.setFontColor(WHITE);
 }
