@@ -15,6 +15,8 @@ Debu::Debu(){
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
 	putSound = audioNS::PUT_DEBU;
+	hold = false;
+	hammer = false;
 }
 
 //‰Šú‰»
@@ -22,6 +24,7 @@ bool Debu::initialize(Game *game, Texture *t, Input *in, int i, int j){
 	//“ü—Í‚ğó‚¯•t‚¯‚é
 	input = in;
 	hold = false;
+	hammer = false;
 	return Entity::initialize(game, t, i, j);
 }
 
@@ -87,6 +90,7 @@ void Debu::move(float frameTime){
 				else vel.x = 0.0f;
 				break;
 			case ST_LADDER:
+			case ST_HAMMER:
 				//’òq‚Í‚·‚®‚É~‚Ü‚é
 				vel.x = 0.0f;
 				break;

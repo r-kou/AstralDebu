@@ -303,6 +303,8 @@ public:
 	void resetResponse() { response = 0; FOR(entityNS::RES_CLEAR){ responseVC[i].x = 0; responseVC[i].y = 0; } }
 	//ƒ[ƒv‘Šè‚ğİ’è
 	void setpartner(Entity *e) {partnerX = e->ChipCX(); partnerY = e->ChipCY();	}
+	//—§‚Â
+	virtual void setStand() { state = entityNS::ST_STAND; }
 
 	//•`‰æ‡‚ğw’è
 	bool isRenderOrder(entityNS::RENDER_ORDER ro){ return renderOrder == ro; }

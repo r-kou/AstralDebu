@@ -164,7 +164,7 @@ void Entity::collideMap(UCHAR t){
 		setLeft(false);
 		vel.x = 0.0f;
 		if (state == ST_KNOCK) {
-			state = ST_STAND;
+			setStand();
 			playPut();
 		}
 	}
@@ -172,7 +172,7 @@ void Entity::collideMap(UCHAR t){
 		setRight(false);
 		vel.x = 0.0f;
 		if (state == ST_KNOCK) {
-			state = ST_STAND;
+			setStand();
 			playPut();
 		}
 	}
@@ -182,7 +182,7 @@ void Entity::collideMap(UCHAR t){
 		if (vel.y < 0) vel.y += TOP_GRAVITY_RATE*frameTime;
 		else vel.y = 0;
 		if (state == ST_KNOCK) {
-			state = ST_STAND;
+			setStand();
 			playPut();
 		}
 	}
@@ -193,7 +193,7 @@ void Entity::collideMap(UCHAR t){
 			if ((vel.y > 0) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 			//生きてたら着地　死んでたら停止
 			if (state == ST_DEAD) vel.x = 0.0f;
-			else state = ST_STAND;
+			else setStand();
 			setBottom(false);
 			vel.y = 0.0f;
 		}
@@ -311,7 +311,7 @@ void Entity::responseObj(){
 		vel.x = 0.0f;
 		if (!action&&type!=TY_DEBU) direct = false;
 		if (state == ST_KNOCK) {
-			state = ST_STAND;
+			setStand();
 			playPut();
 		}
 	}
@@ -321,7 +321,7 @@ void Entity::responseObj(){
 		vel.x = 0.0f;
 		if (!action && type != TY_DEBU) direct = true;
 		if (state == ST_KNOCK) {
-			state = ST_STAND;
+			setStand();
 			playPut();
 		}
 	}
@@ -333,7 +333,7 @@ void Entity::responseObj(){
 		//else vel.y = 0;
 		vel.y = 0;
 		if (state == ST_KNOCK) {
-			state = ST_STAND;
+			setStand();
 			playPut();
 		}
 	}
@@ -343,7 +343,7 @@ void Entity::responseObj(){
 		//はしごの速度ではならない
 		if (((vel.y > 0) && (vel.y != 100)) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 		vel.y = 0.0f;
-		state = ST_STAND;
+		setStand();
 	}
 	if (getRes(RES_BOTTOM_CHIP)) {
 		//下に衝突 マスにぴったり
@@ -352,13 +352,13 @@ void Entity::responseObj(){
 		if ((vel.y > 0) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 		vel.y = 0.0f;
 		vel.x = 0.0f;
-		state = ST_STAND;
+		setStand();
 	}
 	if (getRes(RES_STOP)) {
 		//停止
 		vel.x = 0.0f;
 		vel.y = 0.0f;
-		state = ST_STAND;
+		setStand();
 	}
 	if (getRes(RES_CHIP)) {
 		//停止 マスにぴったり
@@ -366,7 +366,7 @@ void Entity::responseObj(){
 		setCY();
 		vel.x = 0.0f;
 		vel.y = 0.0f;
-		state = ST_STAND;
+		setStand();
 	}
 	if (getRes(RES_COLLIDE)){
 		if (!action) direct = !direct;

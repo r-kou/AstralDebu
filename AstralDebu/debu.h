@@ -53,6 +53,8 @@ private:
 	bool hold;
 	//ハンマー専用の向き
 	bool directHammer;
+	//ハンマーを所持しているか
+	bool hammer;
 public:
 	//コンストラクタ
 	Debu();
@@ -75,13 +77,18 @@ public:
 	//描画
 	virtual void draw();
 
+	//立つ
+	virtual void setStand() { state = (hammer ? entityNS::ST_HAMMER : entityNS::ST_STAND); }
+
 	//setter
 	void setHold(bool h) { hold = h; }
-	void setHammer(bool d) { directHammer = d; }
+	void setHammerHold(bool d) { hammer = d; }
+	void setHammerDirect(bool d) { directHammer = d; }
 
 	//getter
 	bool getHold() { return hold; }
-	bool getHammer() { return directHammer; }
+	bool getHammerHold() { return hammer; }
+	bool getHammerDirect() { return directHammer; }
 };
 
 #endif

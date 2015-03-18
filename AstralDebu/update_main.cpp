@@ -167,6 +167,7 @@ void AstralDebu::putObject(){
 
 	objHolded = -1;
 	debu->setHold(false);
+	debu->setHammerHold(false);
 	debu->setState(entityNS::ST_STAND);
 	debu->setAnim(0.3f);
 
@@ -240,6 +241,7 @@ void AstralDebu::throwObject(){
 
 	objHolded = -1;
 	debu->setHold(false);
+	debu->setHammerHold(false);
 	debu->setState(entityNS::ST_STAND);
 	debu->setAnim(0.3f);
 
@@ -283,7 +285,7 @@ void AstralDebu::moveHold(int i){
 	Entity *e = getObject(i);
 
 	if (e->getType() == entityNS::TY_HAMMER) {
-		debu->setHammer(debu->getPosX() >= e->getPosX());
+		debu->setHammerDirect(debu->getPosX() >= e->getPosX());
 	}
 	else {
 		if (debu->getDirect()) e->setPosX(debu->getPosX() - HOLD_MAR_X);

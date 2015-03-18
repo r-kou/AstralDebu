@@ -268,6 +268,7 @@ void Hammer::collideObj(Entity *e, UCHAR t){
 //Ž‚Âˆ—
 void Hammer::setHold(Debu *d){
 	d->setState(ST_HAMMER);
+	d->setHammerHold(true);
 	d->setVelX(0);
 	d->setVelY(0);
 
