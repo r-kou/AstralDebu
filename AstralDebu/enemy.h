@@ -131,6 +131,9 @@ public:
 
 	//移動
 	virtual void move(float frameTime);
+
+	//他オブジェクトへの反応
+	virtual void responseObj();
 };
 
 class BulletE :public Entity{

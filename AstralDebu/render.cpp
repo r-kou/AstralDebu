@@ -302,8 +302,8 @@ void AstralDebu::renderHint(){
 	case 11:
 		drawPanel("X+C", 20.5f, 4.25f, 2.0f, HINT_PANEL);
 		drawArrowHorizontal(20.5f, 5.5f, true, HINT_ARROW);
-		drawPanel(CHIP_HAMMER, 17.0f, 9.25f, HINT_PANEL);
-		drawArrowHorizontal(16.5f, 10.5f, false, HINT_ARROW);
+		drawPanel(CHIP_HAMMER, 17.0f, 10.25f, HINT_PANEL);
+		drawArrowHorizontal(16.5f, 11.5f, false, HINT_ARROW);
 		break;
 	case 15:
 		drawArrowVertical(17.0f, 8.0f, false, HINT_ARROW);

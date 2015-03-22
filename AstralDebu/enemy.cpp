@@ -279,6 +279,15 @@ void Enemy5::move(float frameTime){
 	Enemy::move(frameTime);
 }
 
+//他オブジェクトへの反応
+void Enemy5::responseObj(){
+	if (getRes(RES_DEAD)){
+		action = true;
+	}
+
+	Entity::responseObj();
+}
+
 //コンストラクタ
 BulletE::BulletE(){
 	state = ST_KNOCK;

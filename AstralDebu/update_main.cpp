@@ -390,17 +390,32 @@ void AstralDebu::actionObject(int i){
 		ne->playPut();
 		break;
 	case entityNS::TY_ENEMY_5:
-		//ミサイル生成
-		e->setAction(false);
-		n = getEmptyIndex();
-		ne = object[n];
-		SAFE_DELETE(ne);
-		ne = new Missile();
-		if (!ne->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
-			throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
-		ne->setDirect(e->getDirect());
-		ne->setState(entityNS::ST_KNOCK);
-		setObject(n, ne);
-		break;
+		//生存時はミサイル発射、死亡時は爆発　サヨナラ！
+		if (e->getState() != entityNS::ST_DEAD){
+			//ミサイル生成
+			e->setAction(false);
+			n = getEmptyIndex();
+			ne = object[n];
+			SAFE_DELETE(ne);
+			ne = new Missile();
+			if (!ne->initialize(this, &enemyT, e->ChipCX(), e->ChipCY()))
+				throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
+			ne->setDirect(e->getDirect());
+			ne->setState(entityNS::ST_KNOCK);
+			setObject(n, ne);
+			break;
+		}
+		else {
+			e->setAction(false);
+			n = getEmptyIndex();
+			ne = object[n];
+			SAFE_DELETE(ne);
+			ne = new Blast(false);
+			if (!ne->initialize(this, &bombT, e->ChipCX(), e->ChipCY()))
+				throw(GameError(gameErrorNS::FATAL, "オブジェクトの初期化に失敗しました"));
+			setObject(n, ne);
+			audio->playCue(audioNS::BLAST1);
+			break;
+		}
 	}
 }
