@@ -190,7 +190,7 @@ void Entity::collideMap(UCHAR t){
 		//空中にいたら着地判定
 		if (((vel.y >= 0.0f) && (state == ST_JUMP || state == ST_LADDER)) ||
 			((vel.y > 0.0f) && (state == ST_KNOCK || state == ST_DEAD))){
-			if ((vel.y > 0) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
+			if ((vel.y > 50) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 			//生きてたら着地　死んでたら停止
 			if (state == ST_DEAD) vel.x = 0.0f;
 			else setStand();
@@ -212,22 +212,22 @@ void Entity::touchObj(Entity *e){
 	if (pos.y > e->getPosY()){
 		if (pos.x > e->getPosX()){
 			//edge1
-			if (touchObjDirect(diffLeft(e, false), diffTop(e, true), diffVelX(e))){
+			if (touchObjDirect(diffLeft(e, false), diffTop(e, true), ((e->getType() == TY_BLAST) ? 0 : diffVelX(e)))){
 				t |= LEFT;
 				et |= RIGHT;
 			}
-			if (touchObjDirect(diffLeft(e, true), diffTop(e, false), diffVelY(e))){
+			if (touchObjDirect(diffLeft(e, true), diffTop(e, false), ((e->getType() == TY_BLAST) ? 0 : diffVelY(e)))){
 				t |= TOP;
 				et |= BOTTOM;
 			}
 		}
 		else {
 			//edge2
-			if (touchObjDirect(-diffRight(e, false), diffTop(e, true), -diffVelX(e))){
+			if (touchObjDirect(-diffRight(e, false), diffTop(e, true), ((e->getType() == TY_BLAST) ? 0 : -diffVelX(e)))){
 				t |= RIGHT;
 				et |= LEFT;
 			}
-			if (touchObjDirect(-diffRight(e, true), diffTop(e, false), diffVelY(e))){
+			if (touchObjDirect(-diffRight(e, true), diffTop(e, false), ((e->getType() == TY_BLAST) ? 0 : diffVelY(e)))){
 				t |= TOP;
 				et |= BOTTOM;
 			}
@@ -240,22 +240,22 @@ void Entity::touchObj(Entity *e){
 	else {
 		if (pos.x > e->getPosX()){
 			//edge4
-			if (touchObjDirect(diffLeft(e, false), -diffBottom(e, true), diffVelX(e))){
+			if (touchObjDirect(diffLeft(e, false), -diffBottom(e, true), ((e->getType() == TY_BLAST) ? 0 : diffVelX(e)))){
 				t |= LEFT;
 				et |= RIGHT;
 			}
-			if (touchObjDirect(diffLeft(e, true), -diffBottom(e, false), -diffVelY(e))){
+			if (touchObjDirect(diffLeft(e, true), -diffBottom(e, false), ((e->getType() == TY_BLAST) ? 0 : -diffVelY(e)))){
 				t |= BOTTOM;
 				et |= TOP;
 			}
 		}
 		else {
 			//edge3
-			if (touchObjDirect(-diffRight(e, false), -diffBottom(e, true), -diffVelX(e))){
+			if (touchObjDirect(-diffRight(e, false), -diffBottom(e, true), ((e->getType() == TY_BLAST) ? 0 : -diffVelX(e)))){
 				t |= RIGHT;
 				et |= LEFT;
 			}
-			if (touchObjDirect(-diffRight(e, true), -diffBottom(e, false), -diffVelY(e))){
+			if (touchObjDirect(-diffRight(e, true), -diffBottom(e, false), ((e->getType() == TY_BLAST) ? 0 : -diffVelY(e)))){
 				t |= BOTTOM;
 				et |= TOP;
 			}
@@ -329,9 +329,8 @@ void Entity::responseObj(){
 		//上に衝突
 		setTop(false);
 		//停止せずに落下速度に加算
-		//if (vel.y < 0) vel.y += TOP_GRAVITY_RATE*frameTime;
-		//else vel.y = 0;
-		vel.y = 0;
+		if (vel.y < 0) vel.y += TOP_GRAVITY_RATE*frameTime;
+		else vel.y = 0;
 		if (state == ST_KNOCK) {
 			setStand();
 			playPut();
@@ -341,7 +340,7 @@ void Entity::responseObj(){
 		//下に衝突
 		setBottom(false);
 		//はしごの速度ではならない
-		if (((vel.y > 0) && (vel.y != 100)) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
+		if (((vel.y > 50) && (vel.y != 100)) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 		vel.y = 0.0f;
 		setStand();
 	}
@@ -349,7 +348,7 @@ void Entity::responseObj(){
 		//下に衝突 マスにぴったり
 		setCX();
 		setBottom(false);
-		if ((vel.y > 0) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
+		if ((vel.y > 50) && ((state == ST_JUMP) || (state == ST_KNOCK))) playPut();
 		vel.y = 0.0f;
 		vel.x = 0.0f;
 		setStand();
@@ -380,20 +379,20 @@ void Entity::responseObj(){
 	}
 	if (getRes(RES_KNOCK)) {
 		state = ST_KNOCK;
-		vel.x = setLimit(getResX(RES_KNOCK),VEL_MAX);
-		vel.y = setLimit(getResY(RES_KNOCK),VEL_MAX);
+		vel.x = addLimit(vel.x, getResX(RES_KNOCK), VEL_MAX);
+		vel.y = addLimit(vel.y, getResY(RES_KNOCK), VEL_MAX);
 		audio->playCue(audioNS::KNOCK);
 	}
 	if (getRes(RES_JUMP)){
 		state = ST_JUMP;
-		vel.x = setLimit(getResX(RES_JUMP), VEL_MAX);
-		vel.y = setLimit(getResY(RES_JUMP), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
+		vel.x = addLimit(vel.x,getResX(RES_JUMP), VEL_MAX);
+		vel.y = addLimit(vel.y,getResY(RES_JUMP), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
 		audio->playCue(audioNS::KNOCK);
 	}
 	if (getRes(RES_DEAD)){
 		state = ST_DEAD;
-		vel.x = setLimit(getResX(RES_DEAD), VEL_MAX);
-		vel.y = setLimit(getResY(RES_DEAD), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
+		vel.x = addLimit(vel.x,getResX(RES_DEAD), VEL_MAX);
+		vel.y = addLimit(vel.y,getResY(RES_DEAD), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
 		playDead();
 	}
 	if (getRes(RES_CLEAR)){
@@ -467,4 +466,11 @@ void Entity::checkBottom(bool d, Entity *e){
 		}
 		break;
 	}
+}
+
+float Entity::addLimit(float v, float n, float max) {
+	//減速は無し　反射はあり
+	if (((v > n) && (n > 0.0f)) || ((v < n) && (n < 0.0f))) return v;
+	if (v*n > 0) return setLimit(v + n, max);
+	else return setLimit(n, max);
 }

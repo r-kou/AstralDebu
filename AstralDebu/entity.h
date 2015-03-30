@@ -174,7 +174,9 @@ protected:
 	void setRes(int i) { response |= shift(i); }
 	void setRes(int i, float x, float y) { response |= shift(i); responseVC[i].x += x; responseVC[i].y += y; }
 	//各値の最大値を設定
-	const float setLimit(float n, float max) { return ((n>max) ? max : ((n<-max) ? -max : n)); }
+	float setLimit(float n, float max) { return ((n>max) ? max : ((n<-max) ? -max : n)); }
+	//各値の最大値以下になるように加算
+	float addLimit(float v, float n, float max);
 
 public:
 	//コンストラクタ
