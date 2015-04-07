@@ -69,7 +69,14 @@ void Box::collideWarp(Entity *e){
 	case TY_AIR_BOX:
 	case TY_FRAME_BOX:
 	case TY_GOAST_BOX:
+	case TY_BOMB:
+	case TY_HIBOMB:
 	case TY_HAMMER:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
 		resetResponse(RES_WARP);
 		break;
 	}

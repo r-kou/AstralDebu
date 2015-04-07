@@ -28,6 +28,9 @@ public:
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
+
+	//ワープの是非を判定
+	virtual void collideWarp(Entity *e);
 };
 
 class Bomb : public BombE{

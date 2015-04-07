@@ -131,6 +131,27 @@ void Enemy::draw(){
 	trans = false;
 }
 
+//ワープの是非を判定
+void Enemy::collideWarp(Entity *e){
+	Entity::collideWarp(e);
+
+	switch (e->getType()){
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_GOAST_BOX:
+	case TY_BOMB:
+	case TY_HIBOMB:
+	case TY_HAMMER:
+		resetResponse(RES_WARP);
+		break;
+	}
+}
+
 //コンストラクタ
 Enemy1::Enemy1(){
 	type = TY_ENEMY_1;

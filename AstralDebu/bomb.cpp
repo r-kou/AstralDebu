@@ -95,6 +95,32 @@ void BombE::collideObj(Entity *e, UCHAR t){
 
 }
 
+//ワープの是非を判定
+void BombE::collideWarp(Entity *e){
+	Entity::collideWarp(e);
+
+	switch (e->getType()){
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_GOAST_BOX:
+	case TY_BOMB:
+	case TY_HIBOMB:
+	case TY_HAMMER:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
+		resetResponse(RES_WARP);
+		break;
+	}
+}
+
 //コンストラクタ
 Bomb::Bomb(){
 	type = TY_BOMB;

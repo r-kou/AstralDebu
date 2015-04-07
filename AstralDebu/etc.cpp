@@ -265,6 +265,32 @@ void Hammer::collideObj(Entity *e, UCHAR t){
 	}
 }
 
+//ƒ[ƒv‚Ì¥”ñ‚ð”»’è
+void Hammer::collideWarp(Entity *e){
+	Entity::collideWarp(e);
+
+	switch (e->getType()){
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_GOAST_BOX:
+	case TY_BOMB:
+	case TY_HIBOMB:
+	case TY_HAMMER:
+	case TY_ENEMY_1:
+	case TY_ENEMY_2:
+	case TY_ENEMY_3:
+	case TY_ENEMY_4:
+	case TY_ENEMY_5:
+		resetResponse(RES_WARP);
+		break;
+	}
+}
+
 //Ž‚Âˆ—
 void Hammer::setHold(Debu *d){
 	d->setState(ST_HAMMER);

@@ -112,6 +112,9 @@ public:
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
 
+	//ワープの是非を判定
+	virtual void collideWarp(Entity *e);
+
 	//持つ処理
 	void setHold(Debu *d);
 };
