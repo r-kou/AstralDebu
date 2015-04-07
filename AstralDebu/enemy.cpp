@@ -68,19 +68,19 @@ void Enemy::collideObj(Entity *e, UCHAR t){
 	case TY_HIBOMB:
 	case TY_HAMMER:
 		//箱にはぶつかる
-		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
-		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
-		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
+		if ((t & LEFT) && (diffVelX(e) < 0)) setResponse(RES_LEFT);
+		if ((t & RIGHT) && (diffVelX(e) > 0)) setResponse(RES_RIGHT);
+		if ((t & TOP) && (diffVelY(e) < 0)) setResponse(RES_TOP);
 		if ((diffBottom(e, true) <= marginY) &&
 			((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP)) ||
-			((diffVelY(e) > 0) && (state == ST_KNOCK))))) setRes(RES_BOTTOM); //空中にいたら着地判定
+			((diffVelY(e) > 0) && (state == ST_KNOCK))))) setResponse(RES_BOTTOM); //空中にいたら着地判定
 		//向こうからぶつかってきたら死亡
 		if ((e->getState() == ST_HAMMER) ||
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
 			animInterval = 1.0f;
-			setRes(RES_DEAD, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, 0);
+			setResponse(RES_DEAD, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, 0);
 		}
 		break;
 	case TY_ENEMY_1:
@@ -89,12 +89,12 @@ void Enemy::collideObj(Entity *e, UCHAR t){
 	case TY_ENEMY_4:
 	case TY_ENEMY_5:
 		if (((t & LEFT) && (diffVelX(e) < 0))||
-			((t & RIGHT) && (diffVelX(e) > 0))) setRes(RES_COLLIDE);
+			((t & RIGHT) && (diffVelX(e) > 0))) setResponse(RES_COLLIDE);
 		break;
 	case TY_BLAST:
 		//吹っ飛ばされて死亡
 		animInterval = 1.0f;
-		setRes(RES_DEAD, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
+		setResponse(RES_DEAD, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
 		break;
 	}
 }
@@ -281,7 +281,7 @@ void Enemy5::move(float frameTime){
 
 //他オブジェクトへの反応
 void Enemy5::responseObj(){
-	if (getRes(RES_DEAD)){
+	if (getResponse(RES_DEAD)){
 		action = true;
 	}
 
@@ -324,7 +324,7 @@ void BulletE::collideObj(Entity *e, UCHAR t){
 	case TY_HIBOMB:
 	case TY_HAMMER:
 	case TY_BLAST:
-		setRes(RES_DEAD);
+		setResponse(RES_DEAD);
 		break;
 	}
 }

@@ -43,14 +43,34 @@ void Box::collideObj(Entity *e, UCHAR t){
 	case TY_GOAST_BOX:
 	case TY_HAMMER:
 		//î†ìØémÇÕÇ‘Ç¬Ç©ÇÈ
-		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
-		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
-		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
+		if ((t & LEFT) && (diffVelX(e) < 0)) setResponse(RES_LEFT);
+		if ((t & RIGHT) && (diffVelX(e) > 0)) setResponse(RES_RIGHT);
+		if ((t & TOP) && (diffVelY(e) < 0)) setResponse(RES_TOP);
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP)) ||
 			((diffVelY(e) > 0) && (state == ST_KNOCK)))) {
 			//ãÛíÜÇ…Ç¢ÇΩÇÁíÖínîªíË
-			setRes(RES_BOTTOM_CHIP);
+			setResponse(RES_BOTTOM_CHIP);
 		}
+		break;
+	}
+}
+
+
+//ÉèÅ[ÉvÇÃê•îÒÇîªíË
+void Box::collideWarp(Entity *e){
+	Entity::collideWarp(e);
+
+	switch (e->getType()){
+	case TY_WOOD_BOX:
+	case TY_STEEL_BOX:
+	case TY_LEAD_BOX:
+	case TY_BOMB_BOX:
+	case TY_HIBOMB_BOX:
+	case TY_AIR_BOX:
+	case TY_FRAME_BOX:
+	case TY_GOAST_BOX:
+	case TY_HAMMER:
+		resetResponse(RES_WARP);
 		break;
 	}
 }
@@ -69,7 +89,7 @@ void WoodBox::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case TY_BLAST:
 		//îöî≠Ç≈âÛÇÍÇÈ
-		setRes(RES_DEAD);
+		setResponse(RES_DEAD);
 		break;
 	case TY_HAMMER:
 		//ìSãÖÇ©ÇÁÇ‘Ç¬Ç©Ç¡ÇƒÇ´ÇΩÇÁâÛÇÍÇÈ
@@ -77,7 +97,7 @@ void WoodBox::collideObj(Entity *e, UCHAR t){
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
-			setRes(RES_DEAD);
+			setResponse(RES_DEAD);
 		}
 		break;
 	case TY_ENEMY_1:
@@ -90,7 +110,7 @@ void WoodBox::collideObj(Entity *e, UCHAR t){
 			((t & RIGHT) && (vel.x > 0.0f)) ||
 			((t & TOP) && (vel.y < 0.0f)) ||
 			((t & BOTTOM) && (vel.y > 0.0f))){
-			setRes(RES_DEAD);
+			setResponse(RES_DEAD);
 		}
 		break;
 
@@ -114,7 +134,7 @@ void SteelBox::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case TY_BLAST:
 		//îöî≠Ç≈îÚÇÒÇ≈Ç¢Ç≠
-		setRes(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
+		setResponse(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
 		break;
 	case TY_HAMMER:
 		//ìSãÖÇ©ÇÁÇ‘Ç¬Ç©Ç¡ÇƒÇ´ÇΩÇÁâÛÇÍÇÈ
@@ -122,7 +142,7 @@ void SteelBox::collideObj(Entity *e, UCHAR t){
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
-			setRes(RES_DEAD);
+			setResponse(RES_DEAD);
 		}
 		break;
 	case TY_ENEMY_1:
@@ -135,7 +155,7 @@ void SteelBox::collideObj(Entity *e, UCHAR t){
 			((t & RIGHT) && (vel.x > 0.0f)) ||
 			((t & TOP) && (vel.y < 0.0f)) ||
 			((t & BOTTOM) && (vel.y > 0.0f))){
-			setRes(RES_STOP);
+			setResponse(RES_STOP);
 		}
 		break;
 	}
@@ -173,14 +193,14 @@ void BombBox::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case TY_BLAST:
 		//îöî≠Ç≈âÛÇÍÇÈÅ@ÇƒÇ©óUîö
-		setRes(RES_DEAD);
+		setResponse(RES_DEAD);
 	case TY_HAMMER:
 		//ìSãÖÇ©ÇÁÇ‘Ç¬Ç©Ç¡ÇƒÇ´ÇΩÇÁâÛÇÍÇÈ
 		if ((e->getState() == ST_HAMMER) ||
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
-			setRes(RES_DEAD);
+			setResponse(RES_DEAD);
 		}
 		break;
 	case TY_ENEMY_1:
@@ -193,7 +213,7 @@ void BombBox::collideObj(Entity *e, UCHAR t){
 			((t & RIGHT) && (vel.x > 0.0f)) ||
 			((t & TOP) && (vel.y < 0.0f)) ||
 			((t & BOTTOM) && (vel.y > 0.0f))){
-			setRes(RES_DEAD);
+			setResponse(RES_DEAD);
 		}
 		break;
 	}
@@ -215,7 +235,7 @@ void HibombBox::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case TY_BLAST:
 		//îöî≠Ç≈âÛÇÍÇÈ ìSãÖÇ≈ÇÕâÛÇÍÇ»Ç¢
-		setRes(RES_DEAD);
+		setResponse(RES_DEAD);
 		break;
 	}
 
@@ -238,7 +258,7 @@ void AirBox::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case TY_BLAST:
 		//îöî≠Ç≈îÚÇÒÇ≈Ç¢Ç≠
-		setRes(RES_KNOCK, blastX(e,VEL_BOMB_X), blastY(e,VEL_BOMB_A));
+		setResponse(RES_KNOCK, blastX(e,VEL_BOMB_X), blastY(e,VEL_BOMB_A));
 		break;
 	case TY_HAMMER:
 		//ìSãÖÇ©ÇÁÇ‘Ç¬Ç©Ç¡ÇƒÇ´ÇΩÇÁâÛÇÍÇÈ
@@ -246,7 +266,7 @@ void AirBox::collideObj(Entity *e, UCHAR t){
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
-			setRes(RES_DEAD);
+			setResponse(RES_DEAD);
 		}
 		break;
 	case TY_ENEMY_1:
@@ -259,7 +279,7 @@ void AirBox::collideObj(Entity *e, UCHAR t){
 			((t & RIGHT) && (vel.x > 0.0f)) ||
 			((t & TOP) && (vel.y < 0.0f)) ||
 			((t & BOTTOM) && (vel.y > 0.0f))){
-			setRes(RES_STOP);
+			setResponse(RES_STOP);
 		}
 		break;
 	}
@@ -321,7 +341,7 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 	case TY_FRAME_BOX:
 	case TY_GOAST_BOX:
 	case TY_ROCK:
-		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == ST_JUMP)) setRes(RES_BOTTOM_CHIP);
+		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == ST_JUMP)) setResponse(RES_BOTTOM_CHIP);
 	case TY_BOMB:
 	case TY_HIBOMB:
 	case TY_HAMMER:
@@ -329,7 +349,7 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 		if (((t & LEFT) && (diffVelX(e) < 0)) ||
 			((t & RIGHT) && (diffVelX(e) > 0)) ||
 			((t & TOP) && (diffVelY(e) < 0)) ||
-			((t & BOTTOM) && (diffVelY(e) > 0) && (state == ST_JUMP || state == ST_KNOCK))) setRes(RES_DEAD);
+			((t & BOTTOM) && (diffVelY(e) > 0) && (state == ST_JUMP || state == ST_KNOCK))) setResponse(RES_DEAD);
 		break;
 	case TY_ENEMY_1:
 	case TY_ENEMY_2:
@@ -340,18 +360,18 @@ void FrameBox::collideObj(Entity *e, UCHAR t){
 		//ç∂âEÇ…ÇÕÇ±Ç¡ÇøÇ™ìÆÇ¢ÇƒÇ¢ÇΩÇÁÅAè„â∫ÇÕñ‚ìöñ≥ópÇ≈âÛÇÍÇÈ
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
-			(t & TOP) || (t & BOTTOM)) setRes(RES_DEAD);
+			(t & TOP) || (t & BOTTOM)) setResponse(RES_DEAD);
 		break;
 	case TY_BLAST:
 		//îöïóÇÕë¨ìxÇ∆Ç©ä÷åWÇ»Ç¢
-		setRes(RES_DEAD);
+		setResponse(RES_DEAD);
 		break;
 	case TY_DEBU:
 		//ÉfÉuÇ™èÊÇ¡ÇƒÇ‡âÛÇÍÇÈ
 		if (t & TOP) {
 			if ((diffTop(e, true) >= -marginY) &&
 				((diffVelY(e) < 0) && (e->getState() == ST_JUMP || e->getState() == ST_LADDER || e->getState() == ST_KNOCK))){
-				setRes(RES_DEAD);
+				setResponse(RES_DEAD);
 			}
 		}
 		break;
@@ -376,7 +396,7 @@ void GoastBox::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case TY_BLAST:
 		//îöî≠Ç≈ÇÃÇ›âÛÇÍÇÈ
-		setRes(RES_DEAD);
+		setResponse(RES_DEAD);
 		break;
 	}
 

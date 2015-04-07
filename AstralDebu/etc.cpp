@@ -51,7 +51,7 @@ void Rock::collideObj(Entity *e, UCHAR t){
 		break;
 	case TY_BLAST:
 		//爆発する
-		setRes(RES_DEAD);
+		setResponse(RES_DEAD);
 		break;
 	case TY_HAMMER:
 		//鉄球からぶつかってきたら壊れる
@@ -59,7 +59,7 @@ void Rock::collideObj(Entity *e, UCHAR t){
 			((t & LEFT) && (e->getVelX() > 0)) ||
 			((t & RIGHT) && (e->getVelX() < 0)) ||
 			((t & TOP) && (e->getVelY() > 0))) {
-			setRes(RES_DEAD);
+			setResponse(RES_DEAD);
 		}
 		break;
 	}
@@ -152,7 +152,7 @@ void MeatE::collideObj(Entity *e, UCHAR t){
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP)) ||
 			((diffVelY(e) > 0) && (state == ST_KNOCK)))) {
 			//空中にいたら着地判定
-			setRes(RES_BOTTOM_CHIP);
+			setResponse(RES_BOTTOM_CHIP);
 		}
 		break;
 	}
@@ -246,17 +246,17 @@ void Hammer::collideObj(Entity *e, UCHAR t){
 	case TY_HIBOMB_BOX:
 	case TY_GOAST_BOX:
 		//停止するのは鉛箱と霊箱だけ　それ以外は全て粉砕する
-		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
-		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
-		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
+		if ((t & LEFT) && (diffVelX(e) < 0)) setResponse(RES_LEFT);
+		if ((t & RIGHT) && (diffVelX(e) > 0)) setResponse(RES_RIGHT);
+		if ((t & TOP) && (diffVelY(e) < 0)) setResponse(RES_TOP);
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP || state == ST_LADDER)) ||
-			((diffVelY(e) > 0) && (state == ST_KNOCK)))) setRes(RES_BOTTOM_CHIP); //空中にいたら着地判定
+			((diffVelY(e) > 0) && (state == ST_KNOCK)))) setResponse(RES_BOTTOM_CHIP); //空中にいたら着地判定
 		break;
 	case TY_RED_WARP:
 	case TY_GREEN_WARP:
 	case TY_YELLOW_WARP:
 		//ワープは可能
-		if (warpInterval == 0.0f) setRes(RES_WARP, CHIP(e->getPartnerX() + 0.5f), CHIP_D(e->getPartnerY() + 0.5f));
+		if (warpInterval == 0.0f) setResponse(RES_WARP, CHIP(e->getPartnerX() + 0.5f), CHIP_D(e->getPartnerY() + 0.5f));
 	case TY_LADDER:
 	case TY_GOAL:
 		//半透明になる

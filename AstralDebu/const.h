@@ -48,6 +48,7 @@
 #define FOR_EACH(x) for(int i = 0; i < x; i++) for(int j = i + 1; j < x; j++)
 #define ALL_OBJ FOR(objMax)
 #define ALL_OBJ_EACH FOR_EACH(objMax)
+#define ALL_OBJ_2 FOR_2(objMax,objMax)
 #define INC(x,t) x = static_cast<t>(x + 1)
 #define COND(s,t,f) ((s)?t:f)
 #define TOBOOL(i) COND(i,true,false)

@@ -61,7 +61,7 @@ void BombE::collideObj(Entity *e, UCHAR t){
 	case TY_GOAST_BOX:
 	case TY_ROCK:
 		//静止してたら止まる
-		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == ST_JUMP)) setRes(RES_BOTTOM);
+		if ((t & BOTTOM) && (diffVelY(e) <= 0) && (state == ST_JUMP)) setResponse(RES_BOTTOM);
 	case TY_BOMB:
 	case TY_HIBOMB:
 	case TY_HAMMER:
@@ -69,7 +69,7 @@ void BombE::collideObj(Entity *e, UCHAR t){
 		if (((t & LEFT) && (diffVelX(e) < 0)) ||
 			((t & RIGHT) && (diffVelX(e) > 0)) ||
 			((t & TOP) && (diffVelY(e) < 0)) ||
-			((t & BOTTOM) && (diffVelY(e) > 0) && (state == ST_JUMP || state == ST_KNOCK))) setRes(RES_DEAD);
+			((t & BOTTOM) && (diffVelY(e) > 0) && (state == ST_JUMP || state == ST_KNOCK))) setResponse(RES_DEAD);
 		break;
 	case TY_ENEMY_1:
 	case TY_ENEMY_2:
@@ -80,13 +80,13 @@ void BombE::collideObj(Entity *e, UCHAR t){
 		if (((t & LEFT) && (vel.x < 0)) ||
 			((t & RIGHT) && (vel.x > 0)) ||
 			((t & TOP) && (vel.y < 0)) ||
-			((t & BOTTOM) && (vel.y > 0))) setRes(RES_DEAD);
+			((t & BOTTOM) && (vel.y > 0))) setResponse(RES_DEAD);
 		break;
 	case TY_BULLET:
 	case TY_MISSILE:
 	case TY_BLAST:
 		//爆風と弾丸は速度とか関係ない
-		setRes(RES_DEAD);
+		setResponse(RES_DEAD);
 		break;
 	}
 
@@ -124,5 +124,5 @@ Mine::Mine(){
 //他オブジェクトへの接触
 void Mine::collideObj(Entity *e, UCHAR t){
 	//機雷は本当になんでも爆発する
-	setRes(RES_DEAD);
+	setResponse(RES_DEAD);
 }

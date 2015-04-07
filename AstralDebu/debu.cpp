@@ -146,10 +146,10 @@ void Debu::collideObj(Entity *e, UCHAR t){
 		if ((!input->isKeyDown(VK_DOWN))&&
 			(t & BOTTOM) && ((diffBottom(e, true) <= 0) &&
 			(((diffVelY(e) >= 0) && (state == ST_JUMP || (state == ST_LADDER))) ||
-			((diffVelY(e) > 0) && (state == ST_KNOCK))))) setRes(RES_BOTTOM);
+			((diffVelY(e) > 0) && (state == ST_KNOCK))))) setResponse(RES_BOTTOM);
 		break;
 	case TY_LADDER:
-		setRes(RES_LADDER);
+		setResponse(RES_LADDER);
 		break;
 	case TY_ENEMY_1:
 	case TY_ENEMY_2:
@@ -159,18 +159,18 @@ void Debu::collideObj(Entity *e, UCHAR t){
 	case TY_BULLET:
 		//吹っ飛ばされる
 		if (knockInterval == 0.0f){
-			setRes(RES_KNOCK, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, -VEL_KNOCK_JUMP);
+			setResponse(RES_KNOCK, getPosX() > e->getPosX() ? VEL_KNOCK_X : -VEL_KNOCK_X, -VEL_KNOCK_JUMP);
 			knockInterval = 0.33f;
 		}
 		break;
 	case TY_MISSILE:
 	case TY_BLAST:
 		//吹っ飛ばされる
-		setRes(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
+		setResponse(RES_JUMP, blastX(e, VEL_BOMB_X), blastY(e, VEL_BOMB_Y));
 		break;
 	case TY_GOAL:
 		//クリアする
-		setRes(RES_CLEAR);
+		setResponse(RES_CLEAR);
 		break;
 	}
 }
@@ -246,7 +246,7 @@ void Debu::changeImage(){
 //他オブジェクトへの反応
 void Debu::responseObj(){
 	Entity::responseObj();
-	if (getRes(RES_LADDER)){
+	if (getResponse(RES_LADDER)){
 		if (input->isKeyDown('Z') || hold || state == ST_KNOCK || state == ST_DEAD || state == ST_CLEAR) return;
 		state = ST_LADDER;
 	}

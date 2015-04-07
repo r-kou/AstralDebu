@@ -96,25 +96,41 @@ void AstralDebu::updateMain(){
 		if (isMovable(e)) e->touchMap(map);
 	}
 
-	debu->resetResponse();
+	debu->resetResponseAll();
 	ALL_OBJ{
 		Entity *e = getObject(i);
-		e->resetResponse();
+		e->resetResponseAll();
 	}
 
 		//他オブジェクトへの接触
-	if (isTouchable(debu)){
+		if (isTouchable(debu)){
 		ALL_OBJ{
 			Entity *e = getObject(i);
 			if (isTouchable(e)) debu->touchObj(e);
 		}
-	}
-	
+		}
 	ALL_OBJ_EACH{
 		Entity *ei = getObject(i);
 		Entity *ej = getObject(j);
 		if (isTouchable(ei) && isTouchable(ej))
 			ei->touchObj(ej);
+	}
+
+	//ワープ判定
+	if (isWarpable(debu)){
+		ALL_OBJ{
+			Entity *e = getObject(i);
+			if (isTouchable(e) && ((debu->getResponseX(entityNS::RES_WARP) / CHIP_SIZE) == e->ChipCX())
+				&& ((debu->getResponseY(entityNS::RES_WARP) / CHIP_SIZE) == e->ChipCY())) debu->collideWarp(e);
+		}
+	}
+	ALL_OBJ_2{
+		if (i == j) continue;
+		Entity *ei = getObject(i);
+		Entity *ej = getObject(j);
+		if (!isWarpable(ei)) continue;
+		if (isTouchable(ej) && ((int)(ei->getResponseX(entityNS::RES_WARP) / CHIP_SIZE) == ej->ChipCX())
+			&& ((int)((ei->getResponseY(entityNS::RES_WARP) - DATA_LEN) / CHIP_SIZE) == ej->ChipCY())) ei->collideWarp(ej);
 	}
 
 		//オブジェクトへの反応実行

@@ -365,6 +365,8 @@ private:
 	bool isTouchable(Entity *e);
 	//オブジェクトが描画可能か判定
 	bool isMovable(Entity *e);
+	//オブジェクトがワープするか判定
+	bool isWarpable(Entity *e) { return (isTouchable(e)&&e->getResponse(entityNS::RES_WARP) != 0); }
 	//体力の増加
 	void addLife(int i);
 	//体力の減少

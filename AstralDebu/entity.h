@@ -168,11 +168,6 @@ protected:
 	float blastY(Entity *e, float y) { if (blastTop(e)) return -y; else if (blastBottom(e)) return y; else return 0; }
 	//オブジェクト反応の演算
 	UINT shift(int i) { return 1 << i; }
-	const UINT getRes(int i) { return response & shift(i); }
-	const float getResX(int i) { return responseVC[i].x; }
-	const float getResY(int i) { return responseVC[i].y; }
-	void setRes(int i) { response |= shift(i); }
-	void setRes(int i, float x, float y) { response |= shift(i); responseVC[i].x += x; responseVC[i].y += y; }
 	//各値の最大値を設定
 	float setLimit(float n, float max) { return ((n>max) ? max : ((n<-max) ? -max : n)); }
 	//各値の最大値以下になるように加算
@@ -207,6 +202,9 @@ public:
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
+
+	//ワープの是非を判定
+	virtual void collideWarp(Entity *e);
 
 	//他オブジェクトへの反応
 	virtual void responseObj();
@@ -270,7 +268,10 @@ public:
 	const float getAnim() { return animInterval; }
 	const float getWarp() { return warpInterval; }
 	const bool getAction() { return action; }
-	const int getResponse() { return response; }
+	const int getResponseAll() { return response; }
+	const UINT getResponse(int i) { return response & shift(i); }
+	const float getResponseX(int i) { return responseVC[i].x; }
+	const float getResponseY(int i) { return responseVC[i].y; }
 	const std::string getPut() { return putSound; }
 
 	//マップ上での座標を返す
@@ -302,7 +303,10 @@ public:
 	void setWarp(float i) { warpInterval = i; }
 	void setAction(bool b) { action = b; }
 	//反応を初期化
-	void resetResponse() { response = 0; FOR(entityNS::RES_CLEAR){ responseVC[i].x = 0; responseVC[i].y = 0; } }
+	void setResponse(int i) { response |= shift(i); }
+	void setResponse(int i, float x, float y) { response |= shift(i); responseVC[i].x += x; responseVC[i].y += y; }
+	void resetResponseAll() { response = 0; FOR(entityNS::RES_CLEAR){ responseVC[i].x = 0; responseVC[i].y = 0; } }
+	void resetResponse(int i) { response -= (getResponse(i) & shift(i)); }
 	//ワープ相手を設定
 	void setpartner(Entity *e) {partnerX = e->ChipCX(); partnerY = e->ChipCY();	}
 	//立つ

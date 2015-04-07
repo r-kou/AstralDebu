@@ -283,17 +283,17 @@ void Entity::collideObj(Entity *e, UCHAR t){
 	switch (e->getType()){
 	case TY_ROCK:
 		//壊れる壁なので壁と同じ
-		if ((t & LEFT) && (diffVelX(e) < 0)) setRes(RES_LEFT);
-		if ((t & RIGHT) && (diffVelX(e) > 0)) setRes(RES_RIGHT);
-		if ((t & TOP) && (diffVelY(e) < 0)) setRes(RES_TOP);
+		if ((t & LEFT) && (diffVelX(e) < 0)) setResponse(RES_LEFT);
+		if ((t & RIGHT) && (diffVelX(e) > 0)) setResponse(RES_RIGHT);
+		if ((t & TOP) && (diffVelY(e) < 0)) setResponse(RES_TOP);
 		if ((t & BOTTOM) && (((diffVelY(e) >= 0) && (state == ST_JUMP || state == ST_LADDER)) ||
-			((diffVelY(e) > 0) && (state == ST_KNOCK)))) setRes(RES_BOTTOM); //空中にいたら着地判定
+			((diffVelY(e) > 0) && (state == ST_KNOCK)))) setResponse(RES_BOTTOM); //空中にいたら着地判定
 		break;
 	case TY_RED_WARP:
 	case TY_GREEN_WARP:
 	case TY_YELLOW_WARP:
 		//ワープは発動後一定期間内無効
-		if (warpInterval == 0.0f) setRes(RES_WARP,CHIP(e->getPartnerX() + 0.5f),CHIP_D(e->getPartnerY() + 0.5f));
+		if (warpInterval == 0.0f) setResponse(RES_WARP,CHIP(e->getPartnerX() + 0.5f),CHIP_D(e->getPartnerY() + 0.5f));
 	case TY_LADDER:
 	case TY_GOAL:
 		//半透明になる
@@ -305,7 +305,7 @@ void Entity::collideObj(Entity *e, UCHAR t){
 
 //他オブジェクトへの反応
 void Entity::responseObj(){
-	if (getRes(RES_LEFT)) {
+	if (getResponse(RES_LEFT)) {
 		//左に衝突
 		setLeft(false);
 		vel.x = 0.0f;
@@ -315,7 +315,7 @@ void Entity::responseObj(){
 			playPut();
 		}
 	}
-	if (getRes(RES_RIGHT)) {
+	if (getResponse(RES_RIGHT)) {
 		//右に衝突
 		setRight(false);
 		vel.x = 0.0f;
@@ -325,7 +325,7 @@ void Entity::responseObj(){
 			playPut();
 		}
 	}
-	if (getRes(RES_TOP)) {
+	if (getResponse(RES_TOP)) {
 		//上に衝突
 		setTop(false);
 		//停止せずに落下速度に加算
@@ -336,7 +336,7 @@ void Entity::responseObj(){
 			playPut();
 		}
 	}
-	if (getRes(RES_BOTTOM)) {
+	if (getResponse(RES_BOTTOM)) {
 		//下に衝突
 		setBottom(false);
 		//はしごの速度ではならない
@@ -344,7 +344,7 @@ void Entity::responseObj(){
 		vel.y = 0.0f;
 		setStand();
 	}
-	if (getRes(RES_BOTTOM_CHIP)) {
+	if (getResponse(RES_BOTTOM_CHIP)) {
 		//下に衝突 マスにぴったり
 		setCX();
 		setBottom(false);
@@ -353,13 +353,13 @@ void Entity::responseObj(){
 		vel.x = 0.0f;
 		setStand();
 	}
-	if (getRes(RES_STOP)) {
+	if (getResponse(RES_STOP)) {
 		//停止
 		vel.x = 0.0f;
 		vel.y = 0.0f;
 		setStand();
 	}
-	if (getRes(RES_CHIP)) {
+	if (getResponse(RES_CHIP)) {
 		//停止 マスにぴったり
 		setCX();
 		setCY();
@@ -367,35 +367,35 @@ void Entity::responseObj(){
 		vel.y = 0.0f;
 		setStand();
 	}
-	if (getRes(RES_COLLIDE)){
+	if (getResponse(RES_COLLIDE)){
 		if (!action) direct = !direct;
 	}
-	if (getRes(RES_WARP)){
+	if (getResponse(RES_WARP)){
 		//ワープ
 		warpInterval = 0.5f;
-		pos.x = getResX(RES_WARP);
-		pos.y = getResY(RES_WARP);
+		pos.x = getResponseX(RES_WARP);
+		pos.y = getResponseY(RES_WARP);
 		audio->playCue(audioNS::WARP);
 	}
-	if (getRes(RES_KNOCK)) {
+	if (getResponse(RES_KNOCK)) {
 		state = ST_KNOCK;
-		vel.x = addLimit(vel.x, getResX(RES_KNOCK), VEL_MAX);
-		vel.y = addLimit(vel.y, getResY(RES_KNOCK), VEL_MAX);
+		vel.x = addLimit(vel.x, getResponseX(RES_KNOCK), VEL_MAX);
+		vel.y = addLimit(vel.y, getResponseY(RES_KNOCK), VEL_MAX);
 		audio->playCue(audioNS::KNOCK);
 	}
-	if (getRes(RES_JUMP)){
+	if (getResponse(RES_JUMP)){
 		state = ST_JUMP;
-		vel.x = addLimit(vel.x,getResX(RES_JUMP), VEL_MAX);
-		vel.y = addLimit(vel.y,getResY(RES_JUMP), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
+		vel.x = addLimit(vel.x,getResponseX(RES_JUMP), VEL_MAX);
+		vel.y = addLimit(vel.y,getResponseY(RES_JUMP), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
 		audio->playCue(audioNS::KNOCK);
 	}
-	if (getRes(RES_DEAD)){
+	if (getResponse(RES_DEAD)){
 		state = ST_DEAD;
-		vel.x = addLimit(vel.x,getResX(RES_DEAD), VEL_MAX);
-		vel.y = addLimit(vel.y,getResY(RES_DEAD), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
+		vel.x = addLimit(vel.x,getResponseX(RES_DEAD), VEL_MAX);
+		vel.y = addLimit(vel.y,getResponseY(RES_DEAD), VEL_MAX_JUMP) - VEL_KNOCK_JUMP;
 		playDead();
 	}
-	if (getRes(RES_CLEAR)){
+	if (getResponse(RES_CLEAR)){
 		state = ST_CLEAR;
 		vel.x = 0.0f;
 		vel.y = 0.0f;
@@ -404,6 +404,14 @@ void Entity::responseObj(){
 
 }
 
+//ワープの是非を判定
+void Entity::collideWarp(Entity *e){
+	switch (e->getType()){
+	case TY_ROCK:
+		resetResponse(RES_WARP);
+		break;
+	}
+}
 
 //描画する画像を変更
 void Entity::changeImage(){}
