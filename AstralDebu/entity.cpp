@@ -212,22 +212,22 @@ void Entity::touchObj(Entity *e){
 	if (pos.y > e->getPosY()){
 		if (pos.x > e->getPosX()){
 			//edge1
-			if (touchObjDirect(diffLeft(e, false), diffTop(e, true), ((e->getType() == TY_BLAST) ? 0 : diffVelX(e)))){
+			if (touchObjDirect(diffLeft(e, false), diffTop(e, true), checkObjectVelocity(e,diffVelX(e)))){
 				t |= LEFT;
 				et |= RIGHT;
 			}
-			if (touchObjDirect(diffLeft(e, true), diffTop(e, false), ((e->getType() == TY_BLAST) ? 0 : diffVelY(e)))){
+			if (touchObjDirect(diffLeft(e, true), diffTop(e, false), checkObjectVelocity(e, diffVelY(e)))){
 				t |= TOP;
 				et |= BOTTOM;
 			}
 		}
 		else {
 			//edge2
-			if (touchObjDirect(-diffRight(e, false), diffTop(e, true), ((e->getType() == TY_BLAST) ? 0 : -diffVelX(e)))){
+			if (touchObjDirect(-diffRight(e, false), diffTop(e, true), checkObjectVelocity(e, -diffVelX(e)))){
 				t |= RIGHT;
 				et |= LEFT;
 			}
-			if (touchObjDirect(-diffRight(e, true), diffTop(e, false), ((e->getType() == TY_BLAST) ? 0 : diffVelY(e)))){
+			if (touchObjDirect(-diffRight(e, true), diffTop(e, false), checkObjectVelocity(e, diffVelY(e)))){
 				t |= TOP;
 				et |= BOTTOM;
 			}
@@ -240,22 +240,22 @@ void Entity::touchObj(Entity *e){
 	else {
 		if (pos.x > e->getPosX()){
 			//edge4
-			if (touchObjDirect(diffLeft(e, false), -diffBottom(e, true), ((e->getType() == TY_BLAST) ? 0 : diffVelX(e)))){
+			if (touchObjDirect(diffLeft(e, false), -diffBottom(e, true), checkObjectVelocity(e, diffVelX(e)))){
 				t |= LEFT;
 				et |= RIGHT;
 			}
-			if (touchObjDirect(diffLeft(e, true), -diffBottom(e, false), ((e->getType() == TY_BLAST) ? 0 : -diffVelY(e)))){
+			if (touchObjDirect(diffLeft(e, true), -diffBottom(e, false), checkObjectVelocity(e, -diffVelY(e)))){
 				t |= BOTTOM;
 				et |= TOP;
 			}
 		}
 		else {
 			//edge3
-			if (touchObjDirect(-diffRight(e, false), -diffBottom(e, true), ((e->getType() == TY_BLAST) ? 0 : -diffVelX(e)))){
+			if (touchObjDirect(-diffRight(e, false), -diffBottom(e, true), checkObjectVelocity(e, -diffVelX(e)))){
 				t |= RIGHT;
 				et |= LEFT;
 			}
-			if (touchObjDirect(-diffRight(e, true), -diffBottom(e, false), ((e->getType() == TY_BLAST) ? 0 : -diffVelY(e)))){
+			if (touchObjDirect(-diffRight(e, true), -diffBottom(e, false), checkObjectVelocity(e, -diffVelY(e)))){
 				t |= BOTTOM;
 				et |= TOP;
 			}
@@ -476,9 +476,39 @@ void Entity::checkBottom(bool d, Entity *e){
 	}
 }
 
+//各値の最大値以下になるように加算
 float Entity::addLimit(float v, float n, float max) {
 	//減速は無し　反射はあり
 	if (((v > n) && (n > 0.0f)) || ((v < n) && (n < 0.0f))) return v;
 	if (v*n > 0) return setLimit(v + n, max);
 	else return setLimit(n, max);
+}
+
+//速度に依存しないオブジェクトへの衝突判定
+float Entity::checkObjectVelocity(Entity *e, float vel){
+	switch (type){
+	case TY_BLAST:
+	case TY_GOAL:
+	case TY_RED_WARP:
+	case TY_GREEN_WARP:
+	case TY_YELLOW_WARP:
+		return 0;
+		break;
+	case TY_HAMMER:
+		if (state == ST_HAMMER) return 0;
+		break;
+	}
+	switch (e->getType()){
+	case TY_BLAST:
+	case TY_GOAL:
+	case TY_RED_WARP:
+	case TY_GREEN_WARP:
+	case TY_YELLOW_WARP:
+		return 0;
+		break;
+	case TY_HAMMER:
+		if (e->getState() == ST_HAMMER) return 0;
+		break;
+	}
+	return vel;
 }

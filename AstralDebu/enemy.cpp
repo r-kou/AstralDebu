@@ -219,7 +219,7 @@ void Enemy3::move(float frameTime){
 	if ((state == ST_STAND) && (!action) && (ChipCY() == debu->ChipCY()) && (animInterval == 0)){
 		if (getPosX() > debu->getPosX()) direct = true;
 		else direct = false;
-		animInterval = 0.5f;
+		animInterval = 0.75f;
 		action = true;
 	}
 

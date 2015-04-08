@@ -172,6 +172,8 @@ protected:
 	float setLimit(float n, float max) { return ((n>max) ? max : ((n<-max) ? -max : n)); }
 	//各値の最大値以下になるように加算
 	float addLimit(float v, float n, float max);
+	//速度に依存しないオブジェクトへの衝突判定
+	float checkObjectVelocity(Entity *e,float vel);
 
 public:
 	//コンストラクタ

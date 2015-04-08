@@ -26,6 +26,7 @@ namespace etcNS{
 	const int EDGE_HAMMER_X = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_Y = entityNS::EDGE_MAX;
 	const int EDGE_HAMMER_HOLDED_X = entityNS::EDGE_MAX * 2;
+	const int EDGE_HAMMER_HOLDED_Y = 13;
 	const int EDGE_MAR_X = 3;
 	const int EDGE_MAR_Y = 3;
 
@@ -93,6 +94,8 @@ public:
 };
 
 class Hammer : public Entity{
+private:
+	VC2 basePos;
 public:
 	//コンストラクタ
 	Hammer();
@@ -102,9 +105,6 @@ public:
 
 	//地形への接触判定
 	virtual void touchMap(int map[MAP_COL][MAP_ROW]);
-
-	//他オブジェクトへの接触判定
-	virtual void touchObj(Entity *e);
 
 	//地形への接触
 	virtual void collideMap(UCHAR t);
@@ -117,5 +117,11 @@ public:
 
 	//持つ処理
 	void setHold(Debu *d);
+
+	//持ち上げ前の位置を取得
+	const VC2 getBasePos() { return basePos; }
+
+	//持ち上げ前の位置を設定
+	void setBasePos(const VC2 b) { basePos = b; }
 };
 #endif

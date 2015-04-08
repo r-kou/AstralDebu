@@ -172,13 +172,13 @@ void AstralDebu::putObject(){
 	debu->setAnim(0.3f);
 
 	if (e->getType() == entityNS::TY_HAMMER){
-		if (e->getDirect()) e->setPosX(CHIP(debu->ChipCX() - 0.5f));
-		else e->setPosX(CHIP(debu->ChipCX() + 1.5f));
+		e->setPosX(((Hammer*)e)->getBasePos().x);
+		e->setPosY(((Hammer*)e)->getBasePos().y);
 	}
 	else {
 		e->setPosX(CHIP(getCursorChipX(debu) + 0.5f));
+		e->setPosY(CHIP_D(getCursorChipY(debu) + 0.5f));
 	}
-	e->setPosY(CHIP_D(getCursorChipY(debu) + 0.5f));
 	e->setVelX(0.0f);
 	e->setVelY(0.0f);
 	e->setState(entityNS::ST_STAND);

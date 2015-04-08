@@ -183,6 +183,8 @@ Hammer::Hammer(){
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
 	fall = true;
+	basePos.x = 0.0f;
+	basePos.y = 0.0f;
 }
 
 
@@ -227,17 +229,9 @@ void Hammer::collideMap(UCHAR t){
 	}
 }
 
-//他オブジェクトへの接触判定
-void Hammer::touchObj(Entity *e){
-	//所持状態なら当たらない
-	if (state == ST_HAMMER) return;
-
-	Entity::touchObj(e);
-}
-
 //他オブジェクトへの接触
 void Hammer::collideObj(Entity *e, UCHAR t){
-	//所持状態ならマップには当たらない
+	//所持状態なら当たらない
 	if (state == ST_HAMMER) return;
 
 	//鉄球類固有の衝突判定　ほとんどのオブジェクトを貫通する
@@ -300,11 +294,12 @@ void Hammer::setHold(Debu *d){
 
 	direct = d->getDirect();
 	state = ST_HAMMER;
+	setBasePos(pos);
 	if (direct) setPosX(d->getPosX() - HAMMER_MAR_X);
 	else setPosX(d->getPosX() + HAMMER_MAR_X);
 	setPosY(d->getPosY() - HAMMER_MAR_Y);
 	setVelX(VEL_HAM);
 	setVelY(0);
 
-	SETRECT(edge, (long)d->getPosX() - EDGE_HAMMER_HOLDED_X, (long)d->getPosY() - EDGE_HAMMER_Y, EDGE_HAMMER_HOLDED_X * 2, EDGE_HAMMER_Y * 2);
+	SETRECT(edge, (long)d->getPosX() - EDGE_HAMMER_HOLDED_X, (long)d->getPosY() - EDGE_HAMMER_HOLDED_Y, EDGE_HAMMER_HOLDED_X * 2, EDGE_HAMMER_HOLDED_Y * 2);
 }
