@@ -413,9 +413,6 @@ void Entity::collideWarp(Entity *e){
 	}
 }
 
-//•`‰æ‚·‚é‰æ‘œ‚ğ•ÏX
-void Entity::changeImage(){}
-
 //‰æ‘œ•ÏX‚ÌˆêŠ‡İ’è
 void Entity::setImage(int s, int e, bool l){
 	//‰æ‘œ‚ğİ’è‚·‚é

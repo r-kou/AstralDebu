@@ -141,8 +141,8 @@ Mine::Mine(){
 	img = IMG_MINE;
 	size = CHIP_SIZE;
 	col = COL_CHIP;
-	edgeX = EDGE_X;
-	edgeY = EDGE_Y;
+	edgeX = EDGE_MINE_X;
+	edgeY = EDGE_MINE_Y;
 	marginX = EDGE_MAR_X;
 	marginY = EDGE_MAR_Y;
 }

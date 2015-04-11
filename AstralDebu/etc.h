@@ -41,17 +41,29 @@ public:
 	//コンストラクタ ステージによって色が変わる
 	Rock(int stage);
 
+	//移動しない
+	virtual void move(float frameTime){};
+
 	//地形への接触判定
-	virtual void touchMap(int map[MAP_COL][MAP_ROW]);
+	virtual void touchMap(int map[MAP_COL][MAP_ROW]){};
 
 	//他オブジェクトへの接触
 	virtual void collideObj(Entity *e, UCHAR t);
 
 	//描画する画像を変更
-	virtual void changeImage();
+	virtual void changeImage(){};
 
 	//描画
 	virtual void draw();
+
+	//地形をチェックして岩の画像を決める
+	void checkMap(int map[MAP_COL][MAP_ROW]);
+
+	//他の岩をチェックして岩の画像を決める
+	void checkObj(Entity *e);
+
+	//一枚絵の設定
+	void setImage();
 };
 
 class Ladder :public Entity {

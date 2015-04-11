@@ -17,6 +17,24 @@ void AstralDebu::updateTitle(){
 void AstralDebu::updateStage(){
 	if (!read) {
 		loadStage();
+		//Šâ‚ÌŒ`‚ğŒˆ‚ß‚é
+		ALL_OBJ{
+			Entity *e = getObject(i);
+			if (e->getType() == entityNS::TY_ROCK) ((Rock*)e)->checkMap(map);
+		}
+		ALL_OBJ_EACH{
+			Entity *ei = getObject(i);
+			Entity *ej = getObject(j);
+			if ((ei->getType() == entityNS::TY_ROCK)
+				&& (ej->getType() == entityNS::TY_ROCK)) {
+				((Rock*)ei)->checkObj(ej);
+				((Rock*)ej)->checkObj(ei);
+			}
+		}
+		ALL_OBJ{
+			Entity *e = getObject(i);
+			if (e->getType() == entityNS::TY_ROCK) ((Rock*)e)->setImage();
+		}
 	}
 
 	if (in1() && read){

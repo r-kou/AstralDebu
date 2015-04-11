@@ -85,9 +85,14 @@ void Debu::move(float frameTime){
 			switch (state){
 			case ST_STAND:
 				//ƒuƒŒ[ƒL‚ð‚©‚¯‚é
-				if (vel.x >= 20) vel.x -= VEL_BREAK * frameTime;
-				else if (vel.x <= -20) vel.x += VEL_BREAK * frameTime;
-				else vel.x = 0.0f;
+				if (vel.x > 0) {
+					vel.x -= VEL_BREAK * frameTime;
+					if (vel.x < 0) vel.x = 0;
+				}
+				else if (vel.x < 0) {
+					vel.x += VEL_BREAK * frameTime;
+					if (vel.x > 0) vel.x = 0;
+				}
 				break;
 			case ST_LADDER:
 			case ST_HAMMER:

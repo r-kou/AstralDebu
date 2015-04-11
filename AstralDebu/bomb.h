@@ -11,6 +11,8 @@ namespace bombNS{
 
 	const int EDGE_X = 15;
 	const int EDGE_Y = entityNS::EDGE_MAX;
+	const int EDGE_MINE_X = 15;
+	const int EDGE_MINE_Y = 15;
 	const int EDGE_MAR_X = 3;
 	const int EDGE_MAR_Y = 3;
 }

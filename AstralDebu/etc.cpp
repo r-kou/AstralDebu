@@ -24,19 +24,6 @@ Rock::Rock(int stage){
 	else img = IMG_ROCK_AREA4;
 }
 
-
-//地形への接触判定
-void Rock::touchMap(int map[MAP_COL][MAP_ROW]){
-	int cx = ChipCX();
-	int cy = ChipCY();
-
-	if (cy == 0) chipTop = true;
-	else chipTop = TOBOOL(map[cx][cy - 1]);
-
-	if (cy == MAP_ROW) chipBottom = true;
-	else chipBottom = TOBOOL(map[cx][cy + 1]);
-}
-
 //他オブジェクトへの接触
 void Rock::collideObj(Entity *e, UCHAR t){
 	//全オブジェクトの衝突判定をチェック
@@ -44,11 +31,6 @@ void Rock::collideObj(Entity *e, UCHAR t){
 
 	//岩固有の衝突判定
 	switch (e->getType()){
-	case TY_ROCK:
-		//上下の岩を確認
-		if (t & TOP) chipTop = true;
-		if (t & BOTTOM) chipBottom = true;
-		break;
 	case TY_BLAST:
 		//爆発する
 		setResponse(RES_DEAD);
@@ -65,19 +47,6 @@ void Rock::collideObj(Entity *e, UCHAR t){
 	}
 }
 
-
-//描画する画像を変更
-void Rock::changeImage(){
-	if (chipBottom){
-		if (chipTop) setImage(img);
-		else setImage(img+1);
-	}
-	else {
-		if (chipTop) setImage(img+2);
-		else setImage(img + 3);
-	}
-}
-
 //描画
 void Rock::draw(){
 	//書く
@@ -87,6 +56,39 @@ void Rock::draw(){
 	trans = false;
 }
 
+
+//地形をチェックして岩の画像を決める
+void Rock::checkMap(int map[MAP_COL][MAP_ROW]){
+	int cx = ChipCX();
+	int cy = ChipCY();
+
+	if (cy == 0) chipTop = true;
+	else chipTop = TOBOOL(map[cx][cy - 1]);
+
+	if (cy == MAP_ROW) chipBottom = true;
+	else chipBottom = TOBOOL(map[cx][cy + 1]);
+}
+
+//他の岩をチェックして岩の画像を決める
+void Rock::checkObj(Entity *e){
+	//形は上下の岩でのみ決まる
+	if ((e->getType() != TY_ROCK)||
+		(ChipCX()!=e->ChipCX())) return;
+	if (ChipCY() + 1 == e->ChipCY()) chipBottom = true;
+	else if(ChipCY() - 1 == e->ChipCY()) chipTop = true;
+}
+
+//描画する画像を決める
+void Rock::setImage(){
+	if (chipBottom){
+		if (chipTop) Entity::setImage(img);
+		else Entity::setImage(img + 1);
+	}
+	else {
+		if (chipTop) Entity::setImage(img + 2);
+		else Entity::setImage(img + 3);
+	}
+}
 
 //コンストラクタ
 Ladder::Ladder(){

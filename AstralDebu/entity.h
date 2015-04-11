@@ -212,7 +212,7 @@ public:
 	virtual void responseObj();
 
 	//•`‰æ‚·‚é‰æ‘œ‚ğ•ÏX
-	virtual void changeImage();
+	virtual void changeImage(){};
 
 	//‰æ‘œ•ÏX‚ÌˆêŠ‡İ’è
 	virtual void setImage(int s, int e, bool l);
