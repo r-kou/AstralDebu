@@ -7,7 +7,7 @@
 namespace debuNS{
 	const float VEL_RATE = 900;
 	const float VEL_MAX_WALK = 145;
-	const float VEL_JUMP = -285;
+	const float VEL_JUMP = -295;
 	const float VEL_DUMP = 3000;
 	const float VEL_BREAK = 2000;
 	const float VEL_RATE_JUMP = 700;
@@ -41,7 +41,7 @@ namespace debuNS{
 
 	const int EDGE_X = 11;
 	const int EDGE_Y = entityNS::EDGE_MAX;
-	const int EDGE_MAR_X = 4;
+	const int EDGE_MAR_X = 5;
 	const int EDGE_MAR_Y = 4;
 }
 

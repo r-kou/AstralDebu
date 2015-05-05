@@ -9,8 +9,8 @@ namespace blastNS{
 	const int IMG_END = 5;
 
 	//‚¿‚å‚Á‚Æ‚¾‚¯”»’è‚ğ¬‚³‚­
-	const int EDGE_SMALL = 45;
-	const int EDGE_LARGE = 75;
+	const int EDGE_SMALL = 46;
+	const int EDGE_LARGE = 78;
 	const int EDGE_MAR = 0;
 }
 

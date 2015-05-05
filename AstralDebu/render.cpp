@@ -317,6 +317,9 @@ void AstralDebu::renderHint(){
 	case 25:
 		drawArrowHorizontal(9.5f, 7.0f, false, HINT_ARROW);
 		break;
+	case 26:
+		drawPanel("Z", 3.0f, 5.5f, 1.0f, HINT_PANEL);
+		drawArrowHorizontal(2.5f, 6.5f, false, HINT_ARROW);
 	default:
 		break;
 	}
