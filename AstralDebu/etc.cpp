@@ -20,7 +20,7 @@ Rock::Rock(int stage){
 	//ステージに応じて画像変更
 	if (stage < 10) img = IMG_ROCK_AREA1;
 	else if (stage < 20) img = IMG_ROCK_AREA2;
-	else if (stage < 30) img = IMG_ROCK_AREA3;
+	else if (stage <= 30) img = IMG_ROCK_AREA3;
 	else img = IMG_ROCK_AREA4;
 }
 
