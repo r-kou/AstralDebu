@@ -179,8 +179,8 @@ void Entity::collideMap(UCHAR t){
 	if ((t & TOP) && (vel.y <= 0.0f)) {
 		setTop(false);
 		//’âŽ~‚¹‚¸‚É—Ž‰º‘¬“x‚É‰ÁŽZ
-		if (vel.y < 0) vel.y += TOP_GRAVITY_RATE*frameTime;
-		else vel.y = 0;
+		vel.y += TOP_GRAVITY_RATE*frameTime;
+		if (vel.y > 0) vel.y = 0;
 		if (state == ST_KNOCK) {
 			setStand();
 			playPut();

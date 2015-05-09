@@ -197,3 +197,23 @@ void AstralDebu::drawFrame(float l, float t, float r, float b, float f, float s,
 	drawQuad(l, t + s, s, b - (s * 2), fs);
 	drawQuad(l + r - f, t + f, s, b - (f * 2), fs);
 }
+
+//ƒ`ƒbƒv‰æ‘œ‚ð•~‚«‹l‚ß‚é
+void AstralDebu::spreadChip(int l,int t,int r,int b,int c) {
+	chip.setCurrentFrame(c);
+	for (int j = t; j <= b; j++){
+		chip.setY((float)CHIP_D(j));
+		for (int i = l; i <= r; i++){
+			chip.setX((float)CHIP(i));
+			chip.draw();
+		}
+	}
+}
+
+//•¶ŽšF•Ï‰»
+int AstralDebu::colorWave(float f){
+	while (f > 1.0f) f -= 1.0f;
+	if (f < 0.0f) f = 0.0f;
+	if (f < 0.5f) return (int) (255 * f);
+	else return (int)(255 * (1.0f - f));
+}

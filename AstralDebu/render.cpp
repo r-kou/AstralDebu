@@ -52,9 +52,9 @@ void AstralDebu::renderMain(){
 
 //クリア画面の描画
 void AstralDebu::renderClear(){
-	graphics->spriteBegin();
-
-	graphics->spriteEnd();
+	//屋外
+	if (stateNumber <= 1) renderClearOut();
+	else renderClearIn();
 }
 
 //メニュー画面の描画
@@ -241,7 +241,7 @@ void AstralDebu::renderChip(){
 				chip.setX((float)CHIP(i));
 				if (map[i][j] <= 12) chip.setCurrentFrame(setChipImage(map[i][j]));
 				else chip.setCurrentFrame(map[i][j]);
-				if (stage >= 31) chip.draw(graphicsNS::ALPHA50);
+				if (chip.getCurrentFrame() >= 24) chip.draw(graphicsNS::ALPHA50);
 				else chip.draw();
 			}
 		}
@@ -320,6 +320,13 @@ void AstralDebu::renderHint(){
 	case 26:
 		drawPanel("Z", 3.0f, 5.5f, 1.0f, HINT_PANEL);
 		drawArrowHorizontal(2.5f, 6.5f, false, HINT_ARROW);
+		break;
+	case 31:
+		drawPanel("C", 4.0f, 9.5f, 1.0f, HINT_PANEL);
+		drawArrowHorizontal(3.5f, 10.5f, false, HINT_ARROW);
+		drawPanel("X→C", 10.5f, 9.5f, 2.0f, HINT_PANEL);
+		drawArrowHorizontal(10.5f, 10.5f, false, HINT_ARROW);
+		break;
 	default:
 		break;
 	}
@@ -388,6 +395,52 @@ void AstralDebu::renderVelocity(){
 		VEL_LEN_X, VEL_LEN_Y, WHITE, DT_RC);
 	graphics->spriteEnd();
 }
+
+//クリア画面の描画 屋外
+void AstralDebu::renderClearOut(){
+	graphics->spriteBegin();
+	drawQuad(0, 0, (float)WINDOW_W, (float)WINDOW_H, STG3_BACK);
+
+	image.draw();
+
+	spreadChip(0, 12, MAP_COL - 1, 12, 17);
+	spreadChip(0, 13, MAP_COL - 1, MAP_ROW - 1, 16);
+	spreadChip(0, 2, 8, 2, 9);
+	spreadChip(0, 3, 8, 9, 8);
+	spreadChip(0, 10, 7, 11, 8);
+
+	graphics->spriteEnd();
+}
+
+//クリア画面の描画 屋内
+void AstralDebu::renderClearIn(){
+	graphics->spriteBegin();
+	drawQuad(0, 0, (float)WINDOW_W, (float)WINDOW_H, STG2_BACK);
+
+	image.draw();
+
+	spreadChip(0, 12, MAP_COL - 1, 12, 9);
+	spreadChip(0, 13, MAP_COL - 1, MAP_ROW - 1, 8);
+	spreadChip(0, 0, 3, 11, 32);
+	spreadChip(4, 4, 7, 11, 32);
+	spreadChip(8, 8, 11, 11, 32);
+	spreadChip(12, 11, 15, 11, 32);
+	if (stateNumber == 2) chip.setCurrentFrame(32);
+	else chip.setCurrentFrame(44);
+	chip.setX((float)CHIP(16));
+	chip.setY((float)CHIP_D(11));
+	chip.draw();
+
+	if(stateNumber == 4) 
+		bigF.print("Congratulations",
+		0, 0, WINDOW_W, WINDOW_H,
+		colorText() , DT_CC);
+
+	graphics->spriteEnd();
+}
+
+
+
 
 //カーソルを描画
 void AstralDebu::drawCursor(){

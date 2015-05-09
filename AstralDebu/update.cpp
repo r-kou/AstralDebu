@@ -4,13 +4,29 @@ using namespace astralNS;
 
 //タイトル画面の更新
 void AstralDebu::updateTitle(){
-	if (stateNumber == 0) updateTitle0();
-	else if (stateNumber == 1) updateTitle1();
-	else if (stateNumber == 2) updateTitle2();
-	else if (stateNumber == 3) updateTitle3();
-	else if (stateNumber == 4) updateTitle4();
-	else if (stateNumber == 5) updateTitle5();
-	else if (stateNumber == 6) updateTitle6();
+	switch (stateNumber){
+	case 0:
+		updateTitle0();
+		break;
+	case 1:
+		updateTitle1();
+		break;
+	case 2:
+		updateTitle2();
+		break;
+	case 3:
+		updateTitle3();
+		break;
+	case 4:
+		updateTitle4();
+		break;
+	case 5:
+		updateTitle5();
+		break;
+	case 6:
+		updateTitle6();
+		break;
+	}
 }
 
 //ステージ表示画面の更新
@@ -87,6 +103,7 @@ void AstralDebu::updateMain(){
 		saveData();
 		stage++;
 		if (stage > MAX_STAGE){
+			stateNumber = 0;
 			state = S_CLEAR;
 		}
 		else {
@@ -181,7 +198,23 @@ void AstralDebu::updateMain(){
 
 //クリア画面の更新
 void AstralDebu::updateClear(){
-
+	switch (stateNumber){
+	case 0:
+		updateClear0();
+		break;
+	case 1:
+		updateClear1();
+		break;
+	case 2:
+		updateClear2();
+		break;
+	case 3:
+		updateClear3();
+		break;
+	case 4:
+		updateClear4();
+		break;
+	}
 }
 
 //メニュー画面の更新
@@ -643,5 +676,71 @@ void AstralDebu::updateTitle6(){
 		stateNumber = 4;
 		saveData();
 		audio->playCue(audioNS::CANCEL);
+	}
+}
+
+//クリア画面を更新
+void AstralDebu::updateClear0() {
+	stopBgm();
+	bgm = false;
+	if (!image.initialize(graphics, &debuT, CHIP_SIZE, CHIP_SIZE, 7))
+		throw(GameError(gameErrorNS::FATAL, "画像データの初期化に失敗しました"));
+	image.setFlipH(true);
+	image.setFrames(2,4);
+	image.setCurrentFrame(2);
+	image.setLoop(true);
+	image.setComplete(false);
+	image.setDelay(0.2f);
+	image.setX(CHIP(27));
+	image.setY(CHIP_D(11));
+
+	stateNumber++;
+}
+
+//クリア画面を更新
+void AstralDebu::updateClear1() {
+	image.setX(image.getX() - (120*frameTime));
+	image.update(frameTime);
+
+	if (image.getX() < CHIP(5)) {
+		image.setX(CHIP(27));
+		stateNumber++;
+	}
+}
+
+//クリア画面を更新
+void AstralDebu::updateClear2() {
+	image.setX(image.getX() - (100 * frameTime));
+	image.update(frameTime);
+
+	if (image.getX() < CHIP(17)) {
+		image.setX(CHIP(17));
+		audio->playCue(audioNS::BRAKE_WOOD);
+		fCount = 0.0f;
+		stateNumber++;
+	}
+}
+
+//クリア画面を更新
+void AstralDebu::updateClear3() {
+	fCount += frameTime;
+	if (fCount >= 1.0f) {
+		audio->playCue(audioNS::BGM_TITLE);
+		bgm = true;
+		fCount = 0.0f;
+		stateNumber++;
+	}
+}
+
+//クリア画面を更新
+void AstralDebu::updateClear4() {
+	fCount += frameTime;
+	if (fCount >= 4.0f) fCount -= 4.0f;
+
+	if (inZ()||inX()||inC()) {
+		stateNumber = 1;
+		state = S_TITLE;
+		audio->playCue(audioNS::OK);
+		stage = 0;
 	}
 }

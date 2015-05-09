@@ -153,7 +153,7 @@ namespace astralNS {
 	const float TIME_OUT = 100.0f;
 
 	//最大ステージ数
-	const int MAX_STAGE = 40;
+	const int MAX_STAGE = 30;
 
 	const enum GameState{
 		S_TITLE, S_STAGE, S_MAIN, S_OVER, S_CLEAR, S_END
@@ -215,6 +215,8 @@ private:
 	Texture debuT, chipT, enemyT, bombT, titleT;
 	//画像のみデータ
 	Image chip, title;
+	//非実態イメージ
+	Image image;
 	//フォント
 	Text stageF, numberF, bigF, middleF, smallF;
 	//描画用短径
@@ -290,6 +292,13 @@ private:
 	void updateTitle5();
 	void updateTitle6();
 
+	//クリア画面の更新　状態ごとに分割
+	void updateClear0();
+	void updateClear1();
+	void updateClear2();
+	void updateClear3();
+	void updateClear4();
+
 	//タイトルと背景を描画
 	void renderTitleBack();
 	//スタートを描画
@@ -312,6 +321,11 @@ private:
 	void renderEdge();
 	//デバッグ用 速度を描画
 	void renderVelocity();
+	//クリア画面を描画
+	void renderClearOut();
+	void renderClearIn();
+	ARGB colorText() { return D3DCOLOR_ARGB(255, colorWave(fCount), colorWave(fCount/2), colorWave(fCount/4)); }
+	int colorWave(float f);
 
 	//vertexを設定
 	void setVertex(float l, float t, float r, float b, ARGB c);
@@ -345,6 +359,8 @@ private:
 	void drawFrame(float l, float t, float r, float b, float f, ARGB c, ARGB fc);
 	//陰あり枠付き四角を描画
 	void drawFrame(float l, float t, float r, float b, float f, float s, ARGB c, ARGB fc, ARGB fs, ARGB fl);
+	//チップ画像を敷き詰める
+	void spreadChip(int l, int t, int r, int b, int c);
 
 	//オブジェクトを返す
 	Entity* getObject(int i);
@@ -385,6 +401,8 @@ private:
 	std::string doubleToString(double f);
 	//色を選択
 	ARGB menuText(bool b) { return (b ? astralNS::menuNS::TEXT_SHOW : astralNS::menuNS::TEXT_HIDE); }
+
+
 	//Zが押されたか
 	bool inZ() { return input->isKeyPressed('Z'); }
 	//Xが押されたか
